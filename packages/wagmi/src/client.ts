@@ -23,6 +23,7 @@ import type {
   LibraryOptions,
   NetworkControllerClient,
   PublicStateControllerState,
+  SocialProvider,
   Token
 } from '@web3modal/scaffold'
 import type { Hex } from 'viem'
@@ -94,7 +95,7 @@ export class Web3Modal extends Web3ModalScaffold {
           const connections = new Map(wagmiConfig.state.connections)
           const connection = connections.get(wagmiConfig.state.current || '')
 
-          if (connection?.connector?.id === ConstantsUtil.EMAIL_CONNECTOR_ID) {
+          if (connection?.connector?.id === ConstantsUtil.AUTH_CONNECTOR_ID) {
             resolve(getEmailCaipNetworks())
           } else if (connection?.connector?.id === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID) {
             const connector = wagmiConfig.connectors.find(
@@ -347,7 +348,7 @@ export class Web3Modal extends Web3ModalScaffold {
     filteredConnectors.forEach(({ id, name, type, icon }) => {
       // If coinbase injected connector is present, skip coinbase sdk connector.
       const shouldSkip =
-        (coinbaseConnector && id === coinbaseSDKId) || ConstantsUtil.EMAIL_CONNECTOR_ID === id
+        (coinbaseConnector && id === coinbaseSDKId) || ConstantsUtil.AUTH_CONNECTOR_ID === id
       if (!shouldSkip) {
         w3mConnectors.push({
           id,
@@ -360,32 +361,40 @@ export class Web3Modal extends Web3ModalScaffold {
       }
     })
     this.setConnectors(w3mConnectors)
-    this.syncEmailConnector(filteredConnectors)
+    this.syncAuthConnector(filteredConnectors)
   }
 
-  private async syncEmailConnector(
+  private async syncAuthConnector(
     connectors: Web3ModalClientOptions<CoreConfig>['wagmiConfig']['connectors']
   ) {
-    const emailConnector = connectors.find(({ id }) => id === ConstantsUtil.EMAIL_CONNECTOR_ID)
-    if (emailConnector) {
-      const provider = await emailConnector.getProvider()
+    const authConnector = connectors.find(
+      ({ id }) => id === ConstantsUtil.AUTH_CONNECTOR_ID
+    ) as unknown as Web3ModalClientOptions<CoreConfig>['wagmiConfig']['connectors'][0] & {
+      email: boolean
+      socials: SocialProvider[]
+    }
+    if (authConnector) {
+      const provider = await authConnector.getProvider()
       this.addConnector({
-        id: ConstantsUtil.EMAIL_CONNECTOR_ID,
-        type: 'EMAIL',
-        name: 'Email',
-        provider
+        id: ConstantsUtil.AUTH_CONNECTOR_ID,
+        type: 'AUTH',
+        name: 'Auth',
+        provider,
+        email: authConnector.email,
+        socials: authConnector.socials
       })
-      this.listenEmailConnector(emailConnector)
+      this.listenAuthConnector(authConnector)
     }
   }
 
-  private async listenEmailConnector(
+  private async listenAuthConnector(
     connector: Web3ModalClientOptions<CoreConfig>['wagmiConfig']['connectors'][number]
   ) {
     if (typeof window !== 'undefined' && connector) {
       super.setLoading(true)
       const provider = (await connector.getProvider()) as W3mFrameProvider
       const isLoginEmailUsed = provider.getLoginEmailUsed()
+
       super.setLoading(isLoginEmailUsed)
       provider.onRpcRequest(request => {
         if (!W3mFrameHelpers.checkIfRequestIsAllowed(request)) {

@@ -3,8 +3,8 @@ import '@web3modal/polyfills'
 import type { CreateConfigParameters, CreateConnectorFn, Config } from 'wagmi'
 import { createConfig, http } from 'wagmi'
 import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors'
-
-import { emailConnector } from '../connectors/EmailConnector.js'
+import type { SocialProvider } from '@web3modal/scaffold-utils'
+import { authConnector } from '../connectors/AuthConnector.js'
 
 export type ConfigOptions = Partial<CreateConfigParameters> & {
   chains: CreateConfigParameters['chains']
@@ -12,8 +12,11 @@ export type ConfigOptions = Partial<CreateConfigParameters> & {
   enableInjected?: boolean
   enableEIP6963?: boolean
   enableCoinbase?: boolean
-  enableEmail?: boolean
   enableWalletConnect?: boolean
+  auth?: {
+    email?: boolean
+    socials?: SocialProvider[]
+  }
   metadata: {
     name: string
     description: string
@@ -28,9 +31,9 @@ export function defaultWagmiConfig({
   metadata,
   enableInjected,
   enableCoinbase,
-  enableEmail,
   enableWalletConnect,
   enableEIP6963,
+  auth,
   ...wagmiConfig
 }: ConfigOptions): Config {
   const connectors: CreateConnectorFn[] = []
@@ -57,9 +60,16 @@ export function defaultWagmiConfig({
   }
 
   // Dissabled by default
-  if (enableEmail === true) {
-    // @ts-expect-error Chain types overlap with core
-    connectors.push(emailConnector({ chains: [...chains], options: { projectId } }))
+  if (auth?.email || auth?.socials) {
+    connectors.push(
+      // @ts-expect-error Chain types overlap with core
+      authConnector({
+        chains: [...chains],
+        options: { projectId },
+        socials: auth.socials,
+        email: auth.email
+      })
+    )
   }
 
   return createConfig({

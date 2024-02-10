@@ -107,6 +107,10 @@ export class W3mRouter extends LitElement {
         return html`<w3m-what-is-a-buy-view></w3m-what-is-a-buy-view>`
       case 'BuyInProgress':
         return html`<w3m-buy-in-progress-view></w3m-buy-in-progress-view>`
+      case 'ConnectWallets':
+        return html`<w3m-connect-wallets-view></w3m-connect-wallets-view>`
+      case 'ConnectSocials':
+        return html`<w3m-connect-socials-view></w3m-connect-socials-view>`
       default:
         return html`<w3m-connect-view></w3m-connect-view>`
     }

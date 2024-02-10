@@ -1,6 +1,6 @@
 import { subscribeKey as subKey } from 'valtio/utils'
 import { proxy, ref, snapshot } from 'valtio/vanilla'
-import type { Connector, EmailConnector } from '../utils/TypeUtil.js'
+import type { Connector, AuthConnector } from '../utils/TypeUtil.js'
 import { OptionsController } from './OptionsController.js'
 
 // -- Types --------------------------------------------- //
@@ -30,8 +30,8 @@ export const ConnectorController = {
   addConnector(connector: Connector) {
     state.connectors.push(ref(connector))
 
-    if (connector.id === 'w3mEmail') {
-      const emailConnector = connector as EmailConnector
+    if (connector.id === 'w3mAuth') {
+      const emailConnector = connector as AuthConnector
       const optionsState = snapshot(OptionsController.state) as typeof OptionsController.state
       emailConnector?.provider?.syncDappData?.({
         metadata: optionsState.metadata,
@@ -41,8 +41,8 @@ export const ConnectorController = {
     }
   },
 
-  getEmailConnector() {
-    return state.connectors.find(c => c.type === 'EMAIL') as EmailConnector | undefined
+  getAuthConnector() {
+    return state.connectors.find(c => c.type === 'AUTH') as AuthConnector | undefined
   },
 
   getAnnouncedConnectorRdns() {

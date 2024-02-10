@@ -1,5 +1,11 @@
 # @web3modal/wallet
 
+## 4.0.1-9bc4a0c.0
+
+### Minor Changes
+
+- Added social login views/components, extended W3mFrameProvider
+
 ## 4.0.1
 
 ### Patch Changes

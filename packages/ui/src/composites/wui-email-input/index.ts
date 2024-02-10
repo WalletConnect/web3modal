@@ -24,7 +24,7 @@ export class WuiEmailInput extends LitElement {
       <wui-input-text
         placeholder="Email"
         icon="mail"
-        size="md"
+        size="lg"
         .disabled=${this.disabled}
         .value=${this.value}
         data-testid="wui-email-input"

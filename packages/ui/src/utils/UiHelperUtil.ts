@@ -106,5 +106,8 @@ export const UiHelperUtil = {
     }
 
     return 'dark'
+  },
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 }

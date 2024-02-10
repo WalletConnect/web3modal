@@ -1,3 +1,4 @@
+import type { SocialProvider } from '@web3modal/scaffold'
 import type { W3mFrameProvider } from '@web3modal/wallet'
 
 export interface IEthersConfig {
@@ -11,7 +12,10 @@ export type Address = `0x${string}`
 export type ProviderType = {
   injected?: Provider
   coinbase?: Provider
-  email?: boolean
+  auth?: {
+    email?: boolean
+    socials?: SocialProvider[]
+  }
   EIP6963?: boolean
   metadata: Metadata
 }

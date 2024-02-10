@@ -6,7 +6,7 @@ import type { Address, CombinedProvider, Provider } from './EthersTypesUtil.js'
 
 export interface EthersStoreUtilState {
   provider?: Provider | CombinedProvider
-  providerType?: 'walletConnect' | 'injected' | 'coinbaseWallet' | 'eip6963' | 'w3mEmail'
+  providerType?: 'walletConnect' | 'injected' | 'coinbaseWallet' | 'eip6963' | 'w3mAuth'
   address?: Address
   chainId?: number
   error?: unknown

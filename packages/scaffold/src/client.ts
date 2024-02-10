@@ -97,9 +97,9 @@ export class Web3ModalScaffold {
     ThemeController.setThemeMode(themeMode)
     setColorTheme(ThemeController.state.themeMode)
     try {
-      const emailConnector = ConnectorController.getEmailConnector()
-      if (emailConnector) {
-        emailConnector.provider.syncTheme({
+      const authConnector = ConnectorController.getAuthConnector()
+      if (authConnector) {
+        authConnector.provider.syncTheme({
           themeMode: ThemeController.getSnapshot().themeMode
         })
       }
@@ -113,9 +113,9 @@ export class Web3ModalScaffold {
     ThemeController.setThemeVariables(themeVariables)
     setThemeVariables(ThemeController.state.themeVariables)
     try {
-      const emailConnector = ConnectorController.getEmailConnector()
-      if (emailConnector) {
-        emailConnector.provider.syncTheme({
+      const authConnector = ConnectorController.getAuthConnector()
+      if (authConnector) {
+        authConnector.provider.syncTheme({
           themeVariables: ThemeController.getSnapshot().themeVariables
         })
       }

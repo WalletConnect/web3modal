@@ -49,6 +49,8 @@ import type { WuiListNetwork } from '../composites/wui-list-network/index.js'
 import type { WuiListWalletTransaction } from '../composites/wui-list-wallet-transaction/index.js'
 import type { WuiOnRampActivityItem } from '../composites/wui-onramp-activity-item/index.js'
 import type { WuiOnRampProviderItem } from '../composites/wui-onramp-provider-item/index.js'
+import type { WuiListButton } from '../composites/wui-list-button/index.js'
+import type { WuiListSocial } from '../composites/wui-list-social/index.js'
 
 import type { WuiFlex } from '../layout/wui-flex/index.js'
 import type { WuiGrid } from '../layout/wui-grid/index.js'
@@ -113,6 +115,8 @@ declare global {
       'wui-list-wallet-transaction': CustomElement<WuiListWalletTransaction>
       'wui-onramp-activity-item': CustomElement<WuiOnRampActivityItem>
       'wui-onramp-provider-item': CustomElement<WuiOnRampProviderItem>
+      'wui-list-button': CustomElement<WuiListButton>
+      'wui-list-social': CustomElement<WuiListSocial>
     }
   }
 }

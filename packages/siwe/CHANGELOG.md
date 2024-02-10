@@ -1,5 +1,13 @@
 # @web3modal/siwe
 
+## 4.0.1-9bc4a0c.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @web3modal/scaffold-utils@4.0.1-9bc4a0c.0
+  - @web3modal/core@4.0.1-9bc4a0c.0
+
 ## 4.0.1
 
 ### Patch Changes

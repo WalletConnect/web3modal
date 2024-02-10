@@ -3,8 +3,7 @@ import type { Chain } from '@wagmi/core/chains'
 import { W3mFrameProvider } from '@web3modal/wallet'
 import { SwitchChainError, getAddress } from 'viem'
 import type { Address } from 'viem'
-
-import { ConstantsUtil } from '@web3modal/scaffold-utils'
+import { ConstantsUtil, type SocialProvider } from '@web3modal/scaffold-utils'
 
 // -- Types ----------------------------------------------------------------------------------------
 interface W3mFrameProviderOptions {
@@ -18,18 +17,22 @@ interface ConnectOptions {
 export type EmailParameters = {
   chains?: Chain[]
   options: W3mFrameProviderOptions
+  socials?: SocialProvider[]
+  email?: boolean
 }
 
 // -- Connector ------------------------------------------------------------------------------------
-export function emailConnector(parameters: EmailParameters) {
+export function authConnector(parameters: EmailParameters) {
   type Properties = {
     provider?: W3mFrameProvider
   }
 
   return createConnector<W3mFrameProvider, Properties>(config => ({
-    id: ConstantsUtil.EMAIL_CONNECTOR_ID,
-    name: 'Web3Modal Email',
-    type: 'w3mEmail',
+    id: ConstantsUtil.AUTH_CONNECTOR_ID,
+    name: 'Web3Modal Auth',
+    type: 'w3mAuth',
+    socials: parameters.socials,
+    email: parameters.email,
 
     async connect(options: ConnectOptions = {}) {
       const provider = await this.getProvider()

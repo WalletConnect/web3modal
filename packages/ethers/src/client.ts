@@ -101,7 +101,7 @@ export class Web3Modal extends Web3ModalScaffold {
 
   private options: Web3ModalClientOptions | undefined = undefined
 
-  private emailProvider?: W3mFrameProvider
+  private frameProvider?: W3mFrameProvider
 
   public constructor(options: Web3ModalClientOptions) {
     const {
@@ -222,8 +222,8 @@ export class Web3Modal extends Web3ModalScaffold {
           } catch (error) {
             EthersStoreUtil.setError(error)
           }
-        } else if (id === ConstantsUtil.EMAIL_CONNECTOR_ID) {
-          this.setEmailProvider()
+        } else if (id === ConstantsUtil.AUTH_CONNECTOR_ID) {
+          this.setAuthProvider()
         }
       },
 
@@ -254,10 +254,10 @@ export class Web3Modal extends Web3ModalScaffold {
           await (WalletConnectProvider as unknown as EthereumProvider).disconnect()
           provider?.emit('disconnect')
           // eslint-disable-next-line no-negated-condition
-        } else if (providerType !== ConstantsUtil.EMAIL_CONNECTOR_ID) {
+        } else if (providerType !== ConstantsUtil.AUTH_CONNECTOR_ID) {
           provider?.emit('disconnect')
         } else {
-          this.emailProvider?.disconnect()
+          this.frameProvider?.disconnect()
         }
         provider?.emit('disconnect')
       },
@@ -314,8 +314,8 @@ export class Web3Modal extends Web3ModalScaffold {
       }
     }
 
-    if (ethersConfig.email) {
-      this.syncEmailConnector(w3mOptions.projectId)
+    if (ethersConfig.auth) {
+      this.syncAuthConnector(w3mOptions.projectId, ethersConfig.auth)
     }
 
     if (ethersConfig.injected) {
@@ -583,16 +583,16 @@ export class Web3Modal extends Web3ModalScaffold {
     }
   }
 
-  private async setEmailProvider() {
-    window?.localStorage.setItem(EthersConstantsUtil.WALLET_ID, ConstantsUtil.EMAIL_CONNECTOR_ID)
+  private async setAuthProvider() {
+    window?.localStorage.setItem(EthersConstantsUtil.WALLET_ID, ConstantsUtil.AUTH_CONNECTOR_ID)
 
-    if (this.emailProvider) {
-      const { address, chainId } = await this.emailProvider.connect()
+    if (this.frameProvider) {
+      const { address, chainId } = await this.frameProvider.connect()
       super.setLoading(false)
       if (address && chainId) {
         EthersStoreUtil.setChainId(chainId)
-        EthersStoreUtil.setProviderType(ConstantsUtil.EMAIL_CONNECTOR_ID as 'w3mEmail')
-        EthersStoreUtil.setProvider(this.emailProvider as unknown as CombinedProvider)
+        EthersStoreUtil.setProviderType(ConstantsUtil.AUTH_CONNECTOR_ID as 'w3mAuth')
+        EthersStoreUtil.setProvider(this.frameProvider as unknown as CombinedProvider)
         EthersStoreUtil.setIsConnected(true)
         EthersStoreUtil.setAddress(address as Address)
         this.watchEmail()
@@ -746,17 +746,17 @@ export class Web3Modal extends Web3ModalScaffold {
   }
 
   private watchEmail() {
-    if (this.emailProvider) {
-      this.emailProvider.onRpcRequest(request => {
+    if (this.frameProvider) {
+      this.frameProvider.onRpcRequest(request => {
         // We only open the modal if it's not a safe (auto-approve)
         if (!W3mFrameHelpers.checkIfRequestIsAllowed(request)) {
           super.open({ view: 'ApproveTransaction' })
         }
       })
-      this.emailProvider.onRpcResponse(() => {
+      this.frameProvider.onRpcResponse(() => {
         super.close()
       })
-      this.emailProvider.onIsConnected(() => {
+      this.frameProvider.onIsConnected(() => {
         super.setLoading(false)
       })
     }
@@ -968,10 +968,10 @@ export class Web3Modal extends Web3ModalScaffold {
             }
           }
         }
-      } else if (providerType === ConstantsUtil.EMAIL_CONNECTOR_ID) {
-        if (this.emailProvider && chain?.chainId) {
+      } else if (providerType === ConstantsUtil.AUTH_CONNECTOR_ID) {
+        if (this.frameProvider && chain?.chainId) {
           try {
-            await this.emailProvider?.switchNetwork(chain?.chainId)
+            await this.frameProvider?.switchNetwork(chain?.chainId)
             EthersStoreUtil.setChainId(chain.chainId)
           } catch {
             throw new Error('Switching chain failed')
@@ -1025,24 +1025,26 @@ export class Web3Modal extends Web3ModalScaffold {
     this.setConnectors(w3mConnectors)
   }
 
-  private async syncEmailConnector(projectId: string) {
+  private async syncAuthConnector(projectId: string, auth: ProviderType['auth']) {
     if (typeof window !== 'undefined') {
-      this.emailProvider = new W3mFrameProvider(projectId)
+      this.frameProvider = new W3mFrameProvider(projectId)
 
       this.addConnector({
-        id: ConstantsUtil.EMAIL_CONNECTOR_ID,
-        type: 'EMAIL',
-        name: 'Email',
-        provider: this.emailProvider
+        id: ConstantsUtil.AUTH_CONNECTOR_ID,
+        type: 'AUTH',
+        name: 'Auth',
+        provider: this.frameProvider,
+        email: auth?.email,
+        socials: auth?.socials
       })
 
       super.setLoading(true)
-      const isLoginEmailUsed = this.emailProvider.getLoginEmailUsed()
+      const isLoginEmailUsed = this.frameProvider.getLoginEmailUsed()
       super.setLoading(isLoginEmailUsed)
-      const isConnected = await this.emailProvider.isConnected()
+      const isConnected = await this.frameProvider.isConnected()
 
       if (isConnected) {
-        this.setEmailProvider()
+        this.setAuthProvider()
       } else {
         super.setLoading(false)
       }

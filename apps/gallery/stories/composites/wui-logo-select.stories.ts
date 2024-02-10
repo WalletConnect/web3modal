@@ -2,6 +2,7 @@ import type { Meta } from '@storybook/web-components'
 import '@web3modal/ui/src/composites/wui-logo-select'
 import type { WuiLogoSelect } from '@web3modal/ui/src/composites/wui-logo-select'
 import { html } from 'lit'
+import '../../components/gallery-container'
 import { logoOptions } from '../../utils/PresetUtils'
 
 type Component = Meta<WuiLogoSelect>
@@ -26,5 +27,7 @@ export default {
 
 export const Default: Component = {
   render: args =>
-    html`<wui-logo-select ?disabled=${args.disabled} logo=${args.logo}></wui-logo-select>`
+    html`<gallery-container width="60"
+      ><wui-logo-select ?disabled=${args.disabled} logo=${args.logo}></wui-logo-select>
+    </gallery-container>`
 }

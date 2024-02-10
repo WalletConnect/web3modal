@@ -1,5 +1,12 @@
 # @examples/html-ethers5
 
+## 4.0.1-9bc4a0c.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @web3modal/ethers5@4.0.1-9bc4a0c.0
+
 ## 4.0.1
 
 ### Patch Changes

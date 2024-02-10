@@ -49,6 +49,8 @@ export * from './src/composites/wui-list-network/index.js'
 export * from './src/composites/wui-list-wallet-transaction/index.js'
 export * from './src/composites/wui-onramp-activity-item/index.js'
 export * from './src/composites/wui-onramp-provider-item/index.js'
+export * from './src/composites/wui-list-button/index.js'
+export * from './src/composites/wui-list-social/index.js'
 
 export * from './src/layout/wui-flex/index.js'
 export * from './src/layout/wui-grid/index.js'

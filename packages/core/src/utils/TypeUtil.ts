@@ -36,7 +36,17 @@ export type Platform =
   | 'unsupported'
   | 'external'
 
-export type ConnectorType = 'EXTERNAL' | 'WALLET_CONNECT' | 'INJECTED' | 'ANNOUNCED' | 'EMAIL'
+export type ConnectorType = 'EXTERNAL' | 'WALLET_CONNECT' | 'INJECTED' | 'ANNOUNCED' | 'AUTH'
+
+export type SocialProvider =
+  | 'google'
+  | 'apple'
+  | 'facebook'
+  | 'x'
+  | 'github'
+  | 'discord'
+  | 'twitch'
+  | 'telegram'
 
 export type Connector = {
   id: string
@@ -47,10 +57,14 @@ export type Connector = {
   imageUrl?: string
   info?: { rdns?: string }
   provider?: unknown
+  email?: boolean
+  socials?: SocialProvider[]
 }
 
-export interface EmailConnector extends Connector {
+export interface AuthConnector extends Connector {
   provider: W3mFrameProvider
+  socials?: SocialProvider[]
+  email?: boolean
 }
 
 export type CaipNamespaces = Record<

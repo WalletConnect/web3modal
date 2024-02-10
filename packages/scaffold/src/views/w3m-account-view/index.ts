@@ -183,9 +183,9 @@ export class W3mAccountView extends LitElement {
 
   private emailCardTemplate() {
     const type = StorageUtil.getConnectedConnector()
-    const emailConnector = ConnectorController.getEmailConnector()
+    const authConnector = ConnectorController.getAuthConnector()
     const { origin } = location
-    if (!emailConnector || type !== 'EMAIL' || origin.includes(ConstantsUtil.SECURE_SITE)) {
+    if (!authConnector || type !== 'AUTH' || origin.includes(ConstantsUtil.SECURE_SITE)) {
       return null
     }
 

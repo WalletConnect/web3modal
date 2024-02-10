@@ -32,6 +32,9 @@ export const GetTransactionByHashResponse = z.object({
 export const AppSwitchNetworkRequest = z.object({ chainId: z.number() })
 export const AppConnectEmailRequest = z.object({ email: z.string().email() })
 export const AppConnectOtpRequest = z.object({ otp: z.string() })
+export const AppConnectSocialRequest = z.object({
+  provider: z.enum(['google', 'apple', 'facebook', 'x', 'github', 'discord'])
+})
 export const AppGetUserRequest = z.object({ chainId: z.optional(z.number()) })
 export const AppUpdateEmailRequest = z.object({ email: z.string().email() })
 export const AppUpdateEmailPrimaryOtpRequest = z.object({ otp: z.string() })
@@ -124,6 +127,8 @@ export const W3mFrameSchema = {
 
     .or(z.object({ type: zType('APP_CONNECT_OTP'), payload: AppConnectOtpRequest }))
 
+    .or(z.object({ type: zType('APP_CONNECT_SOCIAL'), payload: AppConnectSocialRequest }))
+
     .or(z.object({ type: zType('APP_GET_USER'), payload: z.optional(AppGetUserRequest) }))
 
     .or(z.object({ type: zType('APP_SIGN_OUT') }))
@@ -188,6 +193,10 @@ export const W3mFrameSchema = {
     .or(z.object({ type: zType('FRAME_CONNECT_DEVICE_ERROR'), payload: zError }))
 
     .or(z.object({ type: zType('FRAME_CONNECT_DEVICE_SUCCESS') }))
+
+    .or(z.object({ type: zType('FRAME_CONNECT_SOCIAL_ERROR'), payload: zError }))
+
+    .or(z.object({ type: zType('FRAME_CONNECT_SOCIAL_SUCCESS') }))
 
     .or(z.object({ type: zType('FRAME_GET_USER_ERROR'), payload: zError }))
 
