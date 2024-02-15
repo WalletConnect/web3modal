@@ -41,7 +41,9 @@ export class WalletPage {
     const variant = opts.accept ? `approve` : `reject`
     // `.click` doesn't work here, so we use `.focus` and `Space`
     const btn = this.page.getByTestId(`session-${variant}-button`)
-    await btn.waitFor()
+    await btn.waitFor({
+      state: 'visible'
+    })
     await expect(btn).toBeEnabled()
     await btn.focus()
     await this.page.keyboard.press('Space')
@@ -51,7 +53,9 @@ export class WalletPage {
     const variant = accept ? `approve` : `reject`
     // `.click` doesn't work here, so we use `.focus` and `Space`
     const btn = this.page.getByTestId(`session-${variant}-button`)
-    await btn.waitFor()
+    await btn.waitFor({
+      state: 'visible'
+    })
     await expect(btn).toBeEnabled()
     await btn.focus()
     await this.page.keyboard.press('Space')

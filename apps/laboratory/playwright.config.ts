@@ -3,9 +3,9 @@ import { BASE_URL } from './tests/shared/constants'
 
 import { config } from 'dotenv'
 import type { ModalFixture } from './tests/shared/fixtures/w3m-fixture'
-import { getAvailableDevices } from './tests/shared/utils/device'
+import { DEVICES } from './tests/shared/constants/devices'
 config({ path: './.env' })
-const availableDevices = getAvailableDevices()
+const availableDevices = DEVICES
 
 const LIBRARIES = ['wagmi', 'ethers'] as const
 const PERMUTATIONS = availableDevices.flatMap(device =>

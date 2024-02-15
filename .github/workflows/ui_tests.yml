@@ -72,6 +72,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         working-directory: ./apps/laboratory/
         run: npm run playwright:install
+      - name: Install Playwright Browser Dependencies
+        working-directory: ./apps/laboratory/
+        run: npx playwright install-deps
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ inputs.base-url }}
