@@ -1,5 +1,15 @@
 # @web3modal/core
 
+## 4.0.11-8c88aa26.0
+
+### Patch Changes
+
+- JWT test
+
+- Updated dependencies []:
+  - @web3modal/wallet@4.0.11-8c88aa26.0
+  - @web3modal/common@4.0.11-8c88aa26.0
+
 ## 4.0.10
 
 ### Patch Changes

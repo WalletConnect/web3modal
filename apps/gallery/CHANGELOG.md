@@ -1,5 +1,15 @@
 # @apps/gallery
 
+## 4.0.11-8c88aa26.0
+
+### Patch Changes
+
+- JWT test
+
+- Updated dependencies []:
+  - @web3modal/common@4.0.11-8c88aa26.0
+  - @web3modal/ui@4.0.11-8c88aa26.0
+
 ## 4.0.10
 
 ### Patch Changes

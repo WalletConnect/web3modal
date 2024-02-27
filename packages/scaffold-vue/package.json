@@ -1,6 +1,6 @@
 {
   "name": "@web3modal/scaffold-vue",
-  "version": "4.0.10",
+  "version": "4.0.11-8c88aa26.0",
   "type": "module",
   "main": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -16,7 +16,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@web3modal/scaffold": "4.0.10"
+    "@web3modal/scaffold": "4.0.11-8c88aa26.0"
   },
   "peerDependencies": {
     "vue": ">=3"

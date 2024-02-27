@@ -56,6 +56,8 @@ export const AppSyncDappDataRequest = z.object({
   >,
   projectId: z.string()
 })
+export const AppConnectDeviceRequest = z.object({ jwt: z.string() })
+
 export const FrameConnectEmailResponse = z.object({
   action: z.enum(['VERIFY_DEVICE', 'VERIFY_OTP'])
 })
@@ -260,7 +262,7 @@ export const W3mFrameSchema = {
 
     .or(z.object({ type: zType('APP_CONNECT_EMAIL'), payload: AppConnectEmailRequest }))
 
-    .or(z.object({ type: zType('APP_CONNECT_DEVICE') }))
+    .or(z.object({ type: zType('APP_CONNECT_DEVICE'), payload: AppConnectDeviceRequest }))
 
     .or(z.object({ type: zType('APP_CONNECT_OTP'), payload: AppConnectOtpRequest }))
 

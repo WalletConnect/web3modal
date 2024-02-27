@@ -1,5 +1,19 @@
 # @web3modal/ethers5
 
+## 4.0.11-8c88aa26.0
+
+### Patch Changes
+
+- JWT test
+
+- Updated dependencies []:
+  - @web3modal/polyfills@4.0.11-8c88aa26.0
+  - @web3modal/scaffold@4.0.11-8c88aa26.0
+  - @web3modal/scaffold-react@4.0.11-8c88aa26.0
+  - @web3modal/scaffold-utils@4.0.11-8c88aa26.0
+  - @web3modal/scaffold-vue@4.0.11-8c88aa26.0
+  - @web3modal/siwe@4.0.11-8c88aa26.0
+
 ## 4.0.10
 
 ### Patch Changes

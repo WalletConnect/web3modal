@@ -1,3 +1,4 @@
+import { CryptoUtil } from '@web3modal/core'
 import { W3mFrame } from './W3mFrame.js'
 import type { W3mFrameTypes } from './W3mFrameTypes.js'
 import { W3mFrameConstants, W3mFrameRpcConstants } from './W3mFrameConstants.js'
@@ -151,7 +152,13 @@ export class W3mFrameProvider {
 
   public async connectDevice() {
     await this.w3mFrame.frameLoadPromise
-    this.w3mFrame.events.postAppEvent({ type: W3mFrameConstants.APP_CONNECT_DEVICE })
+
+    const jwt = await CryptoUtil.createJwt()
+
+    this.w3mFrame.events.postAppEvent({
+      type: W3mFrameConstants.APP_CONNECT_DEVICE,
+      payload: { jwt: jwt || '' }
+    })
 
     return new Promise((resolve, reject) => {
       this.connectDeviceResolver = { resolve, reject }
