@@ -21,6 +21,7 @@ export interface Transaction {
 export interface TransactionMetadata {
   operationType: string
   hash: string
+  chain: `${string}:${string}`
   minedAt: string
   sentFrom: string
   sentTo: string

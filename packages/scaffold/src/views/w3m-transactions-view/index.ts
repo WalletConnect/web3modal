@@ -3,6 +3,7 @@ import type { Transaction, TransactionImage } from '@web3modal/common'
 import {
   AccountController,
   EventsController,
+  NetworkController,
   OptionsController,
   TransactionsController
 } from '@web3modal/core'
@@ -50,6 +51,9 @@ export class W3mTransactionsView extends LitElement {
             }
           }
         }),
+        NetworkController.subscribeKey('caipNetwork', () => {
+          this.updateTransactionView()
+        }),
         TransactionsController.subscribe(val => {
           this.transactionsByYear = val.transactionsByYear
           this.loading = val.loading
@@ -61,7 +65,7 @@ export class W3mTransactionsView extends LitElement {
   }
 
   public override firstUpdated() {
-    TransactionsController.fetchTransactions(this.address)
+    this.updateTransactionView()
     this.createPaginationObserver()
   }
 
@@ -85,6 +89,17 @@ export class W3mTransactionsView extends LitElement {
   }
 
   // -- Private ------------------------------------------- //
+  private updateTransactionView() {
+    const currentNetwork = NetworkController.state.caipNetwork?.id
+    const lastNetworkInView = TransactionsController.state.lastNetworkInView
+
+    if (lastNetworkInView !== currentNetwork) {
+      TransactionsController.resetTransactions()
+      TransactionsController.fetchTransactions(this.address)
+    }
+    TransactionsController.setLastNetworkInView(currentNetwork)
+  }
+
   private templateTransactionsByYear() {
     const sortedYearKeys = Object.keys(this.transactionsByYear).sort().reverse()
 

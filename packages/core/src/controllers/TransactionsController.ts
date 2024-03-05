@@ -3,6 +3,8 @@ import { proxy, subscribe as sub } from 'valtio/vanilla'
 import { OptionsController } from './OptionsController.js'
 import { EventsController } from './EventsController.js'
 import { SnackController } from './SnackController.js'
+import { NetworkController } from './NetworkController.js'
+import type { CaipNetworkId } from '../utils/TypeUtil.js'
 import { BlockchainApiController } from './BlockchainApiController.js'
 
 // -- Types --------------------------------------------- //
@@ -13,6 +15,7 @@ export interface TransactionsControllerState {
   transactions: Transaction[]
   coinbaseTransactions: TransactionByYearMap
   transactionsByYear: TransactionByYearMap
+  lastNetworkInView: CaipNetworkId | undefined
   loading: boolean
   empty: boolean
   next: string | undefined
@@ -23,6 +26,7 @@ const state = proxy<TransactionsControllerState>({
   transactions: [],
   coinbaseTransactions: {},
   transactionsByYear: {},
+  lastNetworkInView: undefined,
   loading: false,
   empty: false,
   next: undefined
@@ -34,6 +38,10 @@ export const TransactionsController = {
 
   subscribe(callback: (newState: TransactionsControllerState) => void) {
     return sub(state, () => callback(state))
+  },
+
+  setLastNetworkInView(lastNetworkInView: TransactionsControllerState['lastNetworkInView']) {
+    state.lastNetworkInView = lastNetworkInView
   },
 
   async fetchTransactions(accountAddress?: string, onramp?: 'coinbase') {
@@ -54,7 +62,8 @@ export const TransactionsController = {
       })
 
       const nonSpamTransactions = this.filterSpamTransactions(response.data)
-      const filteredTransactions = [...state.transactions, ...nonSpamTransactions]
+      const sameChainTransactions = this.filterByConnectedChain(nonSpamTransactions)
+      const filteredTransactions = [...state.transactions, ...sameChainTransactions]
 
       state.loading = false
 
@@ -67,7 +76,7 @@ export const TransactionsController = {
         state.transactions = filteredTransactions
         state.transactionsByYear = this.groupTransactionsByYearAndMonth(
           state.transactionsByYear,
-          nonSpamTransactions
+          sameChainTransactions
         )
       }
 
@@ -86,6 +95,8 @@ export const TransactionsController = {
       SnackController.showError('Failed to fetch transactions')
       state.loading = false
       state.empty = true
+
+      throw error
     }
   },
 
@@ -125,9 +136,19 @@ export const TransactionsController = {
     })
   },
 
+  filterByConnectedChain(transactions: Transaction[]) {
+    const chainId = NetworkController.state.caipNetwork?.id
+    const filteredTransactions = transactions.filter(
+      transaction => transaction.metadata.chain === chainId
+    )
+
+    return filteredTransactions
+  },
+
   resetTransactions() {
     state.transactions = []
     state.transactionsByYear = {}
+    state.lastNetworkInView = undefined
     state.loading = false
     state.empty = false
     state.next = undefined
