@@ -13,6 +13,8 @@ export class W3mFrame {
 
   public frameLoadPromise: Promise<void>
 
+  private origin = new URL(W3mFrameConstants.SECURE_SITE_SDK).origin
+
   public frameLoadPromiseResolver:
     | {
         resolve: (value: undefined) => void
@@ -71,7 +73,11 @@ export class W3mFrame {
   public events = {
     onFrameEvent: (callback: (event: W3mFrameTypes.FrameEvent) => void) => {
       if (W3mFrameHelpers.isClient) {
-        window.addEventListener('message', ({ data }) => {
+        window.addEventListener('message', ({ data, origin }) => {
+          if (origin !== window.location.origin && origin !== this.origin) {
+            return
+          }
+
           if (!data.type?.includes(W3mFrameConstants.FRAME_EVENT_KEY)) {
             return
           }
@@ -83,13 +89,21 @@ export class W3mFrame {
 
     onAppEvent: (callback: (event: W3mFrameTypes.AppEvent) => void) => {
       if (W3mFrameHelpers.isClient) {
-        window.addEventListener('message', ({ data }) => {
-          if (!data.type?.includes(W3mFrameConstants.APP_EVENT_KEY)) {
-            return
-          }
-          const appEvent = W3mFrameSchema.appEvent.parse(data)
-          callback(appEvent)
-        })
+        window.addEventListener(
+          'message',
+          ({ data, origin }) => {
+            if (origin !== window.location.origin && origin !== this.origin) {
+              return
+            }
+
+            if (!data.type?.includes(W3mFrameConstants.APP_EVENT_KEY)) {
+              return
+            }
+            const appEvent = W3mFrameSchema.appEvent.parse(data)
+            callback(appEvent)
+          },
+          {}
+        )
       }
     },
 
@@ -100,7 +114,7 @@ export class W3mFrame {
         }
         W3mFrameSchema.appEvent.parse(event)
         window.postMessage(event)
-        this.iframe.contentWindow.postMessage(event, '*')
+        this.iframe.contentWindow.postMessage(event, this.origin)
       }
     },
 
@@ -110,7 +124,7 @@ export class W3mFrame {
           throw new Error('W3mFrame: parent is not set')
         }
         W3mFrameSchema.frameEvent.parse(event)
-        parent.postMessage(event, '*')
+        parent.postMessage(event, this.origin)
       }
     }
   }
