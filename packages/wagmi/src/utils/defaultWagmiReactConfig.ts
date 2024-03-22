@@ -2,10 +2,11 @@ import '@web3modal/polyfills'
 
 import type { CreateConfigParameters, CreateConnectorFn, Config } from 'wagmi'
 import { createConfig } from 'wagmi'
-import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors'
+import { coinbaseWallet, injected } from 'wagmi/connectors'
 
 import { emailConnector } from '../connectors/EmailConnector.js'
 import { getTransport } from './helpers.js'
+import { walletConnect } from '../connectors/walletConnectConnector.js'
 
 export type ConfigOptions = Partial<CreateConfigParameters> & {
   chains: CreateConfigParameters['chains']

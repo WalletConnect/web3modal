@@ -1,4 +1,5 @@
 {
   "extends": ["plugin:require-extensions/recommended", "../../.eslintrc.json"],
+  "ignorePatterns": ["walletConnectConnector.ts"],
   "plugins": ["require-extensions"]
 }
