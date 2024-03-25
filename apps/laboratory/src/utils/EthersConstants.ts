@@ -16,18 +16,18 @@ import {
 
 export const EthersConstants = {
   chains: [
-    mainnet,
-    arbitrum,
-    polygon,
-    avalanche,
-    binanceSmartChain,
-    optimism,
-    gnosis,
-    zkSync,
-    zora,
-    base,
-    celo,
-    aurora,
+    // mainnet,
+    // arbitrum,
+    // polygon,
+    // avalanche,
+    // binanceSmartChain,
+    // optimism,
+    // gnosis,
+    // zkSync,
+    // zora,
+    // base,
+    // celo,
+    // aurora,
     sepolia
   ]
 }

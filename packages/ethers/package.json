@@ -44,13 +44,15 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "3.9.1",
-    "@walletconnect/ethereum-provider": "2.11.1",
+    "@walletconnect/ethereum-provider": "file:../../../walletconnect-monorepo/providers/ethereum-provider",
     "@web3modal/polyfills": "4.1.1",
     "@web3modal/scaffold": "4.1.1",
     "@web3modal/scaffold-react": "4.1.1",
     "@web3modal/scaffold-utils": "4.1.1",
     "@web3modal/scaffold-vue": "4.1.1",
-    "valtio": "1.11.2"
+    "permissionless": "0.0.36",
+    "valtio": "1.11.2",
+    "viem": "^2.8.18"
   },
   "peerDependencies": {
     "@web3modal/siwe": "4.1.1",
