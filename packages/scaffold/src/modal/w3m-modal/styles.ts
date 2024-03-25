@@ -38,7 +38,6 @@ export default css`
     max-width: 360px;
     width: 100%;
     position: relative;
-    animation-delay: 0.3s;
     animation-duration: 0.2s;
     animation-name: zoom-in;
     animation-fill-mode: backwards;
