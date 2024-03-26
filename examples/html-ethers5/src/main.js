@@ -37,7 +37,7 @@ const ethersConfig = defaultConfig({
 
 // 3. Create modal
 const modal = createWeb3Modal({
-  ethersConfig,
+  ethersConfig: { ...ethersConfig, email: true },
   projectId,
   chains,
   themeMode: 'light'
