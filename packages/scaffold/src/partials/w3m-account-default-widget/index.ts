@@ -27,7 +27,7 @@ export class W3mAccountDefaultWidget extends LitElement {
   private unsubscribe: (() => void)[] = []
 
   // -- State & Properties -------------------------------- //
-  @state() private address = AccountController.state.address
+  @state() public address = AccountController.state.address
 
   @state() private profileImage = AccountController.state.profileImage
 

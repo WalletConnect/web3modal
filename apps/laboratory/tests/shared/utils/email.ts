@@ -84,4 +84,8 @@ export class Email {
 
     return `web3modal${index}@mailsac.com`
   }
+
+  getSmartAccountEnabledEmail(): string {
+    return 'web3modal-smart-account@mailsac.com'
+  }
 }

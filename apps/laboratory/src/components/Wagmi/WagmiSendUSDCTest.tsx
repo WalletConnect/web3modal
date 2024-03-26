@@ -1,7 +1,7 @@
 import { Button, useToast, Stack, Link, Text, Spacer, Input } from '@chakra-ui/react'
 import { useAccount, useWriteContract } from 'wagmi'
 import { useCallback, useState } from 'react'
-import { sepolia } from 'wagmi/chains'
+import { optimism, sepolia } from 'wagmi/chains'
 
 const minTokenAbi = [
   {
@@ -70,25 +70,27 @@ export function WagmiSendUSDCTest() {
     })
   }, [writeContract, address, amount])
 
-  return chain?.id === sepolia.id && status === 'connected' ? (
+  const allowedChains = [sepolia.id, optimism.id] as number[]
+
+  return allowedChains.includes(Number(chain?.id)) && status === 'connected' ? (
     <Stack direction={['column', 'column', 'row']}>
+      <Spacer />
+      <Input placeholder="0xf34ffa..." onChange={e => setAddress(e.target.value)} value={address} />
+      <Input
+        placeholder="Units (1000000000 for 1 USDC)"
+        onChange={e => setAmount(e.target.value)}
+        value={amount}
+        type="number"
+      />
       <Button
         data-test-id="sign-transaction-button"
         onClick={onSendTransaction}
         disabled={!writeContract}
         isDisabled={isLoading}
+        width="80%"
       >
         Send USDC
       </Button>
-
-      <Spacer />
-      <Input placeholder="0xf34ffa..." onChange={e => setAddress(e.target.value)} value={address} />
-      <Input
-        placeholder="Enter an amount"
-        onChange={e => setAmount(e.target.value)}
-        value={amount}
-        type="number"
-      />
       <Link isExternal href="https://faucet.circle.com">
         <Button variant="outline" colorScheme="blue" isDisabled={isLoading}>
           USDC Faucet
@@ -97,7 +99,7 @@ export function WagmiSendUSDCTest() {
     </Stack>
   ) : (
     <Text fontSize="md" color="yellow">
-      Switch to Sepolia Ethereum Testnet to test this feature
+      Switch to Sepolia or OP to test this feature
     </Text>
   )
 }

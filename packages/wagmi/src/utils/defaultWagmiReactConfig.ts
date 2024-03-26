@@ -15,7 +15,6 @@ export type ConfigOptions = Partial<CreateConfigParameters> & {
   enableCoinbase?: boolean
   enableEmail?: boolean
   enableWalletConnect?: boolean
-  enableSmartAccounts?: boolean
   metadata: {
     name: string
     description: string
@@ -33,7 +32,6 @@ export function defaultWagmiConfig({
   enableEmail,
   enableWalletConnect,
   enableEIP6963,
-  enableSmartAccounts,
   ...wagmiConfig
 }: ConfigOptions): Config {
   const connectors: CreateConnectorFn[] = []
@@ -64,9 +62,7 @@ export function defaultWagmiConfig({
 
   // Dissabled by default
   if (enableEmail === true) {
-    connectors.push(
-      emailConnector({ chains: [...chains], options: { projectId, enableSmartAccounts } })
-    )
+    connectors.push(emailConnector({ chains: [...chains], options: { projectId } }))
   }
 
   return createConfig({

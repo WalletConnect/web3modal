@@ -165,7 +165,9 @@ export type VisualType =
   | 'defi'
   | 'defiAlt'
   | 'eth'
+  | 'google'
   | 'layers'
+  | 'lightbulb'
   | 'lock'
   | 'login'
   | 'network'
@@ -177,6 +179,7 @@ export type VisualType =
   | 'moonpay'
   | 'stripe'
   | 'paypal'
+  | 'pencil'
 
 export type VisualSize = 'sm' | 'md' | 'lg'
 

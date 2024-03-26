@@ -1,5 +1,6 @@
 export const W3mFrameConstants = {
-  SECURE_SITE_SDK: 'https://secure.walletconnect.com/sdk',
+  SECURE_SITE_SDK:
+    'https://secure-web3modal-git-feat-init-smart-accont-walletconnect1.vercel.app/sdk',
   APP_EVENT_KEY: '@w3m-app/',
   FRAME_EVENT_KEY: '@w3m-frame/',
   RPC_METHOD_KEY: 'RPC_',
@@ -11,6 +12,8 @@ export const W3mFrameConstants = {
   LAST_EMAIL_LOGIN_TIME: 'LAST_EMAIL_LOGIN_TIME',
   EMAIL: 'EMAIL',
   PREFERRED_ACCOUNT_TYPE: 'PREFERRED_ACCOUNT_TYPE',
+  SMART_ACCOUNT_ENABLED: 'SMART_ACCOUNT_ENABLED',
+  SMART_ACCOUNT_ENABLED_NETWORKS: 'SMART_ACCOUNT_ENABLED_NETWORKS',
 
   APP_SWITCH_NETWORK: '@w3m-app/SWITCH_NETWORK',
   APP_CONNECT_EMAIL: '@w3m-app/CONNECT_EMAIL',

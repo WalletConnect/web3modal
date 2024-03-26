@@ -11,6 +11,7 @@ import { UiHelperUtil, customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import styles from './styles.js'
 import { state } from 'lit/decorators.js'
+import { W3mFrameHelpers } from '@web3modal/wallet'
 
 @customElement('w3m-wallet-receive-view')
 export class W3mWalletReceiveView extends LitElement {
@@ -100,6 +101,21 @@ export class W3mWalletReceiveView extends LitElement {
   // -- Private ------------------------------------------- //
   networkTemplate() {
     const networks = NetworkController.getRequestedCaipNetworks()
+    const isNetworkEnabledForSmartAccounts = NetworkController.checkIfSmartAccountEnabled()
+    const caipNetwork = NetworkController.state.caipNetwork
+    const preferredAccountType = W3mFrameHelpers.getPreferredAccountType()
+
+    if (preferredAccountType === 'smartAccount' && isNetworkEnabledForSmartAccounts) {
+      if (!caipNetwork) {
+        return null
+      }
+
+      return html`<wui-compatible-network
+        @click=${this.onReceiveClick.bind(this)}
+        text="Only receive assets on this network"
+        .networkImages=${[AssetUtil.getNetworkImage(caipNetwork) ?? '']}
+      ></wui-compatible-network>`
+    }
     const slicedNetworks = networks?.filter(network => network?.imageId)?.slice(0, 5)
     const imagesArray = slicedNetworks.map(AssetUtil.getNetworkImage).filter(Boolean) as string[]
 

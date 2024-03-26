@@ -12,6 +12,7 @@ import { state } from 'lit/decorators.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import styles from './styles.js'
 import { ConstantsUtil } from '../../utils/ConstantsUtil.js'
+import { W3mFrameHelpers } from '@web3modal/wallet'
 
 @customElement('w3m-account-wallet-features-widget')
 export class W3mAccountWalletFeaturesWidget extends LitElement {
@@ -26,6 +27,8 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
   @state() private profileImage = AccountController.state.profileImage
 
   @state() private profileName = AccountController.state.profileName
+
+  @state() private smartAccountDeployed = AccountController.state.smartAccountDeployed
 
   @state() private network = NetworkController.state.caipNetwork
 
@@ -44,15 +47,14 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
             this.profileName = val.profileName
             this.currentTab = val.currentTab
             this.tokenBalance = val.tokenBalance
+            this.smartAccountDeployed = val.smartAccountDeployed
           } else {
             ModalController.close()
           }
         })
       ],
-      NetworkController.subscribeKey('caipNetwork', val => {
-        if (val?.id) {
-          this.network = val
-        }
+      NetworkController.subscribe(val => {
+        this.network = val.caipNetwork
       })
     )
   }
@@ -141,10 +143,21 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
   }
 
   private activateAccountTemplate() {
-    // eslint-disable-next-line no-warning-comments
-    // Todo: Check if SA is deployed
+    const smartAccountEnabled = NetworkController.checkIfSmartAccountEnabled()
+    const preferredAccountType = W3mFrameHelpers.getPreferredAccountType()
+    if (
+      !smartAccountEnabled ||
+      preferredAccountType === 'smartAccount' ||
+      this.smartAccountDeployed
+    ) {
+      return null
+    }
 
-    return html` <wui-promo text="Activate your account"></wui-promo>`
+    return html` <wui-promo
+      text=${'Activate your account'}
+      @click=${() => RouterController.push('UpgradeToSmartAccount')}
+      data-testid="activate-smart-account-promo"
+    ></wui-promo>`
   }
 
   private onTabChange(index: number) {

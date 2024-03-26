@@ -2,7 +2,7 @@ import { Button, useToast, Stack, Link, Text, Spacer, Flex } from '@chakra-ui/re
 import { parseEther } from 'viem'
 import { useAccount, useSimulateContract, useWriteContract, useReadContract } from 'wagmi'
 import { useCallback, useEffect } from 'react'
-import { sepolia } from 'wagmi/chains'
+import { optimism, sepolia } from 'wagmi/chains'
 import { abi, address } from '../../utils/DonutContract'
 
 export function WagmiWriteContractTest() {
@@ -61,7 +61,9 @@ export function WagmiWriteContractTest() {
     reset()
   }, [data, error])
 
-  return chain?.id === sepolia.id && status === 'connected' ? (
+  const allowedChains = [sepolia.id, optimism.id] as number[]
+
+  return allowedChains.includes(Number(chain?.id)) && status === 'connected' ? (
     <Stack direction={['column', 'column', 'row']}>
       <Button
         data-test-id="sign-transaction-button"
@@ -95,7 +97,7 @@ export function WagmiWriteContractTest() {
     </Stack>
   ) : (
     <Text fontSize="md" color="yellow">
-      Switch to Sepolia Ethereum Testnet to test this feature
+      Switch to Sepolia or OP to test this feature
     </Text>
   )
 }

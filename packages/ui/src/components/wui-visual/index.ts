@@ -22,6 +22,9 @@ import { moonpaySvg } from '../../assets/visual/moonpay.js'
 import { stripeSvg } from '../../assets/visual/stripe.js'
 import { paypalSvg } from '../../assets/visual/paypal.js'
 import { onrampCardSvg } from '../../assets/visual/onramp-card.js'
+import { googleSvg } from '../../assets/visual/google.js'
+import { pencilSvg } from '../../assets/visual/pencil.js'
+import { lightbulbSvg } from '../../assets/visual/lightbulb.js'
 import styles from './styles.js'
 
 // -- Svg's-------------------------------- //
@@ -43,7 +46,10 @@ const svgOptions: Record<VisualType, TemplateResult<2>> = {
   onrampCard: onrampCardSvg,
   moonpay: moonpaySvg,
   stripe: stripeSvg,
-  paypal: paypalSvg
+  paypal: paypalSvg,
+  google: googleSvg,
+  pencil: pencilSvg,
+  lightbulb: lightbulbSvg
 }
 
 @customElement('wui-visual')
