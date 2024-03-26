@@ -123,6 +123,10 @@ export class W3mRouter extends LitElement {
         return html`<w3m-wallet-send-select-token-view></w3m-wallet-send-select-token-view>`
       case 'WalletSendPreview':
         return html`<w3m-wallet-send-preview-view></w3m-wallet-send-preview-view>`
+      case 'ConnectWallets':
+        return html`<w3m-connect-wallets-view></w3m-connect-wallets-view>`
+      case 'ConnectSocials':
+        return html`<w3m-connect-socials-view></w3m-connect-socials-view>`
       default:
         return html`<w3m-connect-view></w3m-connect-view>`
     }

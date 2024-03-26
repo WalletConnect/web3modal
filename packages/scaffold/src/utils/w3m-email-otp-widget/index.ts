@@ -41,7 +41,7 @@ export class W3mEmailOtpWidget extends LitElement {
 
   public onStartOver: OnStartOverFn | undefined
 
-  public emailConnector = ConnectorController.getEmailConnector()
+  public authConnector = ConnectorController.getAuthConnector()
 
   public override firstUpdated() {
     this.startOTPTimeout()
@@ -121,7 +121,7 @@ export class W3mEmailOtpWidget extends LitElement {
     try {
       if (!this.loading) {
         this.otp = event.detail
-        if (this.emailConnector && this.otp.length === OTP_LENGTH) {
+        if (this.authConnector && this.otp.length === OTP_LENGTH) {
           this.loading = true
           await this.onOtpSubmit?.(this.otp)
         }
@@ -138,8 +138,8 @@ export class W3mEmailOtpWidget extends LitElement {
         if (!this.loading && !this.timeoutTimeLeft) {
           this.error = ''
           this.otp = ''
-          const emailConnector = ConnectorController.getEmailConnector()
-          if (!emailConnector || !this.email) {
+          const authConnector = ConnectorController.getAuthConnector()
+          if (!authConnector || !this.email) {
             throw new Error('w3m-email-otp-widget: Unable to resend email')
           }
           this.loading = true

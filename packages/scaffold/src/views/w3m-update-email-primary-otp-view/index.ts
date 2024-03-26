@@ -14,8 +14,8 @@ export class W3mUpdateEmailPrimaryOtpView extends W3mEmailOtpWidget {
 
   override onOtpSubmit: OnOtpSubmitFn = async otp => {
     try {
-      if (this.emailConnector) {
-        await this.emailConnector.provider.updateEmailPrimaryOtp({ otp })
+      if (this.authConnector) {
+        await this.authConnector.provider.updateEmailPrimaryOtp({ otp })
         EventsController.sendEvent({ type: 'track', event: 'EMAIL_VERIFICATION_CODE_PASS' })
         RouterController.replace('UpdateEmailSecondaryOtp', RouterController.state.data)
       }

@@ -3,9 +3,9 @@ import '@web3modal/polyfills'
 import type { CreateConfigParameters, CreateConnectorFn, Config } from 'wagmi'
 import { createConfig } from 'wagmi'
 import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors'
-
-import { emailConnector } from '../connectors/EmailConnector.js'
 import { getTransport } from './helpers.js'
+import type { SocialProvider } from '@web3modal/scaffold-utils'
+import { authConnector } from '../connectors/AuthConnector.js'
 
 export type ConfigOptions = Partial<CreateConfigParameters> & {
   chains: CreateConfigParameters['chains']
@@ -13,9 +13,12 @@ export type ConfigOptions = Partial<CreateConfigParameters> & {
   enableInjected?: boolean
   enableEIP6963?: boolean
   enableCoinbase?: boolean
-  enableEmail?: boolean
   enableWalletConnect?: boolean
   enableSmartAccounts?: boolean
+  auth?: {
+    email?: boolean
+    socials?: SocialProvider[]
+  }
   metadata: {
     name: string
     description: string
@@ -30,10 +33,10 @@ export function defaultWagmiConfig({
   metadata,
   enableInjected,
   enableCoinbase,
-  enableEmail,
   enableWalletConnect,
   enableEIP6963,
   enableSmartAccounts,
+  auth,
   ...wagmiConfig
 }: ConfigOptions): Config {
   const connectors: CreateConnectorFn[] = []
@@ -63,9 +66,14 @@ export function defaultWagmiConfig({
   }
 
   // Dissabled by default
-  if (enableEmail === true) {
+  if (auth?.email || auth?.socials) {
     connectors.push(
-      emailConnector({ chains: [...chains], options: { projectId, enableSmartAccounts } })
+      authConnector({
+        chains: [...chains],
+        options: { projectId, enableSmartAccounts },
+        socials: auth.socials,
+        email: auth.email
+      })
     )
   }
 

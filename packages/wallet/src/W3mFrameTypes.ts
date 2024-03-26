@@ -56,7 +56,8 @@ import {
   FrameSwitchNetworkResponse,
   AppSyncDappDataRequest,
   FrameGetSmartAccountEnabledNetworksResponse,
-  FrameInitSmartAccountResponse
+  FrameInitSmartAccountResponse,
+  AppConnectSocialRequest
 } from './W3mFrameSchema.js'
 
 export namespace W3mFrameTypes {
@@ -67,6 +68,7 @@ export namespace W3mFrameTypes {
   export interface Requests {
     AppConnectEmailRequest: z.infer<typeof AppConnectEmailRequest>
     AppConnectOtpRequest: z.infer<typeof AppConnectOtpRequest>
+    AppConnectSocialRequest: z.infer<typeof AppConnectSocialRequest>
     AppSwitchNetworkRequest: z.infer<typeof AppSwitchNetworkRequest>
     AppGetUserRequest: z.infer<typeof AppGetUserRequest>
     AppUpdateEmailRequest: z.infer<typeof AppUpdateEmailRequest>
@@ -136,4 +138,14 @@ export namespace W3mFrameTypes {
   export type RPCResponse = z.infer<typeof RpcResponse>
 
   export type FrameSessionType = z.infer<typeof FrameSession>
+
+  export type SocialProvider =
+    | 'google'
+    | 'apple'
+    | 'facebook'
+    | 'x'
+    | 'github'
+    | 'discord'
+    | 'twitch'
+    | 'telegram'
 }

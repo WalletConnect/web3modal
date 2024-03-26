@@ -16,7 +16,7 @@ export class W3mEmailVerifyDeviceView extends LitElement {
   // -- Members ------------------------------------------- //
   protected readonly email = RouterController.state.data?.email
 
-  protected readonly emailConnector = ConnectorController.getEmailConnector()
+  protected readonly authConnector = ConnectorController.getAuthConnector()
 
   public constructor() {
     super()
@@ -31,7 +31,7 @@ export class W3mEmailVerifyDeviceView extends LitElement {
     if (!this.email) {
       throw new Error('w3m-email-verify-device-view: No email provided')
     }
-    if (!this.emailConnector) {
+    if (!this.authConnector) {
       throw new Error('w3m-email-verify-device-view: No email connector provided')
     }
 
@@ -77,9 +77,9 @@ export class W3mEmailVerifyDeviceView extends LitElement {
 
   // -- Private ------------------------------------------- //
   private async listenForDeviceApproval() {
-    if (this.emailConnector) {
+    if (this.authConnector) {
       try {
-        await this.emailConnector.provider.connectDevice()
+        await this.authConnector.provider.connectDevice()
         EventsController.sendEvent({ type: 'track', event: 'DEVICE_REGISTERED_FOR_EMAIL' })
         EventsController.sendEvent({ type: 'track', event: 'EMAIL_VERIFICATION_CODE_SENT' })
         RouterController.replace('EmailVerifyOtp', { email: this.email })
@@ -93,11 +93,11 @@ export class W3mEmailVerifyDeviceView extends LitElement {
   private async onResendCode() {
     try {
       if (!this.loading) {
-        if (!this.emailConnector || !this.email) {
+        if (!this.authConnector || !this.email) {
           throw new Error('w3m-email-login-widget: Unable to resend email')
         }
         this.loading = true
-        await this.emailConnector.provider.connectEmail({ email: this.email })
+        await this.authConnector.provider.connectEmail({ email: this.email })
         SnackController.showSuccess('Code email resent')
       }
     } catch (error) {

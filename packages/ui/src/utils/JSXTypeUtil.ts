@@ -58,6 +58,8 @@ import type { WuiCompatibleNetwork } from '../composites/wui-compatible-network/
 import type { WuiListToken } from '../composites/wui-list-token/index.js'
 import type { WuiListDescription } from '../composites/wui-list-description/index.js'
 import type { WuiPreviewItem } from '../composites/wui-preview-item/index.js'
+import type { WuiListButton } from '../composites/wui-list-button/index.js'
+import type { WuiListSocial } from '../composites/wui-list-social/index.js'
 
 import type { WuiFlex } from '../layout/wui-flex/index.js'
 import type { WuiGrid } from '../layout/wui-grid/index.js'
@@ -131,6 +133,8 @@ declare global {
       'wui-list-token': CustomElement<WuiListToken>
       'wui-list-description': CustomElement<WuiListDescription>
       'wui-preview-item': CustomElement<WuiPreviewItem>
+      'wui-list-button': CustomElement<WuiListButton>
+      'wui-list-social': CustomElement<WuiListSocial>
     }
   }
 }

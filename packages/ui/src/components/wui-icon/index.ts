@@ -7,6 +7,7 @@ import { customElement } from '../../utils/WebComponentsUtil.js'
 import styles from './styles.js'
 
 // -- Svg's-------------------------------- //
+import { addSvg } from '../../assets/svg/add.js'
 import { allWalletsSvg } from '../../assets/svg/all-wallets.js'
 import { arrowBottomCircleSvg } from '../../assets/svg/arrow-bottom-circle.js'
 import { appStoreSvg } from '../../assets/svg/app-store.js'
@@ -15,7 +16,9 @@ import { arrowBottomSvg } from '../../assets/svg/arrow-bottom.js'
 import { arrowLeftSvg } from '../../assets/svg/arrow-left.js'
 import { arrowRightSvg } from '../../assets/svg/arrow-right.js'
 import { arrowTopSvg } from '../../assets/svg/arrow-top.js'
+import { bankSvg } from '../../assets/svg/bank.js'
 import { browserSvg } from '../../assets/svg/browser.js'
+import { cardSvg } from '../../assets/svg/card.js'
 import { checkmarkSvg } from '../../assets/svg/checkmark.js'
 import { chevronBottomSvg } from '../../assets/svg/chevron-bottom.js'
 import { chevronLeftSvg } from '../../assets/svg/chevron-left.js'
@@ -27,8 +30,8 @@ import { closeSvg } from '../../assets/svg/close.js'
 import { coinPlaceholderSvg } from '../../assets/svg/coinPlaceholder.js'
 import { compassSvg } from '../../assets/svg/compass.js'
 import { copySvg } from '../../assets/svg/copy.js'
-import { addSvg } from '../../assets/svg/add.js'
 import { cursorSvg } from '../../assets/svg/cursor.js'
+import { cursorTransparentSvg } from '../../assets/svg/cursor-transparent.js'
 import { desktopSvg } from '../../assets/svg/desktop.js'
 import { disconnectSvg } from '../../assets/svg/disconnect.js'
 import { discordSvg } from '../../assets/svg/discord.js'
@@ -43,11 +46,14 @@ import { helpCircleSvg } from '../../assets/svg/help-circle.js'
 import { infoCircleSvg } from '../../assets/svg/info-circle.js'
 import { mailSvg } from '../../assets/svg/mail.js'
 import { mobileSvg } from '../../assets/svg/mobile.js'
+import { moreSvg } from '../../assets/svg/more.js'
 import { networkPlaceholderSvg } from '../../assets/svg/network-placeholder.js'
 import { nftPlaceholderSvg } from '../../assets/svg/nftPlaceholder.js'
 import { offSvg } from '../../assets/svg/off.js'
 import { playStoreSvg } from '../../assets/svg/play-store.js'
+import { plusSvg } from '../../assets/svg/plus.js'
 import { qrCodeIcon } from '../../assets/svg/qr-code.js'
+import { recycleHorizontalSvg } from '../../assets/svg/recycle-horizontal.js'
 import { refreshSvg } from '../../assets/svg/refresh.js'
 import { searchSvg } from '../../assets/svg/search.js'
 import { sendSvg } from '../../assets/svg/send.js'
@@ -57,7 +63,6 @@ import { swapHorizontalMediumSvg } from '../../assets/svg/swapHorizontalMedium.j
 import { swapVerticalSvg } from '../../assets/svg/swapVertical.js'
 import { telegramSvg } from '../../assets/svg/telegram.js'
 import { twitchSvg } from '../../assets/svg/twitch.js'
-import { twitterSvg } from '../../assets/svg/twitter.js'
 import { twitterIconSvg } from '../../assets/svg/twitterIcon.js'
 import { verifySvg } from '../../assets/svg/verify.js'
 import { verifyFilledSvg } from '../../assets/svg/verify-filled.js'
@@ -65,11 +70,7 @@ import { walletPlaceholderSvg } from '../../assets/svg/wallet-placeholder.js'
 import { walletSvg } from '../../assets/svg/wallet.js'
 import { walletConnectSvg } from '../../assets/svg/walletconnect.js'
 import { warningCircleSvg } from '../../assets/svg/warning-circle.js'
-import { recycleHorizontalSvg } from '../../assets/svg/recycle-horizontal.js'
-import { bankSvg } from '../../assets/svg/bank.js'
-import { cardSvg } from '../../assets/svg/card.js'
-import { plusSvg } from '../../assets/svg/plus.js'
-import { cursorTransparentSvg } from '../../assets/svg/cursor-transparent.js'
+import { xSvg } from '../../assets/svg/x.js'
 
 const svgOptions: Record<IconType, TemplateResult<2>> = {
   add: addSvg,
@@ -111,6 +112,7 @@ const svgOptions: Record<IconType, TemplateResult<2>> = {
   infoCircle: infoCircleSvg,
   mail: mailSvg,
   mobile: mobileSvg,
+  more: moreSvg,
   networkPlaceholder: networkPlaceholderSvg,
   nftPlaceholder: nftPlaceholderSvg,
   off: offSvg,
@@ -127,14 +129,14 @@ const svgOptions: Record<IconType, TemplateResult<2>> = {
   swapVertical: swapVerticalSvg,
   telegram: telegramSvg,
   twitch: twitchSvg,
-  twitter: twitterSvg,
   twitterIcon: twitterIconSvg,
   verify: verifySvg,
   verifyFilled: verifyFilledSvg,
   wallet: walletSvg,
   walletConnect: walletConnectSvg,
   walletPlaceholder: walletPlaceholderSvg,
-  warningCircle: warningCircleSvg
+  warningCircle: warningCircleSvg,
+  x: xSvg
 }
 
 @customElement('wui-icon')

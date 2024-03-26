@@ -5,7 +5,7 @@ import { ConnectionController } from '../../index.js'
 // -- Setup --------------------------------------------------------------------
 const walletConnectUri = 'wc://uri?=123'
 const externalId = 'coinbaseWallet'
-const type = 'EMAIL'
+const type = 'AUTH'
 
 const client: ConnectionControllerClient = {
   connectWalletConnect: async onUri => {

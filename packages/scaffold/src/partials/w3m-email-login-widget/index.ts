@@ -46,10 +46,9 @@ export class W3mEmailLoginWidget extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
-    const multipleConnectors = this.connectors.length > 1
-    const connector = this.connectors.find(c => c.type === 'EMAIL')
+    const connector = this.connectors.find(c => c.type === 'AUTH')
 
-    if (!connector) {
+    if (!connector?.email) {
       return null
     }
 
@@ -66,8 +65,6 @@ export class W3mEmailLoginWidget extends LitElement {
         ${this.submitButtonTemplate()}${this.loadingTemplate()}
         <input type="submit" hidden />
       </form>
-
-      ${multipleConnectors ? html`<wui-separator text="or"></wui-separator>` : null}
     `
   }
 
@@ -106,12 +103,12 @@ export class W3mEmailLoginWidget extends LitElement {
       }
       this.loading = true
       event.preventDefault()
-      const emailConnector = ConnectorController.getEmailConnector()
+      const authConnector = ConnectorController.getAuthConnector()
 
-      if (!emailConnector) {
+      if (!authConnector) {
         throw new Error('w3m-email-login-widget: Email connector not found')
       }
-      const { action } = await emailConnector.provider.connectEmail({ email: this.email })
+      const { action } = await authConnector.provider.connectEmail({ email: this.email })
       EventsController.sendEvent({ type: 'track', event: 'EMAIL_SUBMITTED' })
       if (action === 'VERIFY_OTP') {
         EventsController.sendEvent({ type: 'track', event: 'EMAIL_VERIFICATION_CODE_SENT' })

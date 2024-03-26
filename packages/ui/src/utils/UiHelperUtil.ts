@@ -107,6 +107,7 @@ export const UiHelperUtil = {
 
     return 'dark'
   },
+
   splitBalance(input: string): [string, string] {
     const parts = input.split('.') as [string, string]
     if (parts.length === 2) {
@@ -119,5 +120,8 @@ export const UiHelperUtil = {
     const roundedNumber = Math.abs(number) >= threshold ? Number(number.toFixed(fixed)) : number
 
     return roundedNumber
+  },
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 }

@@ -84,9 +84,9 @@ export class W3mApproveTransactionView extends LitElement {
   }
 
   private async syncTheme() {
-    const emailConnector = ConnectorController.getEmailConnector()
-    if (emailConnector) {
-      await emailConnector.provider.syncTheme({
+    const authConnector = ConnectorController.getAuthConnector()
+    if (authConnector) {
+      await authConnector.provider.syncTheme({
         themeVariables: ThemeController.getSnapshot().themeVariables
       })
     }

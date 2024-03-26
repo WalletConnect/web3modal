@@ -55,7 +55,9 @@ function headings() {
     WalletCompatibleNetworks: 'Compatible Networks',
     WalletSend: 'Send',
     WalletSendPreview: 'Review send',
-    WalletSendSelectToken: 'Select Token'
+    WalletSendSelectToken: 'Select Token',
+    ConnectWallets: 'Connect wallet',
+    ConnectSocials: 'All socials'
   }
 }
 

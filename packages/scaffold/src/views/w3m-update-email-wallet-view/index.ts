@@ -78,13 +78,13 @@ export class W3mUpdateEmailWalletView extends LitElement {
 
       this.loading = true
       event.preventDefault()
-      const emailConnector = ConnectorController.getEmailConnector()
+      const authConnector = ConnectorController.getAuthConnector()
 
-      if (!emailConnector) {
+      if (!authConnector) {
         throw new Error('w3m-update-email-wallet: Email connector not found')
       }
 
-      await emailConnector.provider.updateEmail({ email: this.email })
+      await authConnector.provider.updateEmail({ email: this.email })
       EventsController.sendEvent({ type: 'track', event: 'EMAIL_EDIT' })
       RouterController.replace('UpdateEmailPrimaryOtp', {
         email: this.initialEmail,

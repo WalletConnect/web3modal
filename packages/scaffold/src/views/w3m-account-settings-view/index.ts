@@ -163,11 +163,11 @@ export class W3mAccountSettingsView extends LitElement {
 
   private emailBtnTemplate() {
     const type = StorageUtil.getConnectedConnector()
-    const emailConnector = ConnectorController.getEmailConnector()
-    if (!emailConnector || type !== 'EMAIL') {
+    const authConnector = ConnectorController.getAuthConnector()
+    if (!authConnector || type !== 'AUTH' || !authConnector.email) {
       return null
     }
-    const email = emailConnector.provider.getEmail() ?? ''
+    const email = authConnector.provider.getEmail() ?? ''
 
     return html`
       <wui-list-item

@@ -133,6 +133,7 @@ export type IconType =
   | 'infoCircle'
   | 'mail'
   | 'mobile'
+  | 'more'
   | 'networkPlaceholder'
   | 'nftPlaceholder'
   | 'off'
@@ -149,7 +150,6 @@ export type IconType =
   | 'swapVertical'
   | 'telegram'
   | 'twitch'
-  | 'twitter'
   | 'twitterIcon'
   | 'verify'
   | 'verifyFilled'
@@ -157,6 +157,7 @@ export type IconType =
   | 'walletConnect'
   | 'walletPlaceholder'
   | 'warningCircle'
+  | 'x'
 
 export type VisualType =
   | 'browser'
@@ -188,7 +189,8 @@ export type LogoType =
   | 'google'
   | 'telegram'
   | 'twitch'
-  | 'twitter'
+  | 'x'
+  | 'more'
 
 export type PlacementType = 'bottom' | 'left' | 'right' | 'top'
 

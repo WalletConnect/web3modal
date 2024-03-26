@@ -10,6 +10,7 @@ type ConnectEmailResolver = Resolver<W3mFrameTypes.Responses['FrameConnectEmailR
 type ConnectDeviceResolver = Resolver<undefined>
 type ConnectOtpResolver = Resolver<undefined>
 type ConnectResolver = Resolver<W3mFrameTypes.Responses['FrameGetUserResponse']>
+type ConnectSocialResolver = Resolver<undefined>
 type DisconnectResolver = Resolver<undefined>
 type IsConnectedResolver = Resolver<W3mFrameTypes.Responses['FrameIsConnectedResponse']>
 type GetChainIdResolver = Resolver<W3mFrameTypes.Responses['FrameGetChainIdResponse']>
@@ -37,6 +38,8 @@ export class W3mFrameProvider {
   private connectDeviceResolver: ConnectDeviceResolver = undefined
 
   private connectOtpResolver: ConnectOtpResolver | undefined = undefined
+
+  private connectSocialResolver: ConnectSocialResolver | undefined = undefined
 
   private connectResolver: ConnectResolver = undefined
 
@@ -85,6 +88,10 @@ export class W3mFrameProvider {
           return this.onConnectOtpSuccess()
         case W3mFrameConstants.FRAME_CONNECT_OTP_ERROR:
           return this.onConnectOtpError(event)
+        case W3mFrameConstants.FRAME_CONNECT_SOCIAL_SUCCESS:
+          return this.onConnectSocialSuccess()
+        case W3mFrameConstants.FRAME_CONNECT_SOCIAL_ERROR:
+          return this.onConnectSocialError(event)
         case W3mFrameConstants.FRAME_GET_USER_SUCCESS:
           return this.onConnectSuccess(event)
         case W3mFrameConstants.FRAME_GET_USER_ERROR:
@@ -188,6 +195,15 @@ export class W3mFrameProvider {
 
     return new Promise((resolve, reject) => {
       this.connectOtpResolver = { resolve, reject }
+    })
+  }
+
+  public async connectSocial(payload: W3mFrameTypes.Requests['AppConnectSocialRequest']) {
+    await this.w3mFrame.frameLoadPromise
+    this.w3mFrame.events.postAppEvent({ type: W3mFrameConstants.APP_CONNECT_SOCIAL, payload })
+
+    return new Promise((resolve, reject) => {
+      this.connectSocialResolver = { resolve, reject }
     })
   }
 
@@ -438,6 +454,16 @@ export class W3mFrameProvider {
     event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/CONNECT_OTP_ERROR' }>
   ) {
     this.connectOtpResolver?.reject(event.payload.message)
+  }
+
+  private onConnectSocialSuccess() {
+    this.connectSocialResolver?.resolve(undefined)
+  }
+
+  private onConnectSocialError(
+    event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/CONNECT_SOCIAL_ERROR' }>
+  ) {
+    this.connectSocialResolver?.reject(event.payload.message)
   }
 
   private onConnectSuccess(
