@@ -1,5 +1,14 @@
 # @examples/vue-wagmi
 
+## 4.1.2
+
+### Patch Changes
+
+- 4.1.2 release
+
+- Updated dependencies []:
+  - @web3modal/wagmi@4.1.2
+
 ## 4.2.0-4b5257b4.1
 
 ### Minor Changes

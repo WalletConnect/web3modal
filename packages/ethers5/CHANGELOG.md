@@ -1,5 +1,14 @@
 # @web3modal/ethers5
 
+## 4.1.2
+
+### Patch Changes
+
+- 4.1.2 release
+
+- Updated dependencies []:
+  - @web3modal/polyfills@4.1.2 - @web3modal/scaffold@4.1.2 - @web3modal/scaffold-react@4.1.2 - @web3modal/scaffold-utils@4.1.2 - @web3modal/scaffold-vue@4.1.2 - @web3modal/siwe@4.1.2
+
 ## 4.2.0-4b5257b4.1
 
 ### Minor Changes

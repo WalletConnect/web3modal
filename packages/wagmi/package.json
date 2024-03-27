@@ -1,6 +1,6 @@
 {
   "name": "@web3modal/wagmi",
-  "version": "4.2.0-4b5257b4.1",
+  "version": "4.1.2",
   "type": "module",
   "main": "./dist/esm/exports/index.js",
   "types": "./dist/types/exports/index.d.ts",
@@ -51,11 +51,11 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@web3modal/polyfills": "4.2.0-4b5257b4.1",
-    "@web3modal/scaffold": "4.2.0-4b5257b4.1",
-    "@web3modal/scaffold-react": "4.2.0-4b5257b4.1",
-    "@web3modal/scaffold-utils": "4.2.0-4b5257b4.1",
-    "@web3modal/scaffold-vue": "4.2.0-4b5257b4.1"
+    "@web3modal/polyfills": "4.1.2",
+    "@web3modal/scaffold": "4.1.2",
+    "@web3modal/scaffold-react": "4.1.2",
+    "@web3modal/scaffold-utils": "4.1.2",
+    "@web3modal/scaffold-vue": "4.1.2"
   },
   "devDependencies": {
     "@wagmi/connectors": "4.1.14",
@@ -68,7 +68,7 @@
   "peerDependencies": {
     "@wagmi/connectors": ">=4.0.0",
     "@wagmi/core": ">=2.0.0",
-    "@web3modal/siwe": "4.2.0-4b5257b4.1",
+    "@web3modal/siwe": "4.1.2",
     "react": ">=17",
     "react-dom": ">=17",
     "viem": ">=2.0.0",
@@ -89,7 +89,7 @@
     }
   },
   "optionalDependencies": {
-    "@web3modal/siwe": "4.2.0-4b5257b4.1",
+    "@web3modal/siwe": "4.1.2",
     "react": ">=17",
     "react-dom": ">=17",
     "vue": ">=3"

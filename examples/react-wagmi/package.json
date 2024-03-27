@@ -1,14 +1,14 @@
 {
   "name": "@examples/react-wagmi",
   "private": true,
-  "version": "4.2.0-4b5257b4.1",
+  "version": "4.1.2",
   "scripts": {
     "dev:example": "vite --port 3002",
     "build:examples": "vite build"
   },
   "dependencies": {
-    "@tanstack/react-query": "5.17.19",
-    "@web3modal/wagmi": "4.2.0-4b5257b4.1",
+    "@tanstack/react-query": "5.24.8",
+    "@web3modal/wagmi": "4.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "vite": "5.0.12",

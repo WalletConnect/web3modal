@@ -1,6 +1,6 @@
 {
   "name": "@web3modal/core",
-  "version": "4.2.0-4b5257b4.1",
+  "version": "4.1.2",
   "type": "module",
   "main": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -17,8 +17,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@web3modal/common": "4.2.0-4b5257b4.1",
-    "@web3modal/wallet": "4.2.0-4b5257b4.1",
+    "@web3modal/common": "4.1.2",
+    "@web3modal/wallet": "4.1.2",
     "valtio": "1.11.2"
   },
   "devDependencies": {
