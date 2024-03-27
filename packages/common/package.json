@@ -17,6 +17,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "bignumber.js": "^9.1.2",
     "dayjs": "1.11.10"
   },
   "keywords": [

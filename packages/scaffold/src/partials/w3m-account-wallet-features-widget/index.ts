@@ -91,7 +91,11 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
           text="Buy"
           icon="card"
         ></wui-tooltip-select>
-        <wui-tooltip-select text="Convert" icon="recycleHorizontal"></wui-tooltip-select>
+        <wui-tooltip-select
+          @click=${this.onConvertClick.bind(this)}
+          text="Convert"
+          icon="recycleHorizontal"
+        ></wui-tooltip-select>
         <wui-tooltip-select
           @click=${this.onReceiveClick.bind(this)}
           text="Receive"
@@ -157,6 +161,10 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
 
   private onBuyClick() {
     RouterController.push('OnRampProviders')
+  }
+
+  private onConvertClick() {
+    RouterController.push('Convert')
   }
 
   private onReceiveClick() {

@@ -42,6 +42,8 @@ export class WuiButton extends LitElement {
   public override render() {
     this.style.cssText = `
     --local-width: ${this.fullWidth ? '100%' : 'auto'};
+    --local-border-color: ${this.fullWidth ? '100%' : 'auto'};
+    --local-background-color: ${this.fullWidth ? '100%' : 'auto'};
     --local-opacity-100: ${this.loading ? 0 : 1};
     --local-opacity-000: ${this.loading ? 1 : 0};
     --local-border-radius: var(--wui-border-radius-${this.borderRadius});

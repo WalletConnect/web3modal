@@ -64,7 +64,37 @@ export const ConstantsUtil = {
     Base: 'base'
   },
 
-  WC_COINBASE_ONRAMP_APP_ID: 'bf18c88d-495a-463b-b249-0b9d3656cf5e'
+  WC_COINBASE_ONRAMP_APP_ID: 'bf18c88d-495a-463b-b249-0b9d3656cf5e',
+
+  POPULAR_TOKENS: [
+    'ETH',
+    'UNI',
+    '1INCH',
+    'AAVE',
+    'SOL',
+    'ADA',
+    'AVAX',
+    'DOT',
+    'LINK',
+    'NITRO',
+    'GAIA',
+    'MILK',
+    'TRX',
+    'NEAR',
+    'GNO',
+    'WBTC',
+    'DAI',
+    'WETH',
+    'USDC',
+    'USDT',
+    'ARB',
+    'BAL',
+    'BICO',
+    'CRV',
+    'ENS',
+    'MATIC',
+    'OP'
+  ]
 }
 
 export type CoinbasePaySDKChainNameValues =

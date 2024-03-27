@@ -146,6 +146,15 @@ export class W3mAccountDefaultWidget extends LitElement {
           <wui-text variant="paragraph-500" color="fg-100">Activity</wui-text>
         </wui-list-item>
         <wui-list-item
+          iconVariant="blue"
+          icon="swapHorizontalMedium"
+          iconSize="sm"
+          ?chevron=${true}
+          @click=${this.onConvert.bind(this)}
+        >
+          <wui-text variant="paragraph-500" color="fg-100">Convert</wui-text>
+        </wui-list-item>
+        <wui-list-item
           variant="icon"
           iconVariant="overlay"
           icon="disconnect"
@@ -269,6 +278,11 @@ export class W3mAccountDefaultWidget extends LitElement {
   private onTransactions() {
     EventsController.sendEvent({ type: 'track', event: 'CLICK_TRANSACTIONS' })
     RouterController.push('Transactions')
+  }
+
+  private onConvert() {
+    EventsController.sendEvent({ type: 'track', event: 'CLICK_CONVERT' })
+    RouterController.push('Convert')
   }
 
   private async onDisconnect() {

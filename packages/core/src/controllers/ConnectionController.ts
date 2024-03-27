@@ -2,7 +2,12 @@ import { subscribeKey as subKey } from 'valtio/utils'
 import { proxy, ref } from 'valtio/vanilla'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { StorageUtil } from '../utils/StorageUtil.js'
-import type { Connector, WcWallet } from '../utils/TypeUtil.js'
+import type {
+  Connector,
+  EstimateGasTransactionArgs,
+  SendTransactionArgs,
+  WcWallet
+} from '../utils/TypeUtil.js'
 import { TransactionsController } from './TransactionsController.js'
 
 // -- Types --------------------------------------------- //
@@ -17,6 +22,10 @@ export interface ConnectionControllerClient {
   connectWalletConnect: (onUri: (uri: string) => void) => Promise<void>
   disconnect: () => Promise<void>
   signMessage: (message: string) => Promise<string>
+  sendTransaction: (args: SendTransactionArgs) => Promise<`0x${string}` | null>
+  getEstimatedGas: (args: EstimateGasTransactionArgs) => Promise<bigint>
+  parseUnits: (value: string, decimals: number) => bigint
+  formatUnits: (value: bigint, decimals: number) => string
   connectExternal?: (options: ConnectExternalOptions) => Promise<void>
   checkInstalled?: (ids?: string[]) => boolean
 }
@@ -81,6 +90,22 @@ export const ConnectionController = {
 
   async signMessage(message: string) {
     return this._getClient().signMessage(message)
+  },
+
+  parseUnits(value: string, decimals: number) {
+    return this._getClient().parseUnits(value, decimals)
+  },
+
+  formatUnits(value: bigint, decimals: number) {
+    return this._getClient().formatUnits(value, decimals)
+  },
+
+  async sendTransaction(args: SendTransactionArgs) {
+    return this._getClient().sendTransaction(args)
+  },
+
+  async getEstimatedGas(args: EstimateGasTransactionArgs) {
+    return this._getClient().getEstimatedGas(args)
   },
 
   checkInstalled(ids?: string[]) {

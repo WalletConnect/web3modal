@@ -325,6 +325,18 @@ export type Event =
         network: string
       }
     }
+  | {
+      type: 'track'
+      event: 'CLICK_CONVERT'
+    }
+  | {
+      type: 'track'
+      event: 'CLICK_SELECT_TOKEN_TO_SWAP'
+    }
+  | {
+      type: 'track'
+      event: 'CLICK_SELECT_NETWORK_TO_SWAP'
+    }
 
 // Onramp Types
 export type DestinationWallet = {
@@ -385,4 +397,19 @@ export type GetQuoteArgs = {
   paymentCurrency: PaymentCurrency
   amount: string
   network: string
+}
+
+export interface SendTransactionArgs {
+  to: `0x${string}`
+  data: `0x${string}`
+  value: bigint
+  gas?: bigint
+  gasPrice: bigint
+  address: `0x${string}`
+}
+
+export interface EstimateGasTransactionArgs {
+  address: `0x${string}`
+  to: `0x${string}`
+  data: `0x${string}`
 }

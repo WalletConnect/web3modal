@@ -55,6 +55,11 @@ export type { EventsControllerState } from './src/controllers/EventsController.j
 export { TransactionsController } from './src/controllers/TransactionsController.js'
 export type { TransactionsControllerState } from './src/controllers/TransactionsController.js'
 
+export { ConvertApiController } from './src/controllers/ConvertApiController.js'
+
+export { ConvertController } from './src/controllers/ConvertController.js'
+export type { ConvertControllerState } from './src/controllers/ConvertController.js'
+
 export { SendController } from './src/controllers/SendController.js'
 export type { SendControllerState } from './src/controllers/SendController.js'
 

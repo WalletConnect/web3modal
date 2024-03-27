@@ -58,6 +58,7 @@ export default css`
     letter-spacing: var(--wui-letter-spacing-2xl);
   }
 
+  .wui-font-paragraph-400,
   .wui-font-paragraph-500,
   .wui-font-paragraph-600,
   .wui-font-paragraph-700 {

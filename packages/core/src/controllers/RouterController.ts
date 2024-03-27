@@ -39,6 +39,10 @@ export interface RouterControllerState {
     | 'WhatIsANetwork'
     | 'WhatIsAWallet'
     | 'WhatIsABuy'
+    | 'Convert'
+    | 'ConvertSelectToken'
+    | 'ConvertSelectNetwork'
+    | 'ConvertPreview'
   history: RouterControllerState['view'][]
   data?: {
     connector?: Connector
@@ -46,6 +50,7 @@ export interface RouterControllerState {
     network?: CaipNetwork
     email?: string
     newEmail?: string
+    target?: 'sourceToken' | 'toToken'
   }
 }
 

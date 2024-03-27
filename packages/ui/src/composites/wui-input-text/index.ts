@@ -28,7 +28,7 @@ export class WuiInputText extends LitElement {
 
   @property() public keyHint?: HTMLInputElement['enterKeyHint']
 
-  @property() public value?: string
+  @property() public value?: string = ''
 
   // -- Render -------------------------------------------- //
   public override render() {
@@ -43,7 +43,6 @@ export class WuiInputText extends LitElement {
         ?disabled=${this.disabled}
         placeholder=${this.placeholder}
         @input=${this.dispatchInputChangeEvent.bind(this)}
-        value=${ifDefined(this.value)}
         .value=${this.value || ''}
       />
       <slot></slot>`

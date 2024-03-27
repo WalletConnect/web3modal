@@ -9,9 +9,12 @@ import {
   getAccount,
   switchChain,
   watchAccount,
-  watchConnectors
+  watchConnectors,
+  waitForTransactionReceipt,
+  estimateGas
 } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
+import { prepareTransactionRequest, sendTransaction as wagmiSendTransaction } from '@wagmi/core'
 import type { Chain } from '@wagmi/core/chains'
 import type { GetAccountReturnType } from '@wagmi/core'
 import type {
@@ -23,8 +26,10 @@ import type {
   LibraryOptions,
   NetworkControllerClient,
   PublicStateControllerState,
+  SendTransactionArgs,
   Token
 } from '@web3modal/scaffold'
+import { formatUnits, parseUnits } from 'viem'
 import type { Hex } from 'viem'
 import { Web3ModalScaffold } from '@web3modal/scaffold'
 import type { Web3ModalSIWEClient } from '@web3modal/siwe'
@@ -168,7 +173,46 @@ export class Web3Modal extends Web3ModalScaffold {
         }
       },
 
-      signMessage: async message => signMessage(this.wagmiConfig, { message })
+      signMessage: async message => signMessage(this.wagmiConfig, { message }),
+
+      getEstimatedGas: async args => {
+        try {
+          return await estimateGas(this.wagmiConfig, {
+            account: args.address,
+            to: args.to,
+            data: args.data,
+            type: 'legacy'
+          })
+        } catch (error) {
+          return 0n
+        }
+      },
+
+      sendTransaction: async (data: SendTransactionArgs) => {
+        const { chainId } = getAccount(this.wagmiConfig)
+
+        const txParams = {
+          account: data.address,
+          to: data.to,
+          value: data.value,
+          gas: data.gas,
+          gasPrice: data.gasPrice,
+          data: data.data,
+          chainId,
+          type: 'legacy' as const
+        }
+
+        await prepareTransactionRequest(this.wagmiConfig, txParams)
+        const tx = await wagmiSendTransaction(this.wagmiConfig, txParams)
+
+        await waitForTransactionReceipt(this.wagmiConfig, { hash: tx, timeout: 25000 })
+
+        return tx
+      },
+
+      parseUnits,
+
+      formatUnits
     }
 
     super({

@@ -13,18 +13,22 @@ export default {
     size: 'md',
     variant: 'fill',
     disabled: false,
+    fullWidth: false,
     iconLeft: undefined,
     iconRight: undefined,
     loading: false
   },
   argTypes: {
     size: {
-      options: ['sm', 'md', 'lg'],
+      options: ['xs', 'sm', 'md', 'lg'],
       control: { type: 'select' }
     },
     variant: {
       options: buttonOptions,
       control: { type: 'select' }
+    },
+    fullWidth: {
+      control: { type: 'boolean' }
     },
     disabled: {
       control: { type: 'boolean' }
@@ -49,6 +53,7 @@ export const Default: Component = {
       size=${args.size}
       ?loading=${args.loading}
       ?disabled=${args.disabled}
+      ?fullWidth=${args.fullWidth}
       variant=${args.variant}
     >
       ${args.iconLeft

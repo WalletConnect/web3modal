@@ -12,6 +12,7 @@ export default css`
     height: 40px;
     border-radius: var(--wui-border-radius-3xl);
     background: var(--wui-gray-glass-002);
+    border-width: 0px;
     box-shadow: inset 0 0 0 1px var(--wui-gray-glass-002);
   }
 
