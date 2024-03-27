@@ -7,6 +7,7 @@ import { EthersStoreUtil } from '@web3modal/scaffold-utils/ethers'
 import { getWeb3Modal } from '@web3modal/scaffold-react'
 import { useSnapshot } from 'valtio'
 import { ethers } from 'ethers'
+import { useAccount } from 'wagmi'
 
 // -- Types -------------------------------------------------------------------
 export type { Web3ModalOptions } from '../src/client.js'
@@ -46,6 +47,15 @@ export function useDisconnect() {
 
   return {
     disconnect
+  }
+}
+
+export function useAddress() {
+  const { address } = useSnapshot(EthersStoreUtil.state)
+  const { address: wagmiAddress } = useAccount()
+
+  return {
+    address: wagmiAddress ?? address
   }
 }
 

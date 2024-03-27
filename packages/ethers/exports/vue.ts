@@ -56,6 +56,15 @@ export function useDisconnect() {
   }
 }
 
+export function useAddress() {
+  const { address } = useSnapshot(EthersStoreUtil.state)
+  const { address: wagmiAddress } = useAccount()
+
+  return {
+    address: wagmiAddress ?? address
+  }
+}
+
 export function useSwitchNetwork() {
   async function switchNetwork(chainId: number) {
     await modal?.switchNetwork(chainId)
