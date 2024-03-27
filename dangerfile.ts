@@ -11,6 +11,9 @@ const RENDER_COMMENT = `// -- Render -------------------------------------------
 const STATE_PROPERTIES_COMMENT = `// -- State & Properties -------------------------------- //`
 const PRIVATE_COMMENT = `// -- Private ------------------------------------------- //`
 const PACKAGE_VERSION = ConstantsUtil.VERSION
+const RELATIVE_IMPORT_SAME_DIR = `'./`
+const RELATIVE_IMPORT_PARENT_DIR = `'../`
+const RELATIVE_IMPORT_EXTENSION = `.js'`
 
 // -- Data --------------------------------------------------------------------
 const { modified_files, created_files, deleted_files, diffForFile } = danger.git
@@ -277,10 +280,23 @@ async function checkScaffoldHtmlPackage() {
 checkScaffoldHtmlPackage()
 
 // -- Client(s) Package Checks ----------------------------------------------------
-async function checkClientPackages() {
-  const wagmi_files = modified_files.filter(f => f.includes('/wagmi/'))
+// -- Helper functions
+const isRelativeImport = (addition: string | undefined) => {
+  const sameDir = addition?.includes(RELATIVE_IMPORT_SAME_DIR)
+  const parentDir = addition?.includes(RELATIVE_IMPORT_PARENT_DIR)
+  return sameDir || parentDir
+}
+const containsRelativeImportWithoutJSExtension = (addition: string | undefined) => {
+  const hasImportStatement = addition?.includes('import')
+  const lacksJSExtension = !addition?.includes(RELATIVE_IMPORT_EXTENSION)
+  const hasRelativePath = isRelativeImport(addition)
 
-  for (const f of wagmi_files) {
+  return hasImportStatement && lacksJSExtension && hasRelativePath
+}
+async function checkClientPackages() {
+  const client_files = modified_files.filter(f => /\/(wagmi|solana|ethers|ethers5)\//.test(f))
+
+  for (const f of client_files) {
     const diff = await diffForFile(f)
 
     if (diff?.added.includes('@web3modal/core')) {
@@ -289,6 +305,10 @@ async function checkClientPackages() {
 
     if (diff?.added.includes('@web3modal/ui')) {
       fail(`${f} is not allowed to import from @web3modal/ui`)
+    }
+
+    if (containsRelativeImportWithoutJSExtension(diff?.added)) {
+      fail(`${f} contains relative imports without .js extension`)
     }
   }
 }
