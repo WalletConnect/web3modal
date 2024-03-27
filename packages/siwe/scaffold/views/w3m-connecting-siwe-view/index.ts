@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   AccountController,
   ConnectionController,
@@ -21,6 +22,8 @@ export class W3mConnectingSiweView extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
+    this.onRender()
+
     return html`
       <wui-flex justifyContent="center" .padding=${['2xl', '0', 'xxl', '0'] as const}>
         <w3m-connecting-siwe></w3m-connecting-siwe>
@@ -69,6 +72,15 @@ export class W3mConnectingSiweView extends LitElement {
   }
 
   // -- Private ------------------------------------------- //
+
+  private onRender() {
+    console.log('onRender')
+    if (SIWEController.state.session) {
+      console.log('session exist, closing..', SIWEController.state.session)
+      ModalController.close()
+    }
+  }
+
   private async onSign() {
     this.isSigning = true
     EventsController.sendEvent({

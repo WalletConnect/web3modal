@@ -18,7 +18,6 @@ export const wagmiConfig = defaultWagmiConfig({
   metadata: ConstantsUtil.Metadata,
   ssr: true
 })
-
 const modal = createWeb3Modal({
   wagmiConfig,
   projectId: ConstantsUtil.ProjectId,

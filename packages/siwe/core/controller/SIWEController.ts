@@ -104,6 +104,7 @@ export const SIWEController = {
     const client = this._getClient()
     await client.signOut()
     this.setStatus('ready')
+    this.setSession(undefined)
     client.onSignOut?.()
   },
 

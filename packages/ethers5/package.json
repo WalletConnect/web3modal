@@ -43,8 +43,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@walletconnect/ethereum-provider": "2.11.2-rc-sign2.5-1",
     "@coinbase/wallet-sdk": "3.9.1",
-    "@walletconnect/ethereum-provider": "2.11.1",
     "@web3modal/polyfills": "4.1.1",
     "@web3modal/scaffold": "4.1.1",
     "@web3modal/scaffold-react": "4.1.1",

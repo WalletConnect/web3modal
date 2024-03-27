@@ -1,20 +1,19 @@
-import { SiweMessage } from 'siwe'
 import { getCsrfToken, signIn, signOut, getSession } from 'next-auth/react'
 import type { SIWEVerifyMessageArgs, SIWECreateMessageArgs, SIWESession } from '@web3modal/siwe'
 import { createSIWEConfig } from '@web3modal/siwe'
+import { formatMessage } from '@walletconnect/utils'
+import { WagmiConstantsUtil } from '../utils/WagmiConstants'
 
 export const siweConfig = createSIWEConfig({
-  createMessage: ({ nonce, address, chainId }: SIWECreateMessageArgs) =>
-    new SiweMessage({
-      version: '1',
-      domain: window.location.host,
-      uri: window.location.origin,
-      address,
-      chainId,
-      nonce,
-      // Human-readable ASCII assertion that the user will sign, and it must not contain `\n`.
-      statement: 'Sign in With Ethereum.'
-    }).prepareMessage(),
+  // We don't require any async action to populate params but other apps might
+  // eslint-disable-next-line @typescript-eslint/require-await
+  getMessageParams: async () => ({
+    domain: window.location.host,
+    uri: window.location.origin,
+    chains: WagmiConstantsUtil.chains.map(chain => chain.id),
+    statement: 'Please sign with your account'
+  }),
+  createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, address),
   getNonce: async () => {
     const nonce = await getCsrfToken()
     if (!nonce) {
