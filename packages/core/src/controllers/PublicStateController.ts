@@ -3,12 +3,14 @@ import type { CaipNetworkId } from '../utils/TypeUtil.js'
 
 // -- Types --------------------------------------------- //
 export interface PublicStateControllerState {
+  loading: boolean
   open: boolean
   selectedNetworkId?: CaipNetworkId
 }
 
 // -- State --------------------------------------------- //
 const state = proxy<PublicStateControllerState>({
+  loading: false,
   open: false,
   selectedNetworkId: undefined
 })

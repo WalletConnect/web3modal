@@ -71,5 +71,6 @@ export const ModalController = {
 
   setLoading(loading: ModalControllerState['loading']) {
     state.loading = loading
+    PublicStateController.set({ loading })
   }
 }
