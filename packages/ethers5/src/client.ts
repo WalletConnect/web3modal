@@ -219,7 +219,7 @@ export class Web3Modal extends Web3ModalScaffold {
         }
       },
 
-      checkInstalled(ids) {
+      checkInstalled: (ids?: string[]) => {
         if (!ids) {
           return Boolean(window.ethereum)
         }
