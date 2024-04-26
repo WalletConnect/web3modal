@@ -8,30 +8,6 @@
     "dist",
     "!tsconfig.tsbuildinfo"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/types/exports/index.d.ts",
-      "import": "./dist/esm/exports/index.js",
-      "default": "./dist/esm/exports/index.js"
-    },
-    "./ethers": {
-      "types": "./dist/types/exports/ethers.d.ts",
-      "import": "./dist/esm/exports/ethers.js",
-      "default": "./dist/esm/exports/ethers.js"
-    },
-    "./solana": {
-      "types": "./dist/types/exports/solana.d.ts",
-      "import": "./dist/esm/exports/solana.js",
-      "default": "./dist/esm/exports/solana.js"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "ethers": [
-        "./dist/types/exports/ethers.d.ts"
-      ]
-    }
-  },
   "scripts": {
     "build:clean": "rm -rf dist",
     "build:scaffold-utils": "tsc --build",
@@ -40,9 +16,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@web3modal/core": "4.1.11",
-    "@web3modal/polyfills": "4.1.11",
-    "valtio": "1.11.2"
+    "@web3modal/core": "4.1.11"
   },
   "keywords": [
     "web3",

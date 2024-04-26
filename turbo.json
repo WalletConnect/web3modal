@@ -39,7 +39,7 @@
     },
     "build:scaffold-utils": {
       "outputs": ["dist/**"],
-      "dependsOn": ["^build:polyfills", "^build:core"],
+      "dependsOn": ["^build:core"],
       "cache": false
     },
     "build:scaffold-react": {

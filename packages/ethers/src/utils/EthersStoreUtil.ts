@@ -1,15 +1,17 @@
 import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
-import type { Address, CombinedProvider, Provider } from './EthersTypesUtil.js'
 import type { W3mFrameTypes } from '@web3modal/wallet'
+import type { Chain, CombinedProvider, Provider } from './EthersTypesUtil.js'
+import { getAddress } from 'ethers'
 
 // -- Types --------------------------------------------- //
 
 export interface EthersStoreUtilState {
   provider?: Provider | CombinedProvider
   providerType?: 'walletConnect' | 'injected' | 'coinbaseWallet' | 'eip6963' | 'w3mEmail'
-  address?: Address
+  address?: string | undefined
   chainId?: number
+  supportedChains: Chain[]
   error?: unknown
   preferredAccountType?: W3mFrameTypes.AccountType
   isConnected: boolean
@@ -23,6 +25,7 @@ const state = proxy<EthersStoreUtilState>({
   providerType: undefined,
   address: undefined,
   chainId: undefined,
+  supportedChains: [],
   isConnected: false
 })
 
@@ -49,7 +52,7 @@ export const EthersStoreUtil = {
   },
 
   setAddress(address: EthersStoreUtilState['address']) {
-    state.address = address
+    state.address = address ? getAddress(address) : undefined
   },
 
   setPreferredAccountType(preferredAccountType: EthersStoreUtilState['preferredAccountType']) {
@@ -58,6 +61,10 @@ export const EthersStoreUtil = {
 
   setChainId(chainId: EthersStoreUtilState['chainId']) {
     state.chainId = chainId
+  },
+
+  setSupportedChains(supportedChains: EthersStoreUtilState['supportedChains']) {
+    state.supportedChains = supportedChains
   },
 
   setIsConnected(isConnected: EthersStoreUtilState['isConnected']) {

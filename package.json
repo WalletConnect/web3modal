@@ -44,7 +44,6 @@
     "packages/siwe",
     "packages/wagmi",
     "packages/ethers",
-    "packages/ethers5",
     "packages/solana",
     "apps/*",
     "examples/*"
