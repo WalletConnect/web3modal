@@ -447,20 +447,6 @@ export class Web3Modal extends Web3ModalScaffold {
     }
   }
 
-  private async syncWalletConnectName(address: Hex) {
-    try {
-      const registeredWcNames = await this.getWalletConnectName(address)
-      if (registeredWcNames[0]) {
-        const wcName = registeredWcNames[0]
-        this.setProfileName(wcName.name)
-      } else {
-        this.setProfileName(null)
-      }
-    } catch {
-      this.setProfileName(null)
-    }
-  }
-
   private async syncProfile(address: Hex, chainId: Chain['id']) {
     try {
       const { name, avatar } = await this.fetchIdentity({
@@ -468,10 +454,6 @@ export class Web3Modal extends Web3ModalScaffold {
       })
       this.setProfileName(name)
       this.setProfileImage(avatar)
-
-      if (!name) {
-        await this.syncWalletConnectName(address)
-      }
     } catch {
       if (chainId === mainnet.id) {
         const profileName = await getEnsName(this.wagmiConfig, { address, chainId })
@@ -484,13 +466,7 @@ export class Web3Modal extends Web3ModalScaffold {
           if (profileImage) {
             this.setProfileImage(profileImage)
           }
-        } else {
-          await this.syncWalletConnectName(address)
-          this.setProfileImage(null)
         }
-      } else {
-        await this.syncWalletConnectName(address)
-        this.setProfileImage(null)
       }
     }
   }

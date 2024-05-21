@@ -258,10 +258,6 @@ export class Web3ModalScaffold {
       AccountController.setPreferredAccountType(preferredAccountType)
     }
 
-  protected getWalletConnectName: (typeof EnsController)['getNamesForAddress'] = address => {
-    return EnsController.getNamesForAddress(address)
-  }
-
   // -- Private ------------------------------------------------------------------
   private async initControllers(options: ScaffoldOptions) {
     NetworkController.setClient(options.networkControllerClient)

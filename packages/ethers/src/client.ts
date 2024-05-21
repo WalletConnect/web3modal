@@ -1096,20 +1096,6 @@ export class Web3Modal extends Web3ModalScaffold {
     }
   }
 
-  private async syncWalletConnectName(address: Address) {
-    try {
-      const registeredWcNames = await this.getWalletConnectName(address)
-      if (registeredWcNames[0]) {
-        const wcName = registeredWcNames[0]
-        this.setProfileName(wcName.name)
-      } else {
-        this.setProfileName(null)
-      }
-    } catch {
-      this.setProfileName(null)
-    }
-  }
-
   private async syncProfile(address: Address) {
     const chainId = EthersStoreUtil.state.chainId
 
@@ -1119,10 +1105,6 @@ export class Web3Modal extends Web3ModalScaffold {
       })
       this.setProfileName(name)
       this.setProfileImage(avatar)
-
-      if (!name) {
-        await this.syncWalletConnectName(address)
-      }
     } catch {
       if (chainId === 1) {
         const ensProvider = new InfuraProvider('mainnet')
@@ -1131,15 +1113,10 @@ export class Web3Modal extends Web3ModalScaffold {
 
         if (name) {
           this.setProfileName(name)
-        } else {
-          await this.syncWalletConnectName(address)
         }
         if (avatar) {
           this.setProfileImage(avatar)
         }
-      } else {
-        await this.syncWalletConnectName(address)
-        this.setProfileImage(null)
       }
     }
   }
