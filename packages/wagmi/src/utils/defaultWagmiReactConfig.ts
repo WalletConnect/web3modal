@@ -41,7 +41,7 @@ export function defaultWagmiConfig({
   enableEIP6963,
   ...wagmiConfig
 }: ConfigOptions): Config {
-  const connectors: CreateConnectorFn[] = []
+  const connectors: CreateConnectorFn[] = wagmiConfig?.connectors ?? []
   const transportsArr = chains.map(chain => [
     chain.id,
     getTransport({ chainId: chain.id, projectId })
@@ -53,10 +53,12 @@ export function defaultWagmiConfig({
     connectors.push(walletConnect({ projectId, metadata, showQrModal: false }))
   }
 
+  // Enabled by default
   if (enableInjected !== false) {
     connectors.push(injected({ shimDisconnect: true }))
   }
 
+  // Enabled by default
   if (enableCoinbase !== false) {
     connectors.push(
       coinbaseWallet({
@@ -67,7 +69,7 @@ export function defaultWagmiConfig({
     )
   }
 
-  // Dissabled by default
+  // Disabled by default
   if (enableEmail || auth?.socials) {
     connectors.push(
       authConnector({
