@@ -121,9 +121,16 @@ export const W3mFrameRpcConstants = {
     'eth_newPendingTransactionFilter',
     'eth_sendRawTransaction',
     'eth_syncing',
-    'eth_uninstallFilter'
+    'eth_uninstallFilter',
+    'wallet_getCapabilities',
+    'wallet_getCallsStatus'
   ],
-  NOT_SAFE_RPC_METHODS: ['personal_sign', 'eth_signTypedData_v4', 'eth_sendTransaction'],
+  NOT_SAFE_RPC_METHODS: [
+    'personal_sign',
+    'eth_signTypedData_v4',
+    'eth_sendTransaction',
+    'wallet_sendCalls'
+  ],
   GET_CHAIN_ID: 'eth_chainId',
   RPC_METHOD_NOT_ALLOWED_MESSAGE: 'Requested RPC call is not allowed',
   RPC_METHOD_NOT_ALLOWED_UI_MESSAGE: 'Action not allowed',

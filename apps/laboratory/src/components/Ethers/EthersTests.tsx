@@ -5,6 +5,9 @@ import { EthersSignTypedDataTest } from './EthersSignTypedDataTest'
 import { StackDivider, Card, CardHeader, Heading, CardBody, Box, Stack } from '@chakra-ui/react'
 import { EthersTransactionTest } from './EthersTransactionTest'
 import { EthersWriteContractTest } from './EthersWriteContractTest'
+import { EthersSendCallsTest } from './EthersSendCallsTest'
+import { EthersGetCallsStatusTest } from './EthersGetCallsStatusTest'
+import { EthersSendCallsWithPaymasterServiceTest } from './EthersSendCallsWithPaymasterServiceTest'
 
 export function EthersTests() {
   const [ready, setReady] = React.useState(false)
@@ -51,6 +54,24 @@ export function EthersTests() {
               Contract Write
             </Heading>
             <EthersWriteContractTest />
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase" pb="2">
+              Send Calls (Atomic Batch)
+            </Heading>
+            <EthersSendCallsTest />
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase" pb="2">
+              Get Calls Status
+            </Heading>
+            <EthersGetCallsStatusTest />
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase" pb="2">
+              Send Calls (Paymaster Service)
+            </Heading>
+            <EthersSendCallsWithPaymasterServiceTest />
           </Box>
         </Stack>
       </CardBody>

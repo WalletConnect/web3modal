@@ -45,6 +45,8 @@ import {
   RcpEthGetBlockTransactionCountByNumber,
   RcpEthGetBlockTransactionCountByHash,
   RpcEthGetBlockReceipts,
+  WalletSendCallsRequest,
+  WalletGetCallsReceiptRequest,
   FrameSession,
   AppGetUserRequest,
   AppUpdateEmailRequest,
@@ -59,7 +61,8 @@ import {
   FrameUpdateEmailResponse,
   AppGetSocialRedirectUriRequest,
   FrameGetSocialRedirectUriResponse,
-  FrameConnectSocialResponse
+  FrameConnectSocialResponse,
+  WalletGetCapabilitiesRequest
 } from './W3mFrameSchema.js'
 import type { W3mFrameRpcConstants } from './W3mFrameConstants.js'
 
@@ -139,6 +142,9 @@ export namespace W3mFrameTypes {
     | z.infer<typeof RpcPersonalSignRequest>
     | z.infer<typeof RpcEthSignTypedDataV4>
     | z.infer<typeof RpcEthSendTransactionRequest>
+    | z.infer<typeof WalletSendCallsRequest>
+    | z.infer<typeof WalletGetCallsReceiptRequest>
+    | z.infer<typeof WalletGetCapabilitiesRequest>
 
   export type RPCResponse = z.infer<typeof RpcResponse>
 
