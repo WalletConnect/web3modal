@@ -40,8 +40,11 @@ export class WuiOtp extends LitElement {
           (_, index: number) => html`
             <wui-input-numeric
               @input=${(e: InputEvent) => this.handleInput(e, index)}
+              @change=${(e: InputEvent) => this.handleChange(e, index)}
               @click=${(e: MouseEvent) => this.selectInput(e)}
               @keydown=${(e: KeyboardEvent) => this.handleKeyDown(e, index)}
+              @inputChange=${() => console.log('inputChange')}
+              @focus=${() => console.log('focus')}
               .disabled=${!this.shouldInputBeEnabled(index)}
               .value=${this.values[index] || ''}
             >
@@ -72,9 +75,14 @@ export class WuiOtp extends LitElement {
     }
   }
 
+  private handleChange(e: InputEvent, index: number) {
+    console.log('wui-otp - handleChange', e, index)
+  }
+
   private handleInput(e: InputEvent, index: number) {
     const inputElement = e.target as HTMLElement
     const input = this.getInputElement(inputElement)
+    console.log('wui-otp - handleInput', e, index, input)
 
     if (input) {
       const inputValue = input.value
@@ -100,10 +108,10 @@ export class WuiOtp extends LitElement {
   }
 
   private handleKeyDown = (e: KeyboardEvent, index: number) => {
+    console.log('wui-otp - handleKeyDown', e, index)
     const inputElement = e.target as HTMLElement
     const input = this.getInputElement(inputElement)
     const keyArr = ['ArrowLeft', 'ArrowRight', 'Shift', 'Delete']
-
     if (!input) {
       return
     }
