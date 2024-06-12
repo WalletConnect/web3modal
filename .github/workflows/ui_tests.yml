@@ -48,8 +48,15 @@ on:
 jobs:
   ui_tests:
     name: 'Playwright Tests'
+    container:
+      image: mcr.microsoft.com/playwright:v1.40.1-jammy
     runs-on:
       group: ubuntu-runners
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+        shardTotal: [4]
     timeout-minutes: 15
     steps:
       - name: checkout
@@ -57,18 +64,22 @@ jobs:
         with:
           repository: WalletConnect/web3modal
           ref: ${{ inputs.branch }}
+
       - name: setup-node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
+
       - name: Get installed Playwright version
         id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['apps/laboratory']['devDependencies']['@playwright/test'])")" >> $GITHUB_ENV
+
       - name: Install Brave Browser
         working-directory: ./apps/laboratory/
         run: sudo ./scripts/install-brave-browser.sh
+
       - name: Cache playwright binaries
         uses: actions/cache@v4
         id: playwright-cache
@@ -76,8 +87,10 @@ jobs:
           path: |
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}-${{ hashFiles('apps/laboratory/tests/shared/constants/devices.ts') }}
+
       - name: install
         run: npm ci
+
       - name: build packages and lab
         run: npm run build:laboratory
         env:
@@ -87,10 +100,7 @@ jobs:
           NEXT_PUBLIC_SECURE_SITE_SDK_URL: ${{ inputs.secure-site-url }}
           SOCIAL_TEST_EMAIL: ${{ secrets.TESTS_SOCIAL_EMAIL }}
           SOCIAL_TEST_PASSWORD: ${{ secrets.TESTS_SOCIAL_PASSWORD }}
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        working-directory: ./apps/laboratory/
-        run: npm run playwright:install
+
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ inputs.base-url }}
@@ -103,23 +113,57 @@ jobs:
           SOCIAL_TEST_EMAIL: ${{ secrets.TESTS_SOCIAL_EMAIL }}
           SOCIAL_TEST_PASSWORD: ${{ secrets.TESTS_SOCIAL_PASSWORD }}
           CI: true
+          HOME: /root
         working-directory: ./apps/laboratory/
-        run: npm run ${{ inputs.command }}
+        run: npm run ${{ inputs.command }} -- --shard=${{ matrix.shard }}/${{ matrix.shardTotal }}
+
       - name: Run canary with minimal environment config
         env:
           NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
           CI: true
         working-directory: ./apps/laboratory/
         run: npm run playwright:test:canary
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shardIndex }}
           path: ./apps/laboratory/playwright-report/
           retention-days: 7
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.shardIndex }}
           path: ./apps/laboratory/test-results/
+          retention-days: 7
+
+  merge-reports:
+    if: ${{ !cancelled() }}
+    needs: [ui_tests]
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: ./apps/laboratory/playwright-report/
           retention-days: 7
