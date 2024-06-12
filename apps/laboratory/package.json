@@ -49,7 +49,7 @@
     "@walletconnect/utils": "2.13.1",
     "valtio": "1.11.2",
     "viem": "2.10.3",
-    "wagmi": "2.9.10",
+    "wagmi": "2.10.0",
     "@wagmi/connectors": "5.0.8"
   },
   "devDependencies": {
