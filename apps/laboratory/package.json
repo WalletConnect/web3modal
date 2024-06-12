@@ -46,7 +46,7 @@
     "next": "14.2.3",
     "next-auth": "4.24.5",
     "react-icons": "4.12.0",
-    "@walletconnect/utils": "2.13.1",
+    "@walletconnect/utils": "2.13.2",
     "valtio": "1.11.2",
     "viem": "2.10.3",
     "wagmi": "2.9.10",
