@@ -20,6 +20,7 @@ export interface OptionsControllerState {
   enableAnalytics?: boolean
   metadata?: Metadata
   enableOnramp?: boolean
+  enableUniversalLinks?: boolean
   disableAppend?: boolean
 }
 
@@ -101,6 +102,10 @@ export const OptionsController = {
 
   setDisableAppend(disableAppend: OptionsControllerState['disableAppend']) {
     state.disableAppend = disableAppend
+  },
+
+  setUniversalLinksEnabled(enableUniversalLinks: OptionsControllerState['enableUniversalLinks']) {
+    state.enableUniversalLinks = enableUniversalLinks
   },
 
   getSnapshot() {

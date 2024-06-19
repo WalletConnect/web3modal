@@ -4,7 +4,9 @@ import { ColorModeScript } from '@chakra-ui/react'
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+      </Head>
       <body>
         <ColorModeScript initialColorMode="system" />
         <Main />

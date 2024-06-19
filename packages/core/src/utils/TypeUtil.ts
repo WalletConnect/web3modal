@@ -103,6 +103,7 @@ export interface WcWallet {
   image_url?: string
   order?: number
   mobile_link?: string | null
+  link_mode?: string | null
   desktop_link?: string | null
   webapp_link?: string | null
   app_store?: string | null
