@@ -72,6 +72,16 @@ export class ModalPage {
     return uri
   }
 
+  async connectMetamask() {
+    await this.page.goto(this.url)
+    await this.connectButton.click()
+    await expect(this.page.getByText('MetaMask')).toBeVisible()
+    const mmButton = this.page.getByTestId('wallet-selector-io.metamask')
+    await expect(mmButton).toBeVisible()
+    await mmButton.click()
+    await expect(this.page.getByText('Continue in MetaMask')).toBeVisible()
+  }
+
   async emailFlow(
     emailAddress: string,
     context: BrowserContext,
