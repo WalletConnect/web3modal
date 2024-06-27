@@ -26,6 +26,10 @@ export class W3mWalletSendPreviewView extends LitElement {
 
   @state() private caipNetwork = NetworkController.state.caipNetwork
 
+  @state() private type = SendController.state.type
+
+  @state() private loading = SendController.state.loading
+
   public constructor() {
     super()
     this.unsubscribe.push(
@@ -37,6 +41,7 @@ export class W3mWalletSendPreviewView extends LitElement {
           this.gasPriceInUSD = val.gasPriceInUSD
           this.receiverProfileName = val.receiverProfileName
           this.receiverProfileImageUrl = val.receiverProfileImageUrl
+          this.loading = val.loading
         }),
         NetworkController.subscribeKey('caipNetwork', val => (this.caipNetwork = val))
       ]
@@ -49,6 +54,39 @@ export class W3mWalletSendPreviewView extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
+
+    const toComponent = this.type === 'Address' ?  html`<wui-preview-item
+        text="${this.receiverProfileName
+          ? UiHelperUtil.getTruncateString({
+              string: this.receiverProfileName,
+              charsStart: 20,
+              charsEnd: 0,
+              truncate: 'end'
+            })
+          : UiHelperUtil.getTruncateString({
+              string: this.receiverAddress ? this.receiverAddress : '',
+              charsStart: 4,
+              charsEnd: 4,
+              truncate: 'middle'
+            }) }"
+        address=${this.receiverAddress ?? ''}
+        .imageSrc=${this.receiverProfileImageUrl ?? undefined}
+        .isAddress=${true}
+      ></wui-preview-item>` :  html`<wui-flex class="generateLinkPreview"
+    ><wui-icon-box
+    ?border=${false}
+    icon="linkConnect"
+    size="s"
+    backgroundColor="glass-005"
+    iconColor="accent-100"
+    iconSize="s"
+  ></wui-icon-box><wui-text variant="large-500" color="accent-100" class="toComponent" icon="linkConnect"
+    >Generate link</wui-text
+  ></wui-flex>`
+
+       
+
+
     return html` <wui-flex flexDirection="column" .padding=${['0', 'l', 'l', 'l'] as const}>
       <wui-flex gap="xs" flexDirection="column" .padding=${['0', 'xs', '0', 'xs'] as const}>
         <wui-flex alignItems="center" justifyContent="space-between">
@@ -68,30 +106,14 @@ export class W3mWalletSendPreviewView extends LitElement {
         </wui-flex>
         <wui-flex alignItems="center" justifyContent="space-between">
           <wui-text variant="small-400" color="fg-150">To</wui-text>
-          <wui-preview-item
-            text="${this.receiverProfileName
-              ? UiHelperUtil.getTruncateString({
-                  string: this.receiverProfileName,
-                  charsStart: 20,
-                  charsEnd: 0,
-                  truncate: 'end'
-                })
-              : UiHelperUtil.getTruncateString({
-                  string: this.receiverAddress ? this.receiverAddress : '',
-                  charsStart: 4,
-                  charsEnd: 4,
-                  truncate: 'middle'
-                })}"
-            address=${this.receiverAddress ?? ''}
-            .imageSrc=${this.receiverProfileImageUrl ?? undefined}
-            .isAddress=${true}
-          ></wui-preview-item>
+          
+          ${toComponent}
         </wui-flex>
       </wui-flex>
       <wui-flex flexDirection="column" .padding=${['xxl', '0', '0', '0'] as const}>
         <w3m-wallet-send-details
           .caipNetwork=${this.caipNetwork}
-          .receiverAddress=${this.receiverAddress}
+          .receiverAddress=${this.receiverAddress ?? ''}
           .networkFee=${this.gasPriceInUSD}
         ></w3m-wallet-send-details>
         <wui-flex justifyContent="center" gap="xxs" .padding=${['s', '0', '0', '0'] as const}>
@@ -110,10 +132,15 @@ export class W3mWalletSendPreviewView extends LitElement {
           <wui-button
             class="sendButton"
             @click=${this.onSendClick.bind(this)}
+            ?loading=${this.loading}
             size="lg"
             variant="main"
           >
-            Send
+          ${this.loading
+            ? html`<wui-loading-spinner size="md" color="fg-150"></wui-loading-spinner>`
+            : this.type == 'Address'
+              ? 'Send'
+              : 'Generate Link'}
           </wui-button>
         </wui-flex>
       </wui-flex></wui-flex
@@ -135,7 +162,11 @@ export class W3mWalletSendPreviewView extends LitElement {
   }
 
   onSendClick() {
-    SendController.sendToken()
+    if (this.type === 'Address') {
+      SendController.sendToken()
+    } else {
+      SendController.generateLink()
+    }
   }
 
   private onCancelClick() {

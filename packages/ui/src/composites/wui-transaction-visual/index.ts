@@ -101,6 +101,7 @@ export class WuiTransactionVisual extends LitElement {
         return 'arrowBottom'
       case 'out':
         return 'arrowTop'
+      
       default:
         return undefined
     }

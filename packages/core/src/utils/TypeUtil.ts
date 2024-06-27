@@ -773,11 +773,11 @@ export type GetQuoteArgs = {
 
 export interface SendTransactionArgs {
   to: `0x${string}`
-  data: `0x${string}`
-  value: bigint
+  data?: `0x${string}`
+  value?: bigint
   gas?: bigint
-  gasPrice: bigint
-  address: `0x${string}`
+  gasPrice?: bigint
+  address?: `0x${string}`
 }
 
 export interface EstimateGasTransactionArgs {

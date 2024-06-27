@@ -34,6 +34,8 @@ export class WuiTransactionListItem extends LitElement {
 
   @property({ type: Array }) public symbol: TransactionImage[] = []
 
+  @property({ type: Boolean }) public isPeanutTransfer: boolean = false
+
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
@@ -47,7 +49,7 @@ export class WuiTransactionListItem extends LitElement {
         ></wui-transaction-visual>
         <wui-flex flexDirection="column" gap="3xs">
           <wui-text variant="paragraph-600" color="fg-100">
-            ${TransactionTypePastTense[this.type] || this.type}
+            ${this.isPeanutTransfer ? "Link created" : TransactionTypePastTense[this.type] || this.type}
           </wui-text>
           <wui-flex class="description-container">
             ${this.templateDescription()} ${this.templateSecondDescription()}

@@ -38,6 +38,7 @@ export interface ConnectionControllerClient {
   writeContract: (args: WriteContractArgs) => Promise<`0x${string}` | null>
   getEnsAddress: (value: string) => Promise<false | string>
   getEnsAvatar: (value: string) => Promise<false | string>
+  signTypedData: (data: any) => Promise<string>
 }
 
 export interface ConnectionControllerState {
@@ -123,6 +124,10 @@ export const ConnectionController = {
     return this._getClient().signMessage(message)
   },
 
+  async signTypedData(data: any) {  
+    return this._getClient().signTypedData(data)
+  },
+
   parseUnits(value: string, decimals: number) {
     return this._getClient().parseUnits(value, decimals)
   },
@@ -188,4 +193,5 @@ export const ConnectionController = {
 
     this.resetWcConnection()
   }
+
 }

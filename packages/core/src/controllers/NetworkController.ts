@@ -6,6 +6,7 @@ import { EventsController } from './EventsController.js'
 import { ModalController } from './ModalController.js'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { NetworkUtil } from '@web3modal/common'
+import { PEANUT_CONTRACTS } from '@squirrel-labs/peanut-sdk'
 
 // -- Types --------------------------------------------- //
 export interface NetworkControllerClient {
@@ -26,6 +27,7 @@ export interface NetworkControllerState {
   approvedCaipNetworkIds?: CaipNetworkId[]
   allowUnsupportedChain?: boolean
   smartAccountEnabledNetworks?: number[]
+  isPeanutSupportedChain?: boolean
 }
 
 type StateKey = keyof NetworkControllerState
@@ -67,6 +69,7 @@ export const NetworkController = {
     if (!this.state.allowUnsupportedChain) {
       this.checkIfSupportedNetwork()
     }
+    this.checkIfPeanutSupportsNetwork()
   },
 
   setDefaultCaipNetwork(caipNetwork: NetworkControllerState['caipNetwork']) {
@@ -133,6 +136,16 @@ export const NetworkController = {
     }
 
     return Boolean(state.smartAccountEnabledNetworks?.includes(networkId))
+  },
+
+  checkIfPeanutSupportsNetwork() {
+    const networkId = NetworkUtil.caipNetworkIdToNumber(state.caipNetwork?.id)
+
+    if (PEANUT_CONTRACTS.hasOwnProperty(networkId)) {
+      state.isPeanutSupportedChain = true
+    } else {
+      state.isPeanutSupportedChain = false
+    }
   },
 
   resetNetwork() {

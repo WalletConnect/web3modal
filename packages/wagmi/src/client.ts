@@ -15,7 +15,8 @@ import {
   writeContract as wagmiWriteContract,
   getAccount,
   getEnsAddress as wagmiGetEnsAddress,
-  reconnect
+  reconnect,
+  signTypedData
 } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
 import { prepareTransactionRequest, sendTransaction as wagmiSendTransaction } from '@wagmi/core'
@@ -247,6 +248,8 @@ export class Web3Modal extends Web3ModalScaffold {
       },
 
       signMessage: async message => signMessage(this.wagmiConfig, { message }),
+
+      signTypedData: async data => signTypedData(this.wagmiConfig, data),
 
       estimateGas: async args => {
         try {

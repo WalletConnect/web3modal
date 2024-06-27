@@ -229,7 +229,7 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
           W3mFrameRpcConstants.ACCOUNT_TYPES.SMART_ACCOUNT
       }
     })
-    RouterController.push('WalletSend')
+    RouterController.push('WalletSelectSend')
   }
 
   private onUpdateToSmartAccount() {

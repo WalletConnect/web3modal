@@ -314,6 +314,25 @@ export class Web3Modal extends Web3ModalScaffold {
         return signature as `0x${string}`
       },
 
+      signTypedData: async(data: any)=>{
+        const provider = EthersStoreUtil.state.provider;
+  if (!provider) {
+    throw new Error('connectionControllerClient:signTypedData - provider is undefined');
+  }
+
+  const serializedData = JSON.stringify(data, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value
+  );
+
+  const signature = await provider.request({
+    method: 'eth_signTypedData_v4',
+    params: [data.message.from, serializedData]
+  });
+
+  return signature as `0x${string}`;
+      },
+
+
       parseUnits: (value: string, decimals: number) =>
         ethers.utils.parseUnits(value, decimals).toBigInt(),
 

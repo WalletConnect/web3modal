@@ -3,7 +3,7 @@ import { css } from 'lit'
 export default css`
   :host {
     width: 100%;
-    height: 100px;
+    height: auto;
     border-radius: var(--wui-border-radius-s);
     border: 1px solid var(--wui-color-gray-glass-002);
     background-color: var(--wui-color-gray-glass-002);

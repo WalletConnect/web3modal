@@ -23,15 +23,20 @@ export class W3mWalletSendDetails extends LitElement {
         <wui-list-content textTitle="Network cost" textValue="$${ifDefined(
           UiHelperUtil.formatNumberToLocalString(this.networkFee, 2)
         )}"></wui-list-content></wui-list-content>
-        <wui-list-content
-          textTitle="Address"
-          textValue=${UiHelperUtil.getTruncateString({
-            string: this.receiverAddress ?? '',
-            charsStart: 4,
-            charsEnd: 4,
-            truncate: 'middle'
-          })}
-        >
+        
+        ${
+          this.receiverAddress &&
+          html`<wui-list-content
+            textTitle="Address"
+            textValue=${UiHelperUtil.getTruncateString({
+              string: this.receiverAddress ?? '',
+              charsStart: 4,
+              charsEnd: 4,
+              truncate: 'middle'
+            })}
+          >
+          </wui-list-content> `
+        }
         </wui-list-content>
         ${this.networkTemplate()}
       </wui-flex>`

@@ -49,6 +49,7 @@ export interface RouterControllerState {
     | 'UpgradeToSmartAccount'
     | 'WalletReceive'
     | 'WalletSend'
+    | 'WalletSelectSend'
     | 'WalletSendPreview'
     | 'WalletSendSelectToken'
     | 'WhatIsANetwork'

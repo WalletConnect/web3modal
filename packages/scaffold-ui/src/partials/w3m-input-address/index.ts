@@ -35,9 +35,9 @@ export class W3mInputAddress extends LitElement {
       @click=${this.onBoxClick.bind(this)}
       flexDirection="column"
       justifyContent="center"
-      gap="4xs"
-      .padding=${['2xl', 'l', 'xl', 'l'] as const}
-    >
+      gap="xs"
+      .padding=${['s', 's', 's', 's'] as const}
+      >
       <wui-text
         ${ref(this.instructionElementRef)}
         class="instruction"

@@ -131,6 +131,8 @@ export class W3mRouter extends LitElement {
         return html`<w3m-swap-preview-view></w3m-swap-preview-view>`
       case 'WalletSend':
         return html`<w3m-wallet-send-view></w3m-wallet-send-view>`
+      case 'WalletSelectSend':
+        return html`<w3m-wallet-select-send-view></w3m-wallet-select-send-view>`
       case 'WalletSendSelectToken':
         return html`<w3m-wallet-send-select-token-view></w3m-wallet-send-select-token-view>`
       case 'WalletSendPreview':

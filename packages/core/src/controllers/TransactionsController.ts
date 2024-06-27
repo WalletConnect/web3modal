@@ -6,6 +6,7 @@ import { SnackController } from './SnackController.js'
 import { BlockchainApiController } from './BlockchainApiController.js'
 import { AccountController } from './AccountController.js'
 import { W3mFrameRpcConstants } from '@web3modal/wallet'
+import {PEANUT_CONTRACTS} from '@squirrel-labs/peanut-sdk'
 
 // -- Types --------------------------------------------- //
 type TransactionByMonthMap = Record<number, Transaction[]>
@@ -48,12 +49,30 @@ export const TransactionsController = {
     state.loading = true
 
     try {
-      const response = await BlockchainApiController.fetchTransactions({
+      let response = await BlockchainApiController.fetchTransactions({
         account: accountAddress,
         projectId,
         cursor: state.next,
         onramp
       })
+
+      response.data = response.data.map((tx: any) => {
+        const chainId = tx.metadata.chain?.split(':')[1];
+        const sentTo = tx.metadata.sentTo;
+      
+        if (chainId && PEANUT_CONTRACTS[chainId]) {
+          const addresses = Object.values(PEANUT_CONTRACTS[chainId])
+            .filter((value): value is string => typeof value === 'string')
+            .map((address: string) => address.toLowerCase());
+      
+          const isAddressPresent = addresses.includes(sentTo.toLowerCase());
+      
+          if (isAddressPresent){
+            return {...tx, metadata: {...tx.metadata, application: { name: 'peanut_created_link'}}}
+          }
+        }
+        return tx; 
+      });
 
       const nonSpamTransactions = this.filterSpamTransactions(response.data)
       const filteredTransactions = [...state.transactions, ...nonSpamTransactions]
