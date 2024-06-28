@@ -5,6 +5,7 @@ import { resetStyles } from '../../utils/ThemeUtil.js'
 import { UiHelperUtil } from '../../utils/UiHelperUtil.js'
 import { customElement } from '../../utils/WebComponentsUtil.js'
 import styles from './styles.js'
+import type { SizeType } from '../../utils/TypeUtil.js'
 
 @customElement('wui-avatar')
 export class WuiAvatar extends LitElement {
@@ -17,8 +18,15 @@ export class WuiAvatar extends LitElement {
 
   @property() public address?: string = undefined
 
+  @property() public size?: SizeType = 'xl'
+
   // -- Render -------------------------------------------- //
   public override render() {
+    this.style.cssText = `
+    --local-width: var(--wui-icon-box-size-${this.size});
+    --local-height: var(--wui-icon-box-size-${this.size});
+    `
+
     return html`${this.visualTemplate()}`
   }
 
@@ -31,7 +39,7 @@ export class WuiAvatar extends LitElement {
     } else if (this.address) {
       this.dataset['variant'] = 'generated'
       const cssColors = UiHelperUtil.generateAvatarColors(this.address)
-      this.style.cssText = cssColors
+      this.style.cssText += `\n ${cssColors}`
 
       return null
     }

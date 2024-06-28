@@ -90,6 +90,7 @@ export class W3mNetworksView extends LitElement {
     const { approvedCaipNetworkIds, supportsAllNetworks, caipNetwork } = NetworkController.state
     const { data } = RouterController.state
     if (isConnected && caipNetwork?.id !== network.id) {
+      console.log('Switching network isConnected', network)
       if (approvedCaipNetworkIds?.includes(network.id)) {
         await NetworkController.switchActiveNetwork(network)
         await NetworkUtil.onNetworkChange()
@@ -97,6 +98,7 @@ export class W3mNetworksView extends LitElement {
         RouterController.push('SwitchNetwork', { ...data, network })
       }
     } else if (!isConnected) {
+      console.log('Switching network !isConnected', network)
       NetworkController.setCaipNetwork(network)
       RouterController.push('Connect')
     }

@@ -35,6 +35,7 @@ export class WuiButton extends LitElement {
   public static override styles = [resetStyles, elementStyles, styles]
 
   // -- State & Properties -------------------------------- //
+
   @property() public size: ButtonSize = 'lg'
 
   @property({ type: Boolean }) public disabled = false

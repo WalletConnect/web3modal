@@ -25,12 +25,12 @@ export const EthersHelpersUtil = {
     return `0x${value.toString(16)}`
   },
   async getUserInfo(provider: Provider) {
-    const [address, chainId] = await Promise.all([
-      EthersHelpersUtil.getAddress(provider),
+    const [addresses, chainId] = await Promise.all([
+      EthersHelpersUtil.getAddresses(provider),
       EthersHelpersUtil.getChainId(provider)
     ])
 
-    return { chainId, address }
+    return { chainId, addresses }
   },
   async getChainId(provider: Provider) {
     const chainId = await provider.request<string | number>({ method: 'eth_chainId' })
@@ -41,6 +41,11 @@ export const EthersHelpersUtil = {
     const [address] = await provider.request<string[]>({ method: 'eth_accounts' })
 
     return address
+  },
+  async getAddresses(provider: Provider) {
+    const addresses = await provider.request<string[]>({ method: 'eth_accounts' })
+
+    return addresses
   },
   async addEthereumChain(provider: Provider, chain: Chain) {
     await provider.request({

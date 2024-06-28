@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { W3mFrameConstants } from './W3mFrameConstants.js'
+import { W3mFrameConstants, W3mFrameRpcConstants } from './W3mFrameConstants.js'
 
 // -- Helpers ----------------------------------------------------------------
 const zError = z.object({ message: z.string() })
@@ -74,6 +74,15 @@ export const FrameConnectSocialResponse = z.object({
   email: z.string(),
   address: z.string(),
   chainId: z.number(),
+  accounts: z.array(
+    z.object({
+      address: z.string(),
+      type: z.enum([
+        W3mFrameRpcConstants.ACCOUNT_TYPES.EOA,
+        W3mFrameRpcConstants.ACCOUNT_TYPES.SMART_ACCOUNT
+      ])
+    })
+  ),
   userName: z.string().optional()
 })
 export const FrameUpdateEmailResponse = z.object({
@@ -84,6 +93,15 @@ export const FrameGetUserResponse = z.object({
   address: z.string(),
   chainId: z.number(),
   smartAccountDeployed: z.optional(z.boolean()),
+  accounts: z.array(
+    z.object({
+      address: z.string(),
+      type: z.enum([
+        W3mFrameRpcConstants.ACCOUNT_TYPES.EOA,
+        W3mFrameRpcConstants.ACCOUNT_TYPES.SMART_ACCOUNT
+      ])
+    })
+  ),
   preferredAccountType: z.optional(z.string())
 })
 export const FrameGetSocialRedirectUriResponse = z.object({ uri: z.string() })

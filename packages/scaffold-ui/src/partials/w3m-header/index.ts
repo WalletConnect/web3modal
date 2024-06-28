@@ -30,32 +30,36 @@ function headings() {
     ChooseAccountName: undefined,
     Account: undefined,
     AccountSettings: undefined,
+    AllWallets: 'All Wallets',
+    ApproveTransaction: 'Approve Transaction',
+    BuyInProgress: 'Buy',
     ConnectingExternal: name ?? 'Connect Wallet',
     ConnectingWalletConnect: name ?? 'WalletConnect',
     ConnectingSiwe: 'Sign In',
-    Networks: 'Choose Network',
-    SwitchNetwork: networkName ?? 'Switch Network',
-    AllWallets: 'All Wallets',
-    WhatIsANetwork: 'What is a network?',
-    WhatIsAWallet: 'What is a wallet?',
-    GetWallet: 'Get a wallet',
+    Convert: 'Convert',
+    ConvertSelectToken: 'Select token',
+    ConvertPreview: 'Preview convert',
     Downloads: name ? `Get ${name}` : 'Downloads',
     EmailVerifyOtp: 'Confirm Email',
     EmailVerifyDevice: 'Register Device',
-    ApproveTransaction: 'Approve Transaction',
+    GetWallet: 'Get a wallet',
+    Networks: 'Choose Network',
+    OnRampProviders: 'Choose Provider',
+    OnRampActivity: 'Activity',
+    OnRampTokenSelect: 'Select Token',
+    OnRampFiatSelect: 'Select Currency',
+    Profile: undefined,
+    SelectAddresses: 'Select accounts',
+    SwitchNetwork: networkName ?? 'Switch Network',
+    SwitchAddress: 'Switch Address',
     Transactions: 'Activity',
+    UnsupportedChain: 'Switch Network',
     UpgradeEmailWallet: 'Upgrade your Wallet',
     UpgradeToSmartAccount: undefined,
     UpdateEmailWallet: 'Edit Email',
     UpdateEmailPrimaryOtp: 'Confirm Current Email',
     UpdateEmailSecondaryOtp: 'Confirm New Email',
-    UnsupportedChain: 'Switch Network',
-    OnRampProviders: 'Choose Provider',
-    OnRampActivity: 'Activity',
     WhatIsABuy: 'What is Buy?',
-    BuyInProgress: 'Buy',
-    OnRampTokenSelect: 'Select Token',
-    OnRampFiatSelect: 'Select Currency',
     RegisterAccountName: 'Choose name',
     RegisterAccountNameSuccess: '',
     WalletReceive: 'Receive',
@@ -66,6 +70,8 @@ function headings() {
     WalletSend: 'Send',
     WalletSendPreview: 'Review send',
     WalletSendSelectToken: 'Select Token',
+    WhatIsANetwork: 'What is a network?',
+    WhatIsAWallet: 'What is a wallet?',
     ConnectWallets: 'Connect wallet',
     ConnectSocials: 'All socials',
     ConnectingSocial: AccountController.state.socialProvider
@@ -153,8 +159,17 @@ export class W3mHeader extends LitElement {
     const isApproveTransaction = view === 'ApproveTransaction'
     const isUpgradeToSmartAccounts = view === 'UpgradeToSmartAccount'
     const isConnectingSIWEView = view === 'ConnectingSiwe'
-
+    const isWalletAccountView = view === 'Account' && OptionsController.state.enableWalletFeatures
     const shouldHideBack = isApproveTransaction || isUpgradeToSmartAccounts || isConnectingSIWEView
+
+    if (isWalletAccountView) {
+      return html`<w3m-network-button
+        @click=${() => RouterController.push('Networks')}
+        label=${' '}
+      >
+        <wui-icon name="chevronBottom" size="sm"></wui-icon>
+      </w3m-network-button>`
+    }
 
     if (this.showBack && !shouldHideBack) {
       return html`<wui-icon-link

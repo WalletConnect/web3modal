@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type {
   ConnectionControllerClient,
   EventsControllerState,
@@ -122,6 +123,10 @@ export class Web3ModalScaffold {
     return AccountController.subscribeKey('connectedWalletInfo', callback)
   }
 
+  public subscribeShouldUpdateToAddress(callback: (newState?: string) => void) {
+    AccountController.subscribeKey('shouldUpdateToAddress', callback)
+  }
+
   public getState() {
     return PublicStateController.state
   }
@@ -180,7 +185,28 @@ export class Web3ModalScaffold {
   protected getIsConnectedState = () => AccountController.state.isConnected
 
   protected setCaipAddress: (typeof AccountController)['setCaipAddress'] = caipAddress => {
+    console.log('@scaffold setCaipAddress', caipAddress)
     AccountController.setCaipAddress(caipAddress)
+  }
+
+  protected setAddresses: (typeof AccountController)['setAddresses'] = (addresses = []) => {
+    console.log('@scaffold setAddresses', addresses)
+    AccountController.setAddresses(addresses)
+  }
+
+  protected setAllAccounts: (typeof AccountController)['setAllAccounts'] = (addresses = []) => {
+    console.log('@scaffold setAllAccounts', addresses)
+    AccountController.setAllAccounts(addresses)
+    console.log('@scaffold setHasMultipleAddresses', addresses?.length > 1)
+    OptionsController.setHasMultipleAddresses(addresses?.length > 1)
+  }
+
+  protected addAddressLabel: (typeof AccountController)['addAddressLabel'] = (address, label) => {
+    AccountController.addAddressLabel(address, label)
+  }
+
+  protected removeAddressLabel: (typeof AccountController)['removeAddressLabel'] = address => {
+    AccountController.removeAddressLabel(address)
   }
 
   protected setBalance: (typeof AccountController)['setBalance'] = (balance, balanceSymbol) => {

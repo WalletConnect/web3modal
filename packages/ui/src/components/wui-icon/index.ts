@@ -65,6 +65,7 @@ import { swapHorizontalMediumSvg } from '../../assets/svg/swapHorizontalMedium.j
 import { swapHorizontalRoundedBoldSvg } from '../../assets/svg/swapHorizontalRoundedBold.js'
 import { swapVerticalSvg } from '../../assets/svg/swapVertical.js'
 import { telegramSvg } from '../../assets/svg/telegram.js'
+import { threeDotsSvg } from '../../assets/svg/three-dots.js'
 import { twitchSvg } from '../../assets/svg/twitch.js'
 import { twitterIconSvg } from '../../assets/svg/twitterIcon.js'
 import { verifySvg } from '../../assets/svg/verify.js'
@@ -73,6 +74,7 @@ import { walletPlaceholderSvg } from '../../assets/svg/wallet-placeholder.js'
 import { walletSvg } from '../../assets/svg/wallet.js'
 import { walletConnectSvg } from '../../assets/svg/walletconnect.js'
 import { warningCircleSvg } from '../../assets/svg/warning-circle.js'
+import { lightbulbSvg } from '../../assets/svg/lightbulb.js'
 import { idSvg } from '../../assets/svg/id.js'
 import { xSvg } from '../../assets/svg/x.js'
 
@@ -117,6 +119,7 @@ const svgOptions: Record<IconType, TemplateResult<2>> = {
   image: imageSvg,
   id: idSvg,
   infoCircle: infoCircleSvg,
+  lightbulb: lightbulbSvg,
   mail: mailSvg,
   mobile: mobileSvg,
   more: moreSvg,
@@ -136,6 +139,7 @@ const svgOptions: Record<IconType, TemplateResult<2>> = {
   swapHorizontalRoundedBold: swapHorizontalRoundedBoldSvg,
   swapVertical: swapVerticalSvg,
   telegram: telegramSvg,
+  threeDots: threeDotsSvg,
   twitch: twitchSvg,
   twitter: xSvg,
   twitterIcon: twitterIconSvg,

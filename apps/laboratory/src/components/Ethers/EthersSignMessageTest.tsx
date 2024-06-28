@@ -25,7 +25,8 @@ export function EthersSignMessageTest() {
         description: signature,
         type: 'success'
       })
-    } catch {
+    } catch (error) {
+      console.error('Failed to sign message', error)
       toast({
         title: ConstantsUtil.SigningFailedToastTitle,
         description: 'Failed to sign message',

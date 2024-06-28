@@ -55,10 +55,10 @@ export class W3mRouter extends LitElement {
   // -- Private ------------------------------------------- //
   private viewTemplate() {
     switch (this.view) {
-      case 'Account':
-        return html`<w3m-account-view></w3m-account-view>`
       case 'AccountSettings':
         return html`<w3m-account-settings-view></w3m-account-settings-view>`
+      case 'Account':
+        return html`<w3m-account-view></w3m-account-view>`
       case 'AllWallets':
         return html`<w3m-all-wallets-view></w3m-all-wallets-view>`
       case 'ApproveTransaction':
@@ -75,6 +75,22 @@ export class W3mRouter extends LitElement {
         return html`<w3m-connecting-external-view></w3m-connecting-external-view>`
       case 'ConnectingSiwe':
         return html`<w3m-connecting-siwe-view></w3m-connecting-siwe-view>`
+      case 'Networks':
+        return html`<w3m-networks-view></w3m-networks-view>`
+      case 'SwitchNetwork':
+        return html`<w3m-network-switch-view></w3m-network-switch-view>`
+      case 'Profile':
+        return html`<w3m-profile-view></w3m-profile-view>`
+      case 'SelectAddresses':
+        return html`<w3m-select-addresses-view></w3m-select-addresses-view>`
+      case 'SwitchAddress':
+        return html`<w3m-switch-address-view></w3m-switch-address-view>`
+      case 'WhatIsAWallet':
+        return html`<w3m-what-is-a-wallet-view></w3m-what-is-a-wallet-view>`
+      case 'WhatIsANetwork':
+        return html`<w3m-what-is-a-network-view></w3m-what-is-a-network-view>`
+      case 'GetWallet':
+        return html`<w3m-get-wallet-view></w3m-get-wallet-view>`
       case 'ConnectWallets':
         return html`<w3m-connect-wallets-view></w3m-connect-wallets-view>`
       case 'ConnectSocials':
@@ -87,16 +103,6 @@ export class W3mRouter extends LitElement {
         return html`<w3m-email-verify-otp-view></w3m-email-verify-otp-view>`
       case 'EmailVerifyDevice':
         return html`<w3m-email-verify-device-view></w3m-email-verify-device-view>`
-      case 'Networks':
-        return html`<w3m-networks-view></w3m-networks-view>`
-      case 'RegisterAccountName':
-        return html`<w3m-register-account-name-view></w3m-register-account-name-view>`
-      case 'RegisterAccountNameSuccess':
-        return html`<w3m-register-account-name-success-view></w3m-register-account-name-success-view>`
-      case 'SwitchNetwork':
-        return html`<w3m-network-switch-view></w3m-network-switch-view>`
-      case 'GetWallet':
-        return html`<w3m-get-wallet-view></w3m-get-wallet-view>`
       case 'Transactions':
         return html`<w3m-transactions-view></w3m-transactions-view>`
       case 'OnRampProviders':
@@ -137,11 +143,6 @@ export class W3mRouter extends LitElement {
         return html`<w3m-wallet-send-preview-view></w3m-wallet-send-preview-view>`
       case 'WhatIsABuy':
         return html`<w3m-what-is-a-buy-view></w3m-what-is-a-buy-view>`
-      case 'WhatIsANetwork':
-        return html`<w3m-what-is-a-network-view></w3m-what-is-a-network-view>`
-      case 'WhatIsAWallet':
-        return html`<w3m-what-is-a-wallet-view></w3m-what-is-a-wallet-view>`
-
       default:
         return html`<w3m-connect-view></w3m-connect-view>`
     }

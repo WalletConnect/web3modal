@@ -94,6 +94,7 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
       alignItems="center"
       gap="m"
     >
+      ${this.network && html`<wui-network-icon .network=${this.network}></wui-network-icon>`}
       ${this.activateAccountTemplate()}
       <wui-profile-button
         @click=${this.onProfileButtonClick.bind(this)}
@@ -187,7 +188,7 @@ export class W3mAccountWalletFeaturesWidget extends LitElement {
   }
 
   private onProfileButtonClick() {
-    RouterController.push('AccountSettings')
+    RouterController.push('Profile')
   }
 
   private onBuyClick() {

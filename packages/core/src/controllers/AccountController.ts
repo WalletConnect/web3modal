@@ -1,7 +1,12 @@
 import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
-import type { CaipAddress, ConnectedWalletInfo, SocialProvider } from '../utils/TypeUtil.js'
+import type {
+  AccountType,
+  CaipAddress,
+  ConnectedWalletInfo,
+  SocialProvider
+} from '../utils/TypeUtil.js'
 import type { Balance } from '@web3modal/common'
 import { BlockchainApiController } from './BlockchainApiController.js'
 import { SnackController } from './SnackController.js'
@@ -16,6 +21,9 @@ export interface AccountControllerState {
   currentTab: number
   caipAddress?: CaipAddress
   address?: string
+  addresses?: string[]
+  addressLabels: Map<string, string>
+  allAccounts: AccountType[]
   balance?: string
   balanceSymbol?: string
   profileName?: string | null
@@ -24,6 +32,7 @@ export interface AccountControllerState {
   smartAccountDeployed?: boolean
   socialProvider?: SocialProvider
   tokenBalance?: Balance[]
+  shouldUpdateToAddress?: string
   connectedWalletInfo?: ConnectedWalletInfo
   preferredAccountType?: W3mFrameTypes.AccountType
   socialWindow?: Window
@@ -36,7 +45,9 @@ const state = proxy<AccountControllerState>({
   isConnected: false,
   currentTab: 0,
   tokenBalance: [],
-  smartAccountDeployed: false
+  smartAccountDeployed: false,
+  allAccounts: [],
+  addressLabels: new Map()
 })
 
 // -- Controller ---------------------------------------- //
@@ -58,6 +69,10 @@ export const AccountController = {
   setCaipAddress(caipAddress: AccountControllerState['caipAddress']) {
     state.caipAddress = caipAddress
     state.address = caipAddress ? CoreHelperUtil.getPlainAddress(caipAddress) : undefined
+  },
+
+  setAddresses(addresses: AccountControllerState['addresses']) {
+    state.addresses = addresses
   },
 
   setBalance(
@@ -92,6 +107,22 @@ export const AccountController = {
     if (tokenBalance) {
       state.tokenBalance = ref(tokenBalance)
     }
+  },
+  setShouldUpdateToAddress(address: string) {
+    state.shouldUpdateToAddress = address
+  },
+
+  setAllAccounts(accounts: AccountType[]) {
+    console.log('@AccountController setAllAccounts', accounts)
+    state.allAccounts = accounts
+  },
+
+  addAddressLabel(address: string, label: string) {
+    state.addressLabels.set(address, label)
+  },
+
+  removeAddressLabel(address: string) {
+    state.addressLabels.delete(address)
   },
 
   setConnectedWalletInfo(connectedWalletInfo: AccountControllerState['connectedWalletInfo']) {
@@ -134,6 +165,7 @@ export const AccountController = {
   },
 
   resetAccount() {
+    console.log('@AccountController resetAccount')
     state.isConnected = false
     state.smartAccountDeployed = false
     state.currentTab = 0
@@ -145,6 +177,7 @@ export const AccountController = {
     state.profileImage = undefined
     state.addressExplorerUrl = undefined
     state.tokenBalance = []
+    state.shouldUpdateToAddress = undefined
     state.connectedWalletInfo = undefined
     state.preferredAccountType = undefined
     state.socialProvider = undefined

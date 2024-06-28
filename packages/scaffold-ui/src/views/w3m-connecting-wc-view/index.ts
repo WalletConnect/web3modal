@@ -57,6 +57,7 @@ export class W3mConnectingWcView extends LitElement {
   // -- Private ------------------------------------------- //
   private async initializeConnection(retry = false) {
     try {
+      console.log('ConnectionController', ConnectionController)
       const { wcPairingExpiry } = ConnectionController.state
       if (retry || CoreHelperUtil.isPairingExpired(wcPairingExpiry)) {
         ConnectionController.connectWalletConnect()
@@ -76,7 +77,14 @@ export class W3mConnectingWcView extends LitElement {
 
         await ConnectionController.state.wcPromise
         this.finalizeConnection()
-        if (OptionsController.state.isSiweEnabled) {
+        console.log('finalizeConnection', StorageUtil.getConnectedConnector())
+        if (
+          StorageUtil.getConnectedConnector() === 'AUTH' &&
+          OptionsController.state.hasMultipleAddresses
+        ) {
+          console.log('naving to SelectAddresses')
+          RouterController.push('SelectAddresses')
+        } else if (OptionsController.state.isSiweEnabled) {
           const { SIWEController } = await import('@web3modal/siwe')
           if (SIWEController.state.status === 'success') {
             ModalController.close()

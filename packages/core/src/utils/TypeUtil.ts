@@ -770,6 +770,10 @@ export type GetQuoteArgs = {
   amount: string
   network: string
 }
+export type AccountType = {
+  address: string
+  type: 'eoa' | 'smartAccount'
+}
 
 export interface SendTransactionArgs {
   to: `0x${string}`

@@ -22,6 +22,8 @@ export class W3mNetworkButton extends LitElement {
   // -- State & Properties -------------------------------- //
   @property({ type: Boolean }) public disabled?: WuiNetworkButton['disabled'] = false
 
+  @property({ type: String }) public label?: string
+
   @state() private network = NetworkController.state.caipNetwork
 
   @state() private connected = AccountController.state.isConnected
@@ -56,18 +58,35 @@ export class W3mNetworkButton extends LitElement {
         imageSrc=${ifDefined(AssetUtil.getNetworkImage(this.network))}
         @click=${this.onClick.bind(this)}
       >
-        ${this.isUnsupportedChain
-          ? 'Switch Network'
-          : this.network?.name ?? (this.connected ? 'Unknown Network' : 'Select Network')}
+        ${this.getLabel()}
+        <slot></slot>
       </wui-network-button>
     `
   }
 
   // -- Private ------------------------------------------- //
+  private getLabel() {
+    if (this.label) {
+      return this.label
+    }
+
+    if (this.isUnsupportedChain) {
+      return 'Switch Network'
+    }
+    if (this.network) {
+      return this.network.name
+    }
+    if (this.connected) {
+      return 'Unknown Network'
+    }
+
+    return 'Select Network'
+  }
+
   private onClick() {
     if (!this.loading) {
       EventsController.sendEvent({ type: 'track', event: 'CLICK_NETWORKS' })
-      ModalController.open({ view: 'Networks' })
+      ModalController.open({ view: 'SelectAddresses' })
     }
   }
 }
