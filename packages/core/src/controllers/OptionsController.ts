@@ -21,6 +21,7 @@ export interface OptionsControllerState {
   metadata?: Metadata
   enableOnramp?: boolean
   disableAppend?: boolean
+  enableAuth?: boolean
   enableEIP6963?: boolean
 }
 
@@ -102,6 +103,11 @@ export const OptionsController = {
 
   setDisableAppend(disableAppend: OptionsControllerState['disableAppend']) {
     state.disableAppend = disableAppend
+  },
+
+  setEnableAuth(enableAuth: OptionsControllerState['enableAuth']) {
+    state.enableAuth = enableAuth
+    state.isSiweEnabled = enableAuth
   },
 
   setEIP6963Enabled(enableEIP6963: OptionsControllerState['enableEIP6963']) {

@@ -140,20 +140,31 @@ export class Web3Modal extends Web3ModalScaffold {
 
         const chainId = NetworkUtil.caipNetworkIdToNumber(this.getCaipNetwork()?.id)
         // Make sure client uses ethereum provider version that supports `authenticate`
-        if (siweConfig?.options?.enabled && typeof provider?.authenticate === 'function') {
+        if (this.getIsSiweEnabled() && typeof provider?.authenticate === 'function') {
           const { SIWEController, getDidChainId, getDidAddress } = await import('@web3modal/siwe')
-          const siweParams = await siweConfig.getMessageParams()
-          // @ts-expect-error - setting requested chains beforehand avoids wagmi auto disconnecting the session when `connect` is called because it things chains are stale
-          await connector.setRequestedChainsIds(siweParams.chains)
+          if (!SIWEController.state._client) {
+            return
+          }
+          const siweParams = await SIWEController.getMessageParams()
+          const chainIds = this.wagmiConfig.chains.map(c => c.id)
+          // @ts-expect-error - setting requested chains beforehand avoids wagmi auto disconnecting the session when `connect` is called because it thinks chains are stale
+          await connector.setRequestedChainsIds(chainIds)
 
           const result = await provider.authenticate({
-            nonce: await siweConfig.getNonce(),
-            methods: [...OPTIONAL_METHODS],
-            ...siweParams
+            nonce: await SIWEController.getNonce(),
+            methods: OPTIONAL_METHODS,
+            ...siweParams,
+            chains: chainIds
           })
 
           // Auths is an array of signed CACAO objects https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-74.md
           const signedCacao = result?.auths?.[0]
+
+          const clientId = await provider?.signer?.client?.core?.crypto?.getClientId()
+          if (clientId) {
+            this.setClientId(clientId)
+          }
+
           if (signedCacao) {
             const { p, s } = signedCacao
             const cacaoChainId = getDidChainId(p.iss) || ''
@@ -174,7 +185,8 @@ export class Web3Modal extends Web3ModalScaffold {
               await SIWEController.verifyMessage({
                 message,
                 signature: s.s,
-                cacao: signedCacao
+                cacao: signedCacao,
+                clientId
               })
             } catch (error) {
               // eslint-disable-next-line no-console
@@ -185,13 +197,13 @@ export class Web3Modal extends Web3ModalScaffold {
               await SIWEController.signOut().catch(console.error)
               throw error
             }
-            /*
-             * Unassign the connector from the wagmiConfig and allow connect() to reassign it in the next step
-             * this avoids case where wagmi throws because the connector is already connected
-             * what we need connect() to do is to only setup internal event listeners
-             */
-            this.wagmiConfig.state.current = ''
           }
+          /*
+           * Unassign the connector from the wagmiConfig and allow connect() to reassign it in the next step
+           * this avoids case where wagmi throws because the connector is already connected
+           * what we need connect() to do is to only setup internal event listeners
+           */
+          this.wagmiConfig.state.current = ''
         }
         await connect(this.wagmiConfig, { connector, chainId })
       },
@@ -240,9 +252,11 @@ export class Web3Modal extends Web3ModalScaffold {
 
       disconnect: async () => {
         await disconnect(this.wagmiConfig)
-        if (siweConfig?.options?.signOutOnDisconnect) {
+        if (this.getIsSiweEnabled()) {
           const { SIWEController } = await import('@web3modal/siwe')
-          await SIWEController.signOut()
+          if (SIWEController.state._client?.options?.signOutOnDisconnect) {
+            await SIWEController.signOut()
+          }
         }
       },
 

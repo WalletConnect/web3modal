@@ -24,7 +24,6 @@ export interface SIWECreateMessageArgs {
   iat?: string
 }
 export type SIWEMessageArgs = {
-  chains: number[]
   methods?: string[]
 } & Omit<SIWECreateMessageArgs, 'address' | 'chainId' | 'nonce' | 'version'>
 // Signed Cacao (CAIP-74)
@@ -57,6 +56,7 @@ export interface SIWEVerifyMessageArgs {
   message: string
   signature: string
   cacao?: Cacao
+  clientId?: string
 }
 
 export interface SIWEClientMethods {

@@ -172,12 +172,16 @@ export class Web3Modal extends Web3ModalScaffold {
           onUri(uri)
         })
 
-        if (siweConfig?.options?.enabled) {
+        if (this.getIsSiweEnabled()) {
           const { SIWEController, getDidChainId, getDidAddress } = await import('@web3modal/siwe')
+          if (!SIWEController.state._client) {
+            return
+          }
           const result = await WalletConnectProvider.authenticate({
-            nonce: await siweConfig.getNonce(),
+            nonce: await SIWEController.getNonce(),
             methods: OPTIONAL_METHODS,
-            ...(await siweConfig.getMessageParams())
+            ...(await SIWEController.getMessageParams()),
+            chains: this.chains.map(chain => chain.chainId)
           })
           // Auths is an array of signed CACAO objects https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-74.md
           const signedCacao = result?.auths?.[0]
@@ -286,9 +290,11 @@ export class Web3Modal extends Web3ModalScaffold {
         const providerType = EthersStoreUtil.state.providerType
         localStorage.removeItem(EthersConstantsUtil.WALLET_ID)
         EthersStoreUtil.reset()
-        if (siweConfig?.options?.signOutOnDisconnect) {
+        if (this.getIsSiweEnabled()) {
           const { SIWEController } = await import('@web3modal/siwe')
-          await SIWEController.signOut()
+          if (SIWEController.state._client?.options?.signOutOnDisconnect) {
+            await SIWEController.signOut()
+          }
         }
         if (providerType === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID) {
           const WalletConnectProvider = provider

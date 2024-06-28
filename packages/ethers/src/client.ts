@@ -197,15 +197,25 @@ export class Web3Modal extends Web3ModalScaffold {
           onUri(uri)
         })
 
-        if (siweConfig?.options?.enabled) {
+        if (this.getIsSiweEnabled()) {
           const { SIWEController, getDidChainId, getDidAddress } = await import('@web3modal/siwe')
+          if (!SIWEController.state._client) {
+            return
+          }
           const result = await WalletConnectProvider.authenticate({
-            nonce: await siweConfig.getNonce(),
+            nonce: await SIWEController.getNonce(),
             methods: OPTIONAL_METHODS,
-            ...(await siweConfig.getMessageParams())
+            ...(await SIWEController.getMessageParams()),
+            chains: this.chains.map(chain => chain.chainId)
           })
           // Auths is an array of signed CACAO objects https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-74.md
           const signedCacao = result?.auths?.[0]
+
+          const clientId = await WalletConnectProvider?.signer?.client?.core?.crypto?.getClientId()
+          if (clientId) {
+            this.setClientId(clientId)
+          }
+
           if (signedCacao) {
             const { p, s } = signedCacao
             const chainId = getDidChainId(p.iss)
@@ -226,7 +236,8 @@ export class Web3Modal extends Web3ModalScaffold {
               await SIWEController.verifyMessage({
                 message,
                 signature: s.s,
-                cacao: signedCacao
+                cacao: signedCacao,
+                clientId
               })
             } catch (error) {
               // eslint-disable-next-line no-console
@@ -313,9 +324,12 @@ export class Web3Modal extends Web3ModalScaffold {
         const providerType = EthersStoreUtil.state.providerType
         localStorage.removeItem(EthersConstantsUtil.WALLET_ID)
         EthersStoreUtil.reset()
-        if (siweConfig?.options?.signOutOnDisconnect) {
+
+        if (this.getIsSiweEnabled()) {
           const { SIWEController } = await import('@web3modal/siwe')
-          await SIWEController.signOut()
+          if (SIWEController.state?._client?.options?.signOutOnDisconnect) {
+            await SIWEController.signOut()
+          }
         }
         if (
           providerType === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID ||

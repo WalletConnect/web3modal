@@ -14,7 +14,7 @@ import {
 type Web3ModalInfoProps = {
   address?: string
   chainId?: number
-  clientId: string | null
+  clientId?: string | null
 }
 
 export function Web3ModalInfo({ address, chainId, clientId }: Web3ModalInfoProps) {

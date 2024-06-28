@@ -52,6 +52,7 @@ export interface ConnectionControllerState {
   wcError?: boolean
   recentWallet?: WcWallet
   buffering: boolean
+  wcClientId?: string
 }
 
 type StateKey = keyof ConnectionControllerState
@@ -180,6 +181,10 @@ export const ConnectionController = {
 
   setBuffering(buffering: ConnectionControllerState['buffering']) {
     state.buffering = buffering
+  },
+
+  setClientId(clientId: ConnectionControllerState['wcClientId']) {
+    state.wcClientId = clientId
   },
 
   async disconnect() {

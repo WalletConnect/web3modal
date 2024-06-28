@@ -120,7 +120,6 @@ export class W3mHeader extends LitElement {
 
   // -- Private ------------------------------------------- //
 
-  // Temporarily added to test connecting with SIWE, replace with 'WhatIsAWallet' again when approved
   private onWalletHelp() {
     EventsController.sendEvent({ type: 'track', event: 'CLICK_WALLET_HELP' })
     RouterController.push('WhatIsAWallet')
@@ -129,7 +128,7 @@ export class W3mHeader extends LitElement {
   private async onClose() {
     if (OptionsController.state.isSiweEnabled) {
       const { SIWEController } = await import('@web3modal/siwe')
-      if (SIWEController.state.status !== 'success') {
+      if (SIWEController.state.status !== 'success' && this.isConnected) {
         await ConnectionController.disconnect()
       }
     }

@@ -19,6 +19,7 @@
     "@walletconnect/utils": "2.12.0",
     "@web3modal/core": "5.0.3",
     "@web3modal/scaffold-utils": "5.0.3",
+    "@web3modal/common": "5.0.3",
     "valtio": "1.11.2",
     "lit": "3.1.0"
   },

@@ -82,9 +82,6 @@ export class Web3ModalSIWEClient {
 
   async getSession() {
     const session = await this.methods.getSession()
-    if (!session) {
-      throw new Error('siweControllerClient:getSession - session is undefined')
-    }
 
     return session
   }
@@ -96,10 +93,12 @@ export class Web3ModalSIWEClient {
       throw new Error('An address is required to create a SIWE message.')
     }
     const chainId = NetworkUtil.caipNetworkIdToNumber(NetworkController.state.caipNetwork?.id)
+
     if (!chainId) {
       throw new Error('A chainId is required to create a SIWE message.')
     }
     const messageParams = await this.getMessageParams()
+
     const message = this.methods.createMessage({
       address: `eip155:${chainId}:${address}`,
       chainId,
@@ -108,6 +107,7 @@ export class Web3ModalSIWEClient {
       iat: messageParams.iat || new Date().toISOString(),
       ...messageParams
     })
+
     const type = StorageUtil.getConnectedConnector()
     if (type === 'AUTH') {
       RouterController.pushTransactionStack({
@@ -119,8 +119,9 @@ export class Web3ModalSIWEClient {
         }
       })
     }
+    const clientId = ConnectionController.state.wcClientId
     const signature = await ConnectionController.signMessage(message)
-    const isValid = await this.methods.verifyMessage({ message, signature })
+    const isValid = await this.methods.verifyMessage({ message, signature, clientId })
     if (!isValid) {
       throw new Error('Error verifying SIWE signature')
     }

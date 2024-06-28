@@ -26,7 +26,8 @@ import {
   ThemeController,
   SnackController,
   RouterController,
-  EnsController
+  EnsController,
+  ApiController
 } from '@web3modal/core'
 import { setColorTheme, setThemeVariables } from '@web3modal/ui'
 import type { SIWEControllerClient } from '@web3modal/siwe'
@@ -50,6 +51,7 @@ export interface LibraryOptions {
   privacyPolicyUrl?: OptionsControllerState['privacyPolicyUrl']
   customWallets?: OptionsControllerState['customWallets']
   enableAnalytics?: OptionsControllerState['enableAnalytics']
+  enableAuth?: OptionsControllerState['enableAuth']
   metadata?: OptionsControllerState['metadata']
   enableOnramp?: OptionsControllerState['enableOnramp']
   disableAppend?: OptionsControllerState['disableAppend']
@@ -205,6 +207,8 @@ export class Web3ModalScaffold {
 
   protected getCaipNetwork = () => NetworkController.state.caipNetwork
 
+  protected getIsSiweEnabled = () => OptionsController.state.isSiweEnabled
+
   protected setRequestedCaipNetworks: (typeof NetworkController)['setRequestedCaipNetworks'] =
     requestedCaipNetworks => {
       NetworkController.setRequestedCaipNetworks(requestedCaipNetworks)
@@ -275,6 +279,10 @@ export class Web3ModalScaffold {
     OptionsController.setEIP6963Enabled(enabled)
   }
 
+  protected setClientId = (clientId: string) => {
+    ConnectionController.setClientId(clientId)
+  }
+
   // -- Private ------------------------------------------------------------------
   private async initControllers(options: ScaffoldOptions) {
     NetworkController.setClient(options.networkControllerClient)
@@ -290,6 +298,7 @@ export class Web3ModalScaffold {
     OptionsController.setPrivacyPolicyUrl(options.privacyPolicyUrl)
     OptionsController.setCustomWallets(options.customWallets)
     OptionsController.setEnableAnalytics(options.enableAnalytics)
+    OptionsController.setEnableAuth(options.enableAuth)
     OptionsController.setSdkVersion(options._sdkVersion)
     // Enabled by default
     OptionsController.setOnrampEnabled(options.enableOnramp !== false)
@@ -313,11 +322,28 @@ export class Web3ModalScaffold {
     if (options.allowUnsupportedChain) {
       NetworkController.setAllowUnsupportedChain(options.allowUnsupportedChain)
     }
+    const { isAnalyticsEnabled, isAppKitAuthEnabled } = await ApiController.fetchProjectConfig()
 
-    if (options.siweControllerClient) {
-      const { SIWEController } = await import('@web3modal/siwe')
+    // Only set the analytics state if it's not already set through the SDK config
+    if (options.enableAnalytics === undefined) {
+      OptionsController.setEnableAnalytics(isAnalyticsEnabled)
+    }
 
-      SIWEController.setSIWEClient(options.siweControllerClient)
+    // Only set the AppKit Auth state if it's not already set through the SDK config
+    if (options.enableAuth === undefined) {
+      OptionsController.setEnableAuth(isAppKitAuthEnabled)
+    }
+
+    if (options.siweControllerClient || OptionsController.state.enableAuth) {
+      const { SIWEController, appKitAuthConfig } = await import('@web3modal/siwe')
+
+      const siweClient = options.siweControllerClient ?? appKitAuthConfig
+      SIWEController.setSIWEClient(siweClient)
+      const session = await siweClient.getSession()
+      OptionsController.setIsSiweEnabled(true)
+      if (session?.address && session?.chainId) {
+        SIWEController.setStatus('success')
+      }
     }
 
     ConnectionController.setClient(options.connectionControllerClient)

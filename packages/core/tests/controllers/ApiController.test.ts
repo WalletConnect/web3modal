@@ -531,7 +531,7 @@ describe('ApiController', () => {
       .spyOn(ApiController, 'fetchConnectorImages')
       .mockResolvedValue()
 
-    const fetchAnalyticsSpy = vi.spyOn(ApiController, 'fetchAnalyticsConfig')
+    const fetchAnalyticsSpy = vi.spyOn(ApiController, 'fetchProjectConfig')
 
     ApiController.prefetch()
 
@@ -553,7 +553,10 @@ describe('ApiController', () => {
       .spyOn(ApiController, 'fetchConnectorImages')
       .mockResolvedValue()
 
-    const fetchAnalyticsSpy = vi.spyOn(ApiController, 'fetchAnalyticsConfig').mockResolvedValue()
+    const fetchAnalyticsSpy = vi.spyOn(ApiController, 'fetchProjectConfig').mockResolvedValue({
+      isAnalyticsEnabled: true,
+      isAppKitAuthEnabled: false
+    })
 
     ApiController.prefetch()
 
@@ -569,10 +572,10 @@ describe('ApiController', () => {
     const data = { isAnalyticsEnabled: true }
     const fetchSpy = vi.spyOn(api, 'get').mockResolvedValue({ data })
 
-    await ApiController.fetchAnalyticsConfig()
+    await ApiController.fetchProjectConfig()
 
     expect(fetchSpy).toHaveBeenCalledWith({
-      path: '/getAnalyticsConfig',
+      path: '/getProjectConfig',
       headers: ApiController._getApiHeaders()
     })
 

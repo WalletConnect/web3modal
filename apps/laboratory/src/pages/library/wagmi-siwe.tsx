@@ -7,8 +7,8 @@ import { ThemeStore } from '../../utils/StoreUtil'
 import { getWagmiConfig } from '../../utils/WagmiConstants'
 import { SiweData } from '../../components/Siwe/SiweData'
 import { ConstantsUtil } from '../../utils/ConstantsUtil'
-import { siweConfig } from '../../utils/SiweUtils'
 import { WagmiModalInfo } from '../../components/Wagmi/WagmiModalInfo'
+import { siweConfig } from '../../utils/SiweUtils'
 
 const queryClient = new QueryClient()
 
