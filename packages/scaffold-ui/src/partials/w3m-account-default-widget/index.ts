@@ -113,9 +113,9 @@ export class W3mAccountDefaultWidget extends LitElement {
               @click=${this.onCopyAddress}
             ></wui-icon-link>
           </wui-flex>
-          <wui-text variant="paragraph-500" color="fg-200"
-            >${CoreHelperUtil.formatBalance(this.balance, this.balanceSymbol)}</wui-text
-          >
+          <wui-text variant="paragraph-500" color="fg-200">
+            ${CoreHelperUtil.formatBalance(this.balance, this.balanceSymbol)}
+          </wui-text>
         </wui-flex>
         ${this.explorerBtnTemplate()}
       </wui-flex>
@@ -264,7 +264,7 @@ export class W3mAccountDefaultWidget extends LitElement {
       await ConnectionController.disconnect()
       EventsController.sendEvent({ type: 'track', event: 'DISCONNECT_SUCCESS' })
       ModalController.close()
-    } catch {
+    } catch () {
       EventsController.sendEvent({ type: 'track', event: 'DISCONNECT_ERROR' })
       SnackController.showError('Failed to disconnect')
     } finally {
