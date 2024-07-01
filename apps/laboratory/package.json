@@ -47,7 +47,7 @@
     "@web3modal/siwe": "5.0.4",
     "@web3modal/solana": "5.0.4",
     "@web3modal/wagmi": "5.0.4",
-    "ethers": "6.13.0",
+    "ethers": "6.13.1",
     "framer-motion": "10.17.9",
     "next": "14.2.3",
     "next-auth": "4.24.5",
