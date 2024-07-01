@@ -313,10 +313,7 @@ export class Web3Modal extends Web3ModalScaffold {
       },
 
       disconnect: async () => {
-        const provider = EthersStoreUtil.state.provider
-        const providerType = EthersStoreUtil.state.providerType
-        localStorage.removeItem(EthersConstantsUtil.WALLET_ID)
-        EthersStoreUtil.reset()
+        const { provider, providerType } = EthersStoreUtil.state
         if (siweConfig?.options?.signOutOnDisconnect) {
           const { SIWEController } = await import('@web3modal/siwe')
           await SIWEController.signOut()
@@ -330,6 +327,15 @@ export class Web3Modal extends Web3ModalScaffold {
           // eslint-disable-next-line no-negated-condition
         } else if (providerType === ConstantsUtil.AUTH_CONNECTOR_ID) {
           await this.authProvider?.disconnect()
+        } else if (providerType === ConstantsUtil.EIP6963_CONNECTOR_ID && provider) {
+          await this.disconnectProvider(provider)
+          provider.emit('disconnect')
+        } else if (providerType === ConstantsUtil.INJECTED_CONNECTOR_ID) {
+          const InjectedProvider = ethersConfig.injected
+          if (InjectedProvider) {
+            await this.disconnectProvider(InjectedProvider)
+            InjectedProvider.emit('disconnect')
+          }
         } else {
           provider?.emit('disconnect')
         }
@@ -600,7 +606,8 @@ export class Web3Modal extends Web3ModalScaffold {
 
     if (providerType === ConstantsUtil.AUTH_CONNECTOR_ID) {
       await this.authProvider?.disconnect()
-    } else if (providerType === 'injected' || providerType === 'eip6963') {
+    } else if (provider && (providerType === 'injected' || providerType === 'eip6963')) {
+      await this.disconnectProvider(provider)
       provider?.emit('disconnect')
     } else if (providerType === 'walletConnect' || providerType === 'coinbaseWalletSDK') {
       const ethereumProvider = provider as unknown as EthereumProvider
@@ -647,6 +654,26 @@ export class Web3Modal extends Web3ModalScaffold {
     this.walletConnectProvider = await EthereumProvider.init(walletConnectProviderOptions)
 
     await this.checkActiveWalletConnectProvider()
+  }
+
+  private async disconnectProvider(provider: Provider | CombinedProvider) {
+    try {
+      const permissions: { parentCapability: string }[] = await provider.request({
+        method: 'wallet_getPermissions'
+      })
+      const ethAccountsPermission = permissions.find(
+        permission => permission.parentCapability === 'eth_accounts'
+      )
+
+      if (ethAccountsPermission) {
+        await provider.request({
+          method: 'wallet_revokePermissions',
+          params: [{ eth_accounts: {} }]
+        })
+      }
+    } catch (error) {
+      throw new Error('Error revoking permissions:')
+    }
   }
 
   private async getWalletConnectProvider() {
