@@ -3,6 +3,7 @@ if (!projectId) {
   throw new Error('NEXT_PUBLIC_PROJECT_ID is not set')
 }
 export const WALLET_URL = process.env['WALLET_URL'] || 'https://react-wallet.walletconnect.com/'
+export const PUBLIC_URL = 'https://lab.web3modal.com'
 
 export const CUSTOM_WALLET = 'wc:custom_wallet'
 
@@ -21,8 +22,8 @@ export const ConstantsUtil = {
   Metadata: {
     name: 'Web3Modal',
     description: 'Web3Modal Laboratory',
-    url: 'https://lab.web3modal.com',
-    icons: ['https://avatars.githubusercontent.com/u/37784886'],
+    url: PUBLIC_URL,
+    icons: [`${PUBLIC_URL}/metadata-icon.png`],
     verifyUrl: ''
   },
   CustomWallets: [
