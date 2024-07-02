@@ -69,7 +69,10 @@ export interface Web3ModalClientOptions<C extends Config>
   tokens?: Record<number, Token>
 }
 
-export type Web3ModalOptions<C extends Config> = Omit<Web3ModalClientOptions<C>, '_sdkVersion'>
+export type Web3ModalOptions<C extends Config> = Omit<
+  Web3ModalClientOptions<C>,
+  '_sdkVersion' | 'isUniversalProvider'
+>
 
 // @ts-expect-error: Overridden state type is correct
 interface Web3ModalState extends PublicStateControllerState {

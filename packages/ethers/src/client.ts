@@ -74,7 +74,7 @@ type CoinbaseProviderError = {
   data: string | undefined
 }
 
-export type Web3ModalOptions = Omit<Web3ModalClientOptions, '_sdkVersion'>
+export type Web3ModalOptions = Omit<Web3ModalClientOptions, '_sdkVersion' | 'isUniversalProvider'>
 
 declare global {
   interface Window {

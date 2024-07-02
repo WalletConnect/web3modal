@@ -50,6 +50,7 @@ export interface LibraryOptions {
   termsConditionsUrl?: OptionsControllerState['termsConditionsUrl']
   privacyPolicyUrl?: OptionsControllerState['privacyPolicyUrl']
   customWallets?: OptionsControllerState['customWallets']
+  isUniversalProvider?: OptionsControllerState['isUniversalProvider']
   enableAnalytics?: OptionsControllerState['enableAnalytics']
   metadata?: OptionsControllerState['metadata']
   enableOnramp?: OptionsControllerState['enableOnramp']
@@ -316,8 +317,9 @@ export class Web3ModalScaffold {
     OptionsController.setTokens(options.tokens)
     OptionsController.setTermsConditionsUrl(options.termsConditionsUrl)
     OptionsController.setPrivacyPolicyUrl(options.privacyPolicyUrl)
-    OptionsController.setCustomWallets(options.customWallets)
     OptionsController.setEnableAnalytics(options.enableAnalytics)
+    OptionsController.setCustomWallets(options.customWallets)
+    OptionsController.setIsUniversalProvider(options.isUniversalProvider)
     OptionsController.setSdkVersion(options._sdkVersion)
     // Enabled by default
     OptionsController.setOnrampEnabled(options.enableOnramp !== false)

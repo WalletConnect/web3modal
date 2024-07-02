@@ -44,7 +44,7 @@ export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultCha
   wallets: BaseWalletAdapter[]
 }
 
-export type Web3ModalOptions = Omit<Web3ModalClientOptions, '_sdkVersion'>
+export type Web3ModalOptions = Omit<Web3ModalClientOptions, '_sdkVersion' | 'isUniversalProvider'>
 
 // -- Client --------------------------------------------------------------------
 export class Web3Modal extends Web3ModalScaffold {
