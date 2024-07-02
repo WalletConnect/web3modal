@@ -9,7 +9,7 @@ import type { W3mFrameTypes } from '@web3modal/wallet'
 import { ChainController } from './ChainController.js'
 import type { Chain } from '@web3modal/common'
 import { NetworkController } from './NetworkController.js'
-import { proxy } from 'valtio'
+import { proxy, ref } from 'valtio'
 
 // -- Types --------------------------------------------- //
 export interface AccountControllerState {
@@ -141,7 +141,7 @@ export const AccountController = {
 
   setSocialWindow(socialWindow: AccountControllerState['socialWindow'], chain?: Chain) {
     if (socialWindow) {
-      ChainController.setAccountProp('socialWindow', socialWindow, chain)
+      ChainController.setAccountProp('socialWindow', ref(socialWindow), chain)
     }
   },
 
