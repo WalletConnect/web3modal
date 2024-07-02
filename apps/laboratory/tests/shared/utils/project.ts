@@ -38,18 +38,18 @@ const EMAIL_BASED_PLATFORM_REGEX =
   /(?:email\.spec\.ts|smart-account\.spec\.ts|siwe-email\.spec\.ts|siwe-sa\.spec\.ts|social\.spec\.ts).*$/u
 
 const SOLANA_UNIMPLEMENTED_TESTS_REGEX =
-  /^(?!.*(?:email\.spec\.ts|siwe\.spec\.ts|canary\.spec\.ts|smart-account\.spec\.ts|social\.spec\.ts|siwe-sa\.spec\.ts|siwe-email\.spec\.ts)).*$/u
+  /^(?!.*(?:email\.spec\.ts|siwe\.spec\.ts|canary\.spec\.ts|smart-account\.spec\.ts|social\.spec\.ts|siwe-sa\.spec\.ts|siwe-email\.spec\.ts|verify\.spec\.ts)).*$/u
 
 const customProjectProperties: CustomProjectProperties = {
   'Desktop Chrome/ethers': {
-    testIgnore: /(?:social\.spec\.ts).*$/u
+    testIgnore: /(?:social\.spec\.ts|verify\.spec\.ts).*$/u
   },
   'Desktop Brave/ethers': {
-    testIgnore: /(?:email\.spec\.ts|smart-account\.spec\.ts|social\.spec\.ts).*$/u,
+    testIgnore: /(?:email\.spec\.ts|smart-account\.spec\.ts|social\.spec\.ts|verify\.spec\.ts).*$/u,
     useOptions: braveOptions
   },
   'Desktop Firefox/ethers': {
-    testIgnore: /(?:social\.spec\.ts).*$/u
+    testIgnore: /(?:social\.spec\.ts|verify\.spec\.ts).*$/u
   },
   'Desktop Brave/wagmi': {
     testIgnore: EMAIL_BASED_PLATFORM_REGEX,
