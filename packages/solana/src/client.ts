@@ -11,11 +11,10 @@ import {
 import { ConstantsUtil, HelpersUtil, PresetsUtil } from '@web3modal/scaffold-utils'
 import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
 
-import { syncInjectedWallets } from './connectors/walletAdapters.js'
 import { SolConstantsUtil, SolHelpersUtil, SolStoreUtil } from './utils/scaffold/index.js'
 import { WalletConnectConnector } from './connectors/walletConnectConnector.js'
 
-import type { BaseWalletAdapter } from '@solana/wallet-adapter-base'
+import type { BaseWalletAdapter, StandardWalletAdapter } from '@solana/wallet-adapter-base'
 import type { PublicKey, Commitment, ConnectionConfig } from '@solana/web3.js'
 import type UniversalProvider from '@walletconnect/universal-provider'
 import type {
@@ -31,7 +30,9 @@ import type {
 } from '@web3modal/scaffold'
 import type { Chain as AvailableChain } from '@web3modal/common'
 
-import type { Chain, Provider, ProviderType, SolStoreUtilState } from './utils/scaffold/index.js'
+import type { ProviderType, Chain, Provider, SolStoreUtilState } from './utils/scaffold/index.js'
+import { signAndSendTransaction } from './connectors/walletAdapters/utils.js'
+import { watchStandard } from './utils/wallet-standard/watchStandard.js'
 
 export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultChain' | 'tokens'> {
   solanaConfig: ProviderType
@@ -44,6 +45,11 @@ export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultCha
   wallets: BaseWalletAdapter[]
 }
 
+export type ExtendedBaseWalletAdapter = BaseWalletAdapter & {
+  isAnnounced: boolean
+  signAndSendTransaction: Promise<string>
+}
+
 export type Web3ModalOptions = Omit<Web3ModalClientOptions, '_sdkVersion'>
 
 // -- Client --------------------------------------------------------------------
@@ -51,7 +57,8 @@ export class Web3Modal extends Web3ModalScaffold {
   private hasSyncedConnectedAccount = false
 
   private WalletConnectConnector: WalletConnectConnector
-  private walletAdapters: BaseWalletAdapter[]
+  private walletAdapters: ExtendedBaseWalletAdapter[]
+  private filteredWalletAdapters: ExtendedBaseWalletAdapter[] | undefined
 
   private chains: Chain[]
 
@@ -86,7 +93,7 @@ export class Web3Modal extends Web3ModalScaffold {
         if (caipNetwork) {
           try {
             // Update chain for Solflare
-            this.walletAdapters = wallets
+            this.walletAdapters = wallets as ExtendedBaseWalletAdapter[]
             const walletId = localStorage.getItem(SolConstantsUtil.WALLET_ID)
             const wallet = walletId?.split('_')[1]
             if (wallet === 'solflare' && window[wallet as keyof Window]) {
@@ -95,8 +102,7 @@ export class Web3Modal extends Web3ModalScaffold {
                 return
               }
               await adapter.connect()
-              const address = adapter.publicKey?.toString()
-              this.setInjectedProvider(adapter as unknown as Provider, wallet, address)
+              this.setInjectedProvider(adapter as unknown as Provider)
             }
 
             await this.switchNetwork(caipNetwork)
@@ -131,15 +137,15 @@ export class Web3Modal extends Web3ModalScaffold {
       },
 
       connectExternal: async ({ id }) => {
-        const adapter = this.walletAdapters.find(
+        const adapter = this.filteredWalletAdapters?.find(
           a => a.name.toLocaleLowerCase() === id.toLocaleLowerCase()
         )
+
         if (!adapter) {
-          return
+          throw Error('connectionControllerClient:connectExternal - adapter was undefined')
         }
         await adapter.connect()
-        const address = adapter.publicKey?.toString()
-        this.setInjectedProvider(adapter as unknown as Provider, id, address)
+        this.setInjectedProvider(adapter as unknown as Provider)
       },
 
       disconnect: async () => {
@@ -218,7 +224,7 @@ export class Web3Modal extends Web3ModalScaffold {
     }
     this.syncNetwork(chainImages)
 
-    this.walletAdapters = wallets
+    this.walletAdapters = wallets as ExtendedBaseWalletAdapter[]
     this.WalletConnectConnector = new WalletConnectConnector({
       relayerRegion: 'wss://relay.walletconnect.com',
       metadata,
@@ -269,34 +275,23 @@ export class Web3Modal extends Web3ModalScaffold {
 
     if (CoreHelperUtil.isClient()) {
       this.checkActiveProviders()
-      this.syncConnectors()
-      let timer = 0
-      /*
-       * Brave browser doesn't inject window.solflare immediately
-       * so there is delay to detect injected wallets
-       * issue: https://github.com/anza-xyz/wallet-adapter/issues/329
-       */
-      if (
-        window.navigator.brave !== undefined &&
-        window.navigator.brave.isBrave.name === 'isBrave'
-      ) {
-        timer = 100
-      }
-
-      const checkWallet = () => {
-        if (window.solflare) {
-          this.checkActiveProviders()
-          this.syncConnectors()
-        } else {
-          setTimeout(() => {
-            checkWallet()
-          }, timer)
-        }
-      }
-
-      setTimeout(() => {
-        checkWallet()
-      }, timer)
+      this.syncStandardAdapters()
+      watchStandard(standardAdapters => {
+        const uniqueIds = standardAdapters
+          ? new Set(standardAdapters.map(s => s.name))
+          : new Set([])
+        this.filteredWalletAdapters = [
+          ...standardAdapters,
+          ...this.walletAdapters.filter(
+            adapter => !uniqueIds.has(adapter.name) && uniqueIds.add(adapter.name)
+          )
+        ].map(adapter => ({
+          ...adapter,
+          signAndSendTransaction: signAndSendTransaction(adapter)
+        })) as unknown as ExtendedBaseWalletAdapter[]
+        this.checkActiveProviders.bind(this)(standardAdapters)
+        this.syncStandardAdapters.bind(this)(standardAdapters)
+      })
     }
   }
 
@@ -330,8 +325,12 @@ export class Web3Modal extends Web3ModalScaffold {
     return SolStoreUtil.state.connection
   }
 
-  public async checkActiveProviders() {
+  public async checkActiveProviders(standardAdapter?: StandardWalletAdapter[]) {
     const walletId = localStorage.getItem(SolConstantsUtil.WALLET_ID)
+
+    if (!walletId) {
+      return
+    }
 
     try {
       if (walletId === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID) {
@@ -341,13 +340,30 @@ export class Web3Modal extends Web3ModalScaffold {
           this.setWalletConnectProvider(account?.split(':')[2])
         }
       } else {
-        const wallet = walletId?.split('_')[1]
-        const adapter = this.walletAdapters.find(a => a.name.toLocaleLowerCase() === wallet)
-        if (adapter && wallet && window[wallet as keyof Window]) {
+        const walletArray = walletId?.split('_') ?? ''
+        if (walletArray[0] === 'announced' && standardAdapter) {
+          const adapter = standardAdapter.find(
+            a => a.name.toLocaleLowerCase() === walletArray[1]?.toLocaleLowerCase()
+          )
+
+          if (adapter) {
+            await adapter.connect()
+            this.setInjectedProvider(adapter as unknown as Provider)
+
+            return
+          }
+        } else if (walletArray[0] === 'injected') {
+          const adapter = [...(standardAdapter ?? []), ...this.walletAdapters].find(
+            a => a.name.toLocaleLowerCase() === walletArray[1]?.toLocaleLowerCase()
+          ) as ExtendedBaseWalletAdapter
+
           await adapter.connect()
-          const address = adapter.publicKey?.toString()
-          this.setInjectedProvider(adapter as unknown as Provider, wallet, address)
+          this.setInjectedProvider(adapter as unknown as Provider)
+
+          return
         }
+
+        throw new Error('AppKit:checkActiveProviders - Invalid type in walletId')
       }
     } catch (error) {
       SolStoreUtil.setError(error)
@@ -356,7 +372,7 @@ export class Web3Modal extends Web3ModalScaffold {
 
   // -- Private -----------------------------------------------------------------
 
-  private syncConnectors() {
+  private syncStandardAdapters(standardAdapters?: StandardWalletAdapter[]) {
     const w3mConnectors: Connector[] = []
 
     const connectorType = PresetsUtil.ConnectorTypesMap[ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID]
@@ -372,7 +388,31 @@ export class Web3Modal extends Web3ModalScaffold {
       })
     }
 
-    syncInjectedWallets(w3mConnectors, this.walletAdapters)
+    const uniqueIds = standardAdapters ? new Set(standardAdapters.map(s => s.name)) : new Set([])
+    const filteredAdapters = this.walletAdapters.filter(
+      adapter => !uniqueIds.has(adapter.name) && uniqueIds.add(adapter.name)
+    )
+    standardAdapters?.forEach(adapter => {
+      w3mConnectors.push({
+        id: adapter.name,
+        type: 'ANNOUNCED',
+        imageUrl: adapter.icon,
+        name: adapter.name,
+        provider: adapter,
+        chain: CommonConstantsUtil.CHAIN.SOLANA
+      })
+    })
+    filteredAdapters.forEach(adapter => {
+      w3mConnectors.push({
+        id: adapter.name,
+        type: 'EXTERNAL',
+        imageUrl: adapter.icon,
+        name: adapter.name,
+        provider: adapter,
+        chain: CommonConstantsUtil.CHAIN.SOLANA
+      })
+    })
+
     this.setConnectors(w3mConnectors)
   }
 
@@ -527,11 +567,11 @@ export class Web3Modal extends Web3ModalScaffold {
     await Promise.all([this.syncBalance(address), this.setApprovedCaipNetworksData()])
   }
 
-  private setInjectedProvider(provider: Provider, adapter: string, address = '') {
-    window?.localStorage.setItem(
-      SolConstantsUtil.WALLET_ID,
-      `${ConstantsUtil.INJECTED_CONNECTOR_ID}_${adapter}`
-    )
+  private setInjectedProvider(provider: Provider) {
+    const id = SolHelpersUtil.getStorageInjectedId(provider as unknown as ExtendedBaseWalletAdapter)
+    const address = provider.publicKey?.toString()
+
+    window?.localStorage.setItem(SolConstantsUtil.WALLET_ID, id)
 
     const chainId = SolStoreUtil.state.currentChain?.chainId
     const caipChainId = `solana:${chainId}`
@@ -539,7 +579,7 @@ export class Web3Modal extends Web3ModalScaffold {
     if (address && chainId) {
       SolStoreUtil.setIsConnected(true)
       SolStoreUtil.setCaipChainId(caipChainId)
-      SolStoreUtil.setProviderType(`injected_${adapter}`)
+      SolStoreUtil.setProviderType(id)
       SolStoreUtil.setProvider(provider)
       this.setAddress(address)
       this.watchInjected(provider)
