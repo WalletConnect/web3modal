@@ -27,14 +27,16 @@ export const InputUtil = {
       'Tab'
     ]
     const controlPressed = event.metaKey || event.ctrlKey
-    const selectAll = event.key === 'a' || event.key === 'A'
-    const copyKey = event.key === 'c' || event.key === 'C'
-    const pasteKey = event.key === 'v' || event.key === 'V'
-    const cutKey = event.key === 'x' || event.key === 'X'
+    const eventKey = event.key
+    const lowercaseEventKey = eventKey.toLocaleLowerCase()
+    const selectAll = lowercaseEventKey === 'a'
+    const copyKey = lowercaseEventKey === 'c'
+    const pasteKey = lowercaseEventKey === 'v'
+    const cutKey = lowercaseEventKey === 'x'
 
-    const isComma = event.key === ','
-    const isDot = event.key === '.'
-    const isNumericKey = event.key >= '0' && event.key <= '9'
+    const isComma = eventKey === ','
+    const isDot = eventKey === '.'
+    const isNumericKey = eventKey >= '0' && eventKey <= '9'
 
     // If command/ctrl key is not pressed, doesn't allow for a, c, v
     if (!controlPressed && (selectAll || copyKey || pasteKey || cutKey)) {
@@ -42,13 +44,13 @@ export const InputUtil = {
     }
 
     // If current value is zero, and zero is pressed, prevent the zero from being added again
-    if (currentValue === '0' && !isComma && !isDot && event.key === '0') {
+    if (currentValue === '0' && !isComma && !isDot && eventKey === '0') {
       event.preventDefault()
     }
 
     // If current value is zero and any numeric key is pressed, replace the zero with the number
     if (currentValue === '0' && isNumericKey) {
-      onChange(event.key)
+      onChange(eventKey)
       event.preventDefault()
     }
 
@@ -66,7 +68,7 @@ export const InputUtil = {
     }
 
     // If the character is not allowed and it's not a dot or comma, prevent it
-    if (!isNumericKey && !allowedKeys.includes(event.key) && !isDot && !isComma) {
+    if (!isNumericKey && !allowedKeys.includes(eventKey) && !isDot && !isComma) {
       event.preventDefault()
     }
   }
