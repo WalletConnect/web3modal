@@ -22,6 +22,7 @@ export interface OptionsControllerState {
   metadata?: Metadata
   enableOnramp?: boolean
   hasMultipleAddresses?: boolean
+  enableUniversalLinks?: boolean
   disableAppend?: boolean
   enableEIP6963?: boolean
 }
@@ -116,5 +117,9 @@ export const OptionsController = {
 
   setHasMultipleAddresses(hasMultipleAddresses: OptionsControllerState['hasMultipleAddresses']) {
     state.hasMultipleAddresses = hasMultipleAddresses
+  },
+
+  setUniversalLinksEnabled(enableUniversalLinks: OptionsControllerState['enableUniversalLinks']) {
+    state.enableUniversalLinks = enableUniversalLinks
   }
 }

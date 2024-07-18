@@ -1,11 +1,18 @@
 import type { WcWallet } from '@web3modal/core'
-import { ApiController, AssetUtil, ConnectorController, RouterController } from '@web3modal/core'
+import {
+  ApiController,
+  AssetUtil,
+  ConnectorController,
+  OptionsController,
+  RouterController
+} from '@web3modal/core'
 import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import styles from './styles.js'
 import { markWalletsAsInstalled } from '../../utils/markWalletsAsInstalled.js'
+import { filterWalletsWithUniversalLink } from '../../utils/filterWalletsWithUniversalLink.js'
 
 // -- Helpers --------------------------------------------- //
 const PAGINATOR_ID = 'local-paginator'
@@ -93,7 +100,10 @@ export class W3mAllWalletsList extends LitElement {
   }
 
   private walletsTemplate() {
-    const wallets = [...this.featured, ...this.recommended, ...this.wallets]
+    let wallets = [...this.featured, ...this.recommended, ...this.wallets]
+    if (OptionsController.state.enableUniversalLinks) {
+      wallets = filterWalletsWithUniversalLink(wallets)
+    }
     const walletsWithInstalled = markWalletsAsInstalled(wallets)
 
     return walletsWithInstalled.map(

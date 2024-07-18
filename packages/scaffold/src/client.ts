@@ -55,6 +55,7 @@ export interface LibraryOptions {
   enableAnalytics?: OptionsControllerState['enableAnalytics']
   metadata?: OptionsControllerState['metadata']
   enableOnramp?: OptionsControllerState['enableOnramp']
+  enableUniversalLinks?: OptionsControllerState['enableUniversalLinks']
   disableAppend?: OptionsControllerState['disableAppend']
   allowUnsupportedChain?: NetworkControllerState['allowUnsupportedChain']
   _sdkVersion: OptionsControllerState['sdkVersion']
@@ -360,6 +361,10 @@ export class Web3ModalScaffold {
 
     if (options.disableAppend) {
       OptionsController.setDisableAppend(Boolean(options.disableAppend))
+    }
+
+    if (options.enableUniversalLinks) {
+      OptionsController.setUniversalLinksEnabled(Boolean(options.enableUniversalLinks))
     }
 
     if (options.allowUnsupportedChain) {
