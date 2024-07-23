@@ -5,7 +5,8 @@ import type {
   W3mConnectButton,
   W3mNetworkButton,
   W3mOnrampWidget,
-  Web3ModalScaffold
+  Web3ModalScaffold,
+  W3mPaymentTokenButton
 } from '@web3modal/scaffold'
 
 type OpenOptions = Parameters<Web3ModalScaffold['open']>[0]
@@ -22,6 +23,10 @@ declare global {
       'w3m-button': Pick<W3mButton, 'size' | 'label' | 'loadingLabel' | 'disabled' | 'balance'>
       'w3m-network-button': Pick<W3mNetworkButton, 'disabled'>
       'w3m-onramp-widget': Pick<W3mOnrampWidget, 'disabled'>
+      'w3m-payment-token-button': Pick<
+        W3mPaymentTokenButton,
+        'availableTokens' | 'symbol' | 'logoUrl'
+      >
     }
   }
 }

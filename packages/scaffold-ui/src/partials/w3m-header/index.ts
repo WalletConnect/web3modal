@@ -17,7 +17,7 @@ import styles from './styles.js'
 const BETA_SCREENS = ['Swap', 'SwapSelectToken', 'SwapPreview']
 
 // -- Helpers ------------------------------------------- //
-function headings() {
+function headings(): Record<RouterControllerState['view'], string | undefined> {
   const connectorName = RouterController.state.data?.connector?.name
   const walletName = RouterController.state.data?.wallet?.name
   const networkName = RouterController.state.data?.network?.name
@@ -36,6 +36,7 @@ function headings() {
     ConnectingExternal: name ?? 'Connect Wallet',
     ConnectingWalletConnect: name ?? 'WalletConnect',
     ConnectingSiwe: 'Sign In',
+    //@ts-expect-error - This is incorrect but won't remove it for now
     Convert: 'Convert',
     ConvertSelectToken: 'Select token',
     ConvertPreview: 'Preview convert',
@@ -76,7 +77,8 @@ function headings() {
     ConnectSocials: 'All socials',
     ConnectingSocial: AccountController.state.socialProvider
       ? AccountController.state.socialProvider
-      : 'Connect Social'
+      : 'Connect Social',
+    PaymasterSelectToken: 'Select token'
   }
 }
 

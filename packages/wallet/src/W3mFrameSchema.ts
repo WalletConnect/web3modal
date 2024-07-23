@@ -122,6 +122,20 @@ export const FrameInitSmartAccountResponse = z.object({
 })
 export const FrameSetPreferredAccountResponse = z.object({ type: z.string(), address: z.string() })
 
+export const FrameGetPaymasterTokensResponse = z.array(
+  z.object({
+    symbol: z.string(),
+    decimal: z.number(),
+    tokenAddress: z.string(),
+    maxGasFee: z.number(),
+    maxGasFeeUSD: z.number(),
+    exchangeRate: z.number(),
+    premiumPercentage: z.string(),
+    validUntil: z.number(),
+    logoUrl: z.string()
+  })
+)
+
 export const RpcResponse = z.any()
 
 export const RpcEthAccountsRequest = z.object({
@@ -404,7 +418,9 @@ export const W3mFrameSchema = {
 
     .or(z.object({ type: zType('APP_SYNC_THEME'), payload: AppSyncThemeRequest }))
 
-    .or(z.object({ type: zType('APP_SYNC_DAPP_DATA'), payload: AppSyncDappDataRequest })),
+    .or(z.object({ type: zType('APP_SYNC_DAPP_DATA'), payload: AppSyncDappDataRequest }))
+
+    .or(z.object({ type: zType('APP_GET_PAYMASTER_TOKENS') })),
 
   // -- Frame Events ---------------------------------------------------------
   frameEvent: z
@@ -518,4 +534,12 @@ export const W3mFrameSchema = {
       })
     )
     .or(z.object({ type: zType('FRAME_SET_PREFERRED_ACCOUNT_ERROR'), payload: zError }))
+
+    .or(
+      z.object({
+        type: zType('FRAME_GET_PAYMASTER_TOKENS_SUCCESS'),
+        payload: FrameGetPaymasterTokensResponse
+      })
+    )
+    .or(z.object({ type: zType('FRAME_GET_PAYMASTER_TOKENS_ERROR'), payload: zError }))
 }

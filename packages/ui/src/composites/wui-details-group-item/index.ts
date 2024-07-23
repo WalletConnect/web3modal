@@ -16,7 +16,10 @@ export class WuiDetailsGroupItem extends LitElement {
   public override render() {
     return html`
       <wui-flex justifyContent="space-between" alignItems="center">
-        <wui-text variant="paragraph-500" color="fg-200">${this.name}</wui-text>
+        <wui-flex gap="xs" alignItems="center">
+          <wui-text variant="paragraph-500" color="fg-200">${this.name}</wui-text>
+          <slot name="suffix"></slot>
+        </wui-flex>
         <wui-flex gap="xs" alignItems="center">
           <slot></slot>
         </wui-flex>

@@ -70,6 +70,9 @@ export type { TooltipControllerState } from './src/controllers/TooltipController
 export { EnsController } from './src/controllers/EnsController.js'
 export type { EnsControllerState } from './src/controllers/EnsController.js'
 
+export { PaymasterController } from './src/controllers/PaymasterController.js'
+export type { PaymasterControllerState } from './src/controllers/PaymasterController.js'
+
 // -- Utils -------------------------------------------------------------------
 export { AssetUtil } from './src/utils/AssetUtil.js'
 export { ConstantsUtil } from './src/utils/ConstantsUtil.js'

@@ -37,6 +37,7 @@ type SmartAccountEnabledNetworksResolver = Resolver<
   W3mFrameTypes.Responses['FrameGetSmartAccountEnabledNetworksResponse']
 >
 type SetPreferredAccountResolver = Resolver<undefined>
+type PaymasterResolver = Resolver<W3mFrameTypes.Responses['FrameGetPaymasterTokensResponse']>
 
 // -- Provider --------------------------------------------------------
 export class W3mFrameProvider {
@@ -55,6 +56,8 @@ export class W3mFrameProvider {
   private disconnectResolver: DisconnectResolver = undefined
 
   private isConnectedResolver: IsConnectedResolver = undefined
+
+  private paymasterResolver: PaymasterResolver = undefined
 
   private getChainIdResolver: GetChainIdResolver = undefined
 
@@ -188,11 +191,38 @@ export class W3mFrameProvider {
           return this.onSetPreferredAccountSuccess()
         case W3mFrameConstants.FRAME_SET_PREFERRED_ACCOUNT_ERROR:
           return this.onSetPreferredAccountError()
+        case W3mFrameConstants.FRAME_GET_PAYMASTER_TOKENS_SUCCESS:
+          return this.onGetPaymasterTokensSuccess(event)
+        case W3mFrameConstants.FRAME_GET_PAYMASTER_TOKENS_ERROR:
+          return this.onGetPaymasterTokensError(event)
 
         default:
           return null
       }
     })
+  }
+
+  public async getPaymasterTokens() {
+    await this.w3mFrame.frameLoadPromise
+    this.w3mFrame.events.postAppEvent({ type: W3mFrameConstants.APP_GET_PAYMASTER_TOKENS })
+
+    return new Promise<W3mFrameTypes.Responses['FrameGetPaymasterTokensResponse']>(
+      (resolve, reject) => {
+        this.paymasterResolver = { resolve, reject }
+      }
+    )
+  }
+
+  public onGetPaymasterTokensSuccess(
+    event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/GET_PAYMASTER_TOKENS_SUCCESS' }>
+  ) {
+    this.paymasterResolver?.resolve(event.payload)
+  }
+
+  public onGetPaymasterTokensError(
+    event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/GET_PAYMASTER_TOKENS_ERROR' }>
+  ) {
+    this.paymasterResolver?.reject(event.payload.message)
   }
 
   // -- Extended Methods ------------------------------------------------

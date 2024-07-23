@@ -38,6 +38,7 @@ export interface RouterControllerState {
     | 'OnRampFiatSelect'
     | 'OnRampProviders'
     | 'OnRampTokenSelect'
+    | 'PaymasterSelectToken'
     | 'Profile'
     | 'RegisterAccountName'
     | 'RegisterAccountNameSuccess'

@@ -11,6 +11,13 @@ export function Web3ModalButtons() {
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
             <Heading size="xs" textTransform="uppercase" pb="2">
+              Select / Paymaster Token
+            </Heading>
+            <w3m-payment-token-button />
+          </Box>
+
+          <Box>
+            <Heading size="xs" textTransform="uppercase" pb="2">
               Connect / Account Button
             </Heading>
             <w3m-button />

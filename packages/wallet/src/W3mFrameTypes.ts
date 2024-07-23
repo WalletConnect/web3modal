@@ -59,7 +59,8 @@ import {
   FrameUpdateEmailResponse,
   AppGetSocialRedirectUriRequest,
   FrameGetSocialRedirectUriResponse,
-  FrameConnectSocialResponse
+  FrameConnectSocialResponse,
+  FrameGetPaymasterTokensResponse
 } from './W3mFrameSchema.js'
 import type { W3mFrameRpcConstants } from './W3mFrameConstants.js'
 
@@ -94,6 +95,7 @@ export namespace W3mFrameTypes {
     FrameUpdateEmailResponse: z.infer<typeof FrameUpdateEmailResponse>
     FrameGetSocialRedirectUriResponse: z.infer<typeof FrameGetSocialRedirectUriResponse>
     FrameConnectSocialResponse: z.infer<typeof FrameConnectSocialResponse>
+    FrameGetPaymasterTokensResponse: z.infer<typeof FrameGetPaymasterTokensResponse>
   }
 
   export interface Network {

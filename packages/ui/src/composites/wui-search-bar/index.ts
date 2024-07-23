@@ -6,6 +6,7 @@ import { customElement } from '../../utils/WebComponentsUtil.js'
 import '../wui-input-text/index.js'
 import type { WuiInputText } from '../wui-input-text/index.js'
 import styles from './styles.js'
+import { property } from 'lit/decorators.js'
 
 @customElement('wui-search-bar')
 export class WuiSearchBar extends LitElement {
@@ -14,12 +15,14 @@ export class WuiSearchBar extends LitElement {
   // -- State & Properties -------------------------------- //
   public inputComponentRef: Ref<WuiInputText> = createRef<WuiInputText>()
 
+  @property({ type: String }) public placeholder = 'Search wallet'
+
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
       <wui-input-text
         ${ref(this.inputComponentRef)}
-        placeholder="Search wallet"
+        placeholder=${this.placeholder}
         icon="search"
         type="search"
         enterKeyHint="search"

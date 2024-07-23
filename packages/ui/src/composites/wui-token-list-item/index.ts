@@ -26,6 +26,8 @@ export class WuiTokenListItem extends LitElement {
 
   @property() public amount?: string = undefined
 
+  @property({ type: Boolean }) public checked?: boolean = undefined
+
   @state() private visible = false
 
   @state() private imageError = false
@@ -69,7 +71,9 @@ export class WuiTokenListItem extends LitElement {
         ${this.visualTemplate()}
         <wui-flex flexDirection="column" gap="3xs">
           <wui-flex justifyContent="space-between">
-            <wui-text variant="paragraph-500" color="fg-100" lineClamp="1">${this.name}</wui-text>
+            <wui-text variant="paragraph-500" color="fg-100" lineClamp="1"
+              >${this.name} ${this.checkedTemplate()}</wui-text
+            >
             ${value
               ? html`
                   <wui-text variant="paragraph-500" color="fg-100">
@@ -92,6 +96,14 @@ export class WuiTokenListItem extends LitElement {
   }
 
   // -- Private ------------------------------------------- //
+  private checkedTemplate() {
+    if (!this.checked) {
+      return null
+    }
+
+    return html`<wui-icon class="checkmark" name="checkmark" color="primary"></wui-icon>`
+  }
+
   private visualTemplate() {
     if (this.imageError) {
       return html`<wui-flex class="token-item-image-placeholder">

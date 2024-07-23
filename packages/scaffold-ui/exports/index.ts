@@ -60,6 +60,7 @@ export * from '../src/views/w3m-connecting-social-view/index.js'
 export * from '../src/views/w3m-profile-view/index.js'
 export * from '../src/views/w3m-select-addresses-view/index.js'
 export * from '../src/views/w3m-switch-address-view/index.js'
+export * from '../src/views/w3m-paymaster-select-token-view/index.js'
 
 // -- Partials ------------------------------------------ //
 export * from '../src/partials/w3m-all-wallets-list/index.js'
@@ -110,3 +111,4 @@ export * from '../src/partials/w3m-connect-walletconnect-widget/index.js'
 export * from '../src/partials/w3m-connector-list/index.js'
 export * from '../src/partials/w3m-all-wallets-widget/index.js'
 export * from '../src/partials/w3m-account-auth-button/index.js'
+export * from '../src/partials/w3m-payment-token-button/index.js'

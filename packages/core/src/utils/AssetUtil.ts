@@ -36,5 +36,9 @@ export const AssetUtil = {
     }
 
     return undefined
+  },
+
+  getTokenImage(name: string) {
+    return AssetController.state.tokenImages[name]
   }
 }

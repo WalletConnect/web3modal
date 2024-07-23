@@ -93,6 +93,8 @@ export class W3mRouter extends LitElement {
         return html`<w3m-networks-view></w3m-networks-view>`
       case 'SwitchNetwork':
         return html`<w3m-network-switch-view></w3m-network-switch-view>`
+      case 'PaymasterSelectToken':
+        return html`<w3m-paymaster-select-token-view></w3m-paymaster-select-token-view>`
       case 'Profile':
         return html`<w3m-profile-view></w3m-profile-view>`
       case 'SelectAddresses':
