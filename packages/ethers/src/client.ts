@@ -1,4 +1,13 @@
 /* eslint-disable max-depth */
+import type { EthereumProviderOptions } from '@walletconnect/ethereum-provider'
+import EthereumProvider, { OPTIONAL_METHODS } from '@walletconnect/ethereum-provider'
+import { getChainsFromAccounts } from '@walletconnect/utils'
+import type { Chain as AvailableChain } from '@web3modal/common'
+import {
+  ConstantsUtil as CommonConstants,
+  ConstantsUtil as CommonConstantsUtil,
+  NetworkUtil
+} from '@web3modal/common'
 import type {
   CaipAddress,
   CaipNetwork,
@@ -13,51 +22,44 @@ import type {
   WriteContractArgs
 } from '@web3modal/scaffold'
 import { Web3ModalScaffold } from '@web3modal/scaffold'
-import { ConstantsUtil, PresetsUtil, HelpersUtil } from '@web3modal/scaffold-utils'
-import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
-import EthereumProvider, { OPTIONAL_METHODS } from '@walletconnect/ethereum-provider'
-import { getChainsFromAccounts } from '@walletconnect/utils'
-import type { Web3ModalSIWEClient } from '@web3modal/siwe'
-import { ConstantsUtil as CommonConstants } from '@web3modal/common'
-import type { Chain as AvailableChain } from '@web3modal/common'
+import { ConstantsUtil, HelpersUtil, PresetsUtil } from '@web3modal/scaffold-utils'
 import type {
   Address,
+  Chain,
+  CombinedProvider,
+  EthersStoreUtilState,
   Metadata,
   Provider,
-  ProviderType,
-  Chain,
-  EthersStoreUtilState
+  ProviderType
 } from '@web3modal/scaffold-utils/ethers'
-import {
-  formatEther,
-  JsonRpcProvider,
-  InfuraProvider,
-  getAddress as getOriginalAddress,
-  parseUnits,
-  formatUnits,
-  JsonRpcSigner,
-  BrowserProvider,
-  Contract,
-  hexlify,
-  toUtf8Bytes,
-  isHexString
-} from 'ethers'
 import {
   EthersConstantsUtil,
   EthersHelpersUtil,
   EthersStoreUtil
 } from '@web3modal/scaffold-utils/ethers'
-import type { EthereumProviderOptions } from '@walletconnect/ethereum-provider'
+import type { Web3ModalSIWEClient } from '@web3modal/siwe'
+import type { W3mFrameTypes } from '@web3modal/wallet'
+import {
+  W3mFrameConstants,
+  W3mFrameHelpers,
+  W3mFrameProvider,
+  W3mFrameRpcConstants
+} from '@web3modal/wallet'
 import type { Eip1193Provider } from 'ethers'
 import {
-  W3mFrameProvider,
-  W3mFrameHelpers,
-  W3mFrameRpcConstants,
-  W3mFrameConstants
-} from '@web3modal/wallet'
-import type { CombinedProvider } from '@web3modal/scaffold-utils/ethers'
-import { NetworkUtil } from '@web3modal/common'
-import type { W3mFrameTypes } from '@web3modal/wallet'
+  BrowserProvider,
+  Contract,
+  formatEther,
+  formatUnits,
+  getAddress as getOriginalAddress,
+  hexlify,
+  InfuraProvider,
+  isHexString,
+  JsonRpcProvider,
+  JsonRpcSigner,
+  parseUnits,
+  toUtf8Bytes
+} from 'ethers'
 // -- Types ---------------------------------------------------------------------
 export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultChain' | 'tokens'> {
   ethersConfig: ProviderType
@@ -196,6 +198,7 @@ export class Web3Modal extends Web3ModalScaffold {
     const connectionControllerClient: ConnectionControllerClient = {
       connectWalletConnect: async onUri => {
         const WalletConnectProvider = await this.getWalletConnectProvider()
+
         if (!WalletConnectProvider) {
           throw new Error('connectionControllerClient:getWalletConnectUri - provider is undefined')
         }
@@ -939,6 +942,7 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     function chainChangedHandler(chainId: string) {
+      console.log({ chainChanged: chainId })
       if (chainId) {
         const chain = EthersHelpersUtil.hexStringToNumber(chainId)
         EthersStoreUtil.setChainId(chain)
@@ -946,6 +950,7 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     const accountsChangedHandler = async (accounts: string[]) => {
+      console.log({ accountsChanged: accounts })
       if (accounts.length > 0) {
         await this.setWalletConnectProvider()
       }

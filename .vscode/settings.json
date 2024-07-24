@@ -10,9 +10,6 @@
   "files.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
-    "**/node_modules": true,
-    "**/out": true,
-    "**/dist": true,
     "**/.turbo": true,
     "**/playwright-report": true,
     "**/coverage": true
