@@ -49,6 +49,15 @@ const nextConfig = {
         ]
       },
       {
+        source: '/api/auth/csrf',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0'
+          }
+        ]
+      },
+      {
         source: '/.well-known/apple-app-site-association',
         headers: [{ key: 'content-type', value: 'application/json' }]
       },
