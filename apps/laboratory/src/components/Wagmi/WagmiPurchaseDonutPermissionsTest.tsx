@@ -1,19 +1,17 @@
 import { Button, Flex, Stack, Text } from '@chakra-ui/react'
-import { useAccount, useReadContract } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { useState } from 'react'
 import { useChakraToast } from '../Toast'
 import { encodeFunctionData, parseEther } from 'viem'
 import { abi as donutContractAbi, address as donutContractaddress } from '../../utils/DonutContract'
 import { usePermissions } from '../../hooks/usePermissions'
-import { useGrantedPermissions } from '../../hooks/useGrantedPermissions'
-import { useLocalSigner } from '../../hooks/useLocalSigner'
+import { useWagmiPermissions } from '../../context/WagmiPermissionsContext'
+import { sepolia } from 'viem/chains'
 
 export function WagmiPurchaseDonutWithPermissionsTest() {
-  const { address, chain } = useAccount()
-  const { buildAndSendTransactionsECDSAKeyAndPermissions } = usePermissions()
-  const { signerPrivateKey: ecdsaPrivateKey } = useLocalSigner()
+  const { buildAndSendTransactionsWithCosignerAndPermissions } = usePermissions()
 
-  const { grantedPermissions } = useGrantedPermissions()
+  const { grantedPermissions, wcCosignerData } = useWagmiPermissions()
   const {
     data: donutsOwned,
     refetch: fetchDonutsOwned,
@@ -23,7 +21,7 @@ export function WagmiPurchaseDonutWithPermissionsTest() {
     abi: donutContractAbi,
     address: donutContractaddress,
     functionName: 'getBalance',
-    args: [grantedPermissions?.signerData?.submitToAddress || address]
+    args: [grantedPermissions?.signerData?.submitToAddress || '0x']
   })
 
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
@@ -35,11 +33,11 @@ export function WagmiPurchaseDonutWithPermissionsTest() {
       if (!grantedPermissions) {
         throw Error('No permissions available')
       }
-      if (!chain) {
-        throw new Error(`chain ${chain}`)
+      if (!wcCosignerData) {
+        throw Error('No wc-cosigner data available')
       }
-      if (!ecdsaPrivateKey) {
-        throw new Error(`Invalid ecdsaPrivateKey:${ecdsaPrivateKey}`)
+      if (!grantedPermissions?.signerData?.submitToAddress) {
+        throw new Error(`Unable to get account details from granted permission`)
       }
       const purchaseDonutCallData = encodeFunctionData({
         abi: donutContractAbi,
@@ -53,11 +51,11 @@ export function WagmiPurchaseDonutWithPermissionsTest() {
           callData: purchaseDonutCallData
         }
       ]
-      const txHash = await buildAndSendTransactionsECDSAKeyAndPermissions({
+      const txHash = await buildAndSendTransactionsWithCosignerAndPermissions({
         actions: purchaseDonutCallDataExecution,
-        ecdsaPrivateKey: ecdsaPrivateKey as `0x${string}`,
         permissions: grantedPermissions,
-        chain
+        chain: sepolia,
+        accountAddress: grantedPermissions?.signerData?.submitToAddress
       })
       if (txHash) {
         toast({
@@ -68,6 +66,7 @@ export function WagmiPurchaseDonutWithPermissionsTest() {
         await fetchDonutsOwned()
       }
     } catch (error) {
+      // Console.log(error)
       toast({
         title: 'Transaction Failed',
         description: `${error}`,

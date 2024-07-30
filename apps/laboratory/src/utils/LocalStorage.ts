@@ -4,6 +4,8 @@ export const PASSKEY_LOCALSTORAGE_KEY = 'passkeyId'
 export const LAST_USED_ADDRESS_KEY = 'lastUsedAddress'
 export const LOCAL_SIGNER_KEY = 'localECDSASigner'
 export const GRANTED_PERMISSIONS_KEY = 'grantedPermissions'
+export const WC_COSIGNER_DATA = 'wc_cosignerData'
+export const PERMISSION_CONSUMED_COUNT = 'wc_permissionConsumedCount'
 /**
  * Sets an item in the local storage.
  * @param key - The key to set the item with.
@@ -33,4 +35,11 @@ function removeItem(key: string) {
   localStorage.removeItem(key)
 }
 
+export type PasskeyLocalStorageFormat = {
+  rawId: string
+  pubkeyCoordinates: {
+    x: string
+    y: string
+  }
+}
 export { setItem, getItem, removeItem }

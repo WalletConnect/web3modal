@@ -49,10 +49,11 @@ export function useWagmiAvailableCapabilities({
     const connectedProvider = await connectedConnector.getProvider?.({
       chainId: connectedChain.id
     })
-    if (connectedProvider instanceof EthereumProvider) {
-      setEthereumProvider(connectedProvider)
+    if (connectedProvider) {
+      const provider = connectedProvider as Awaited<ReturnType<(typeof EthereumProvider)['init']>>
+      setEthereumProvider(provider)
       let walletCapabilities = undefined
-      walletCapabilities = getProviderCachedCapabilities(connectedAccount, connectedProvider)
+      walletCapabilities = getProviderCachedCapabilities(connectedAccount, provider)
       setAvailableCapabilities(walletCapabilities)
     }
   }

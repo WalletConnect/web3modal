@@ -1,93 +1,149 @@
+/* eslint-disable no-console */
 import { Button, Stack, Text } from '@chakra-ui/react'
-import { EthereumProvider } from '@walletconnect/ethereum-provider'
-import { useAccount, type Connector } from 'wagmi'
-import { type Chain } from 'wagmi/chains'
-import { walletActionsErc7715 } from 'viem/experimental'
-import { useCallback, useState, useEffect } from 'react'
+import { useAccount } from 'wagmi'
+import { walletActionsErc7715, type GrantPermissionsParameters } from 'viem/experimental'
+import { useCallback, useState } from 'react'
 import { useChakraToast } from '../Toast'
 import { createPublicClient, custom, parseEther } from 'viem'
 import { EIP_7715_RPC_METHODS } from '../../utils/EIP5792Utils'
-import { useLocalSigner } from '../../hooks/useLocalSigner'
-import { bigIntReplacer, encodeSecp256k1PublicKeyToDID } from '../../utils/CommonUtils'
-import { useGrantedPermissions } from '../../hooks/useGrantedPermissions'
+import {
+  bigIntReplacer,
+  decodeUncompressedPublicKey,
+  encodePublicKeyToDID,
+  hexStringToBase64
+} from '../../utils/CommonUtils'
+import { useWagmiPermissions } from '../../context/WagmiPermissionsContext'
+import { serializePublicKey, type P256Credential } from 'webauthn-p256'
+import { CoSignerApiError, useWalletConnectCosigner } from '../../hooks/useWalletConnectCosigner'
+import { useWagmiAvailableCapabilities } from '../../hooks/useWagmiActiveCapabilities'
 
 export function WagmiRequestPermissionsTest() {
-  const { status, chain, address, connector } = useAccount()
-
-  const { signer } = useLocalSigner()
+  const { isMethodSupported: isGrantPermissionsSupported, ethereumProvider } =
+    useWagmiAvailableCapabilities({
+      method: EIP_7715_RPC_METHODS.WALLET_GRANT_PERMISSIONS
+    })
+  const { chain, address, isConnected } = useAccount()
+  const {
+    passkey,
+    grantedPermissions,
+    clearGrantedPermissions,
+    setGrantedPermissions,
+    setWCCosignerData,
+    setPermissionConsumedCount
+  } = useWagmiPermissions()
   const [isRequestPermissionLoading, setRequestPermissionLoading] = useState<boolean>(false)
-  const { grantedPermissions, setGrantedPermissions } = useGrantedPermissions()
-
-  const [ethereumProvider, setEthereumProvider] =
-    useState<Awaited<ReturnType<(typeof EthereumProvider)['init']>>>()
-
+  const { addPermission, updatePermissionsContext } = useWalletConnectCosigner()
   const toast = useChakraToast()
 
-  const isConnected = status === 'connected'
-
-  useEffect(() => {
-    if (isConnected && connector && address && chain) {
-      fetchProviderAndAccountCapabilities(connector, chain).then(provider => {
-        setEthereumProvider(provider)
-      })
+  function getSamplePermissions(
+    secp256k1DID: string,
+    passkeyDID: string
+  ): GrantPermissionsParameters {
+    return {
+      expiry: Date.now() + 24 * 60 * 60,
+      permissions: [
+        {
+          type: 'native-token-transfer',
+          data: {
+            ticker: 'ETH'
+          },
+          policies: [
+            {
+              type: 'token-allowance',
+              data: {
+                allowance: parseEther('1')
+              }
+            }
+          ]
+        }
+      ],
+      signer: {
+        type: 'keys',
+        data: {
+          ids: [secp256k1DID, passkeyDID]
+        }
+      }
     }
-  }, [isConnected, connector, address])
+  }
 
   const onRequestPermissions = useCallback(async () => {
     setRequestPermissionLoading(true)
-    if (!ethereumProvider) {
-      setRequestPermissionLoading(false)
-
-      return
+    const projectId = process.env['NEXT_PUBLIC_PROJECT_ID']
+    if (!projectId) {
+      throw new Error('NEXT_PUBLIC_PROJECT_ID is not set')
     }
+    if (!passkey) {
+      throw new Error('Passkey not available')
+    }
+    const caip10Address = `eip155:${chain?.id}:${address}`
     try {
-      const targetPublicKey = signer?.publicKey
-      if (!targetPublicKey) {
-        throw new Error('Local signer not initialized')
+      const addPermissionResponse = await addPermission(caip10Address, projectId, {
+        permissionType: 'native-token-transfer',
+        data: '',
+        onChainValidated: false,
+        required: true
+      })
+      console.info({ addPermissionResponse })
+      setWCCosignerData(addPermissionResponse)
+      const cosignerPublicKey = decodeUncompressedPublicKey(addPermissionResponse.key)
+      let p = passkey as P256Credential
+      p = {
+        ...p,
+        publicKey: {
+          prefix: p.publicKey.prefix,
+          x: BigInt(p.publicKey.x),
+          y: BigInt(p.publicKey.y)
+        }
       }
+      const passkeyPublicKey = serializePublicKey(p.publicKey, { to: 'hex' })
+      const passkeyDID = encodePublicKeyToDID(passkeyPublicKey, 'secp256r1')
+      const secp256k1DID = encodePublicKeyToDID(cosignerPublicKey, 'secp256k1')
+
       const publicClient = createPublicClient({
         chain,
-        transport: custom(ethereumProvider)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        transport: custom(ethereumProvider!)
       }).extend(walletActionsErc7715())
-
-      const permissions = await publicClient.grantPermissions({
-        expiry: Date.now() + 24 * 60 * 60,
-        permissions: [
-          {
-            type: 'native-token-transfer',
-            data: {
-              ticker: 'ETH'
-            },
-            policies: [
-              {
-                type: 'token-allowance',
-                data: {
-                  allowance: parseEther('1')
-                }
+      const samplePermissions = getSamplePermissions(secp256k1DID, passkeyDID)
+      const approvedPermissions = await publicClient.grantPermissions(samplePermissions)
+      if (approvedPermissions) {
+        await updatePermissionsContext(caip10Address, projectId, {
+          pci: addPermissionResponse.pci,
+          context: {
+            expiry: approvedPermissions.expiry,
+            signer: {
+              type: 'native-token-transfer',
+              data: {
+                ids: [addPermissionResponse.key, hexStringToBase64(passkeyPublicKey)]
               }
-            ]
+            },
+            signerData: {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
+              userOpBuilder: approvedPermissions.signerData?.userOpBuilder!
+            },
+            permissionsContext: approvedPermissions.permissionsContext,
+            factory: approvedPermissions.factory || '',
+            factoryData: approvedPermissions.factoryData || ''
           }
-        ],
-        signer: {
-          type: 'key',
-          data: {
-            id: encodeSecp256k1PublicKeyToDID(targetPublicKey)
-          }
-        }
-      })
-      if (permissions) {
-        setGrantedPermissions(permissions)
+        })
+        console.info('Updated the context on co-signer')
+        setPermissionConsumedCount('0')
+        setGrantedPermissions(approvedPermissions)
         setRequestPermissionLoading(false)
         toast({
           type: 'success',
           title: 'Permissions Granted',
-          description: JSON.stringify(permissions, bigIntReplacer)
+          description: JSON.stringify(approvedPermissions, bigIntReplacer)
         })
 
         return
       }
       toast({ title: 'Error', description: 'Failed to obtain permissions' })
     } catch (error) {
+      if (error instanceof CoSignerApiError) {
+        console.error(`API Error ${error.status}: ${error.message}`)
+      }
+      console.error('Unexpected error:', error)
       toast({
         type: 'error',
         title: 'Permissions Erros',
@@ -95,33 +151,7 @@ export function WagmiRequestPermissionsTest() {
       })
     }
     setRequestPermissionLoading(false)
-  }, [ethereumProvider, signer])
-
-  const onClearPermissions = useCallback(() => {
-    setGrantedPermissions(undefined)
-  }, [])
-
-  function isGrantPermissionsSupported(): boolean {
-    return Boolean(
-      ethereumProvider?.signer?.session?.namespaces?.['eip155']?.methods?.includes(
-        EIP_7715_RPC_METHODS.WALLET_GRANT_PERMISSIONS
-      )
-    )
-  }
-
-  async function fetchProviderAndAccountCapabilities(
-    connectedConnector: Connector,
-    connectedChain: Chain
-  ) {
-    const connectedProvider = await connectedConnector.getProvider({
-      chainId: connectedChain.id
-    })
-    if (connectedProvider instanceof EthereumProvider) {
-      return connectedProvider
-    }
-
-    return undefined
-  }
+  }, [passkey])
 
   if (!isConnected || !ethereumProvider || !address) {
     return (
@@ -152,7 +182,7 @@ export function WagmiRequestPermissionsTest() {
       </Button>
       <Button
         data-test-id="clear-permissions-button"
-        onClick={onClearPermissions}
+        onClick={clearGrantedPermissions}
         isDisabled={!grantedPermissions}
       >
         Clear Permissions

@@ -1,9 +1,7 @@
 import { Box, Card, CardBody, CardHeader, Heading, Stack, StackDivider } from '@chakra-ui/react'
-import { WagmiCreatePrivateKeySignerTest } from './WagmiCreatePrivateKeySignerTest'
 import { WagmiRequestPermissionsTest } from './WagmiRequestPermissionsTest'
 import { WagmiPurchaseDonutWithPermissionsTest } from './WagmiPurchaseDonutPermissionsTest'
-import { WagmiSendCallsTest } from './WagmiSendCallsTest'
-import { WagmiGetCallsStatusTest } from './WagmiGetCallsStatusTest'
+import { WagmiCreatePasskeySignerTest } from './WagmiCreatePasskeySignerTest'
 
 export function WagmiPermissionsTest() {
   return (
@@ -11,26 +9,13 @@ export function WagmiPermissionsTest() {
       <CardHeader>
         <Heading size="md">Test Interactions</Heading>
       </CardHeader>
-
       <CardBody>
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
             <Heading size="xs" textTransform="uppercase" pb="2">
-              Send Calls (Atomic Batch)
+              New Passkey
             </Heading>
-            <WagmiSendCallsTest />
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase" pb="2">
-              Get Calls Status
-            </Heading>
-            <WagmiGetCallsStatusTest />
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase" pb="2">
-              New Private Key
-            </Heading>
-            <WagmiCreatePrivateKeySignerTest />
+            <WagmiCreatePasskeySignerTest />
           </Box>
           <Box>
             <Heading size="xs" textTransform="uppercase" pb="2">

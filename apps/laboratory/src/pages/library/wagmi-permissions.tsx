@@ -8,7 +8,7 @@ import { ConstantsUtil } from '../../utils/ConstantsUtil'
 import { sepolia } from 'wagmi/chains'
 import { walletConnect } from 'wagmi/connectors'
 import { OPTIONAL_METHODS } from '@walletconnect/ethereum-provider'
-import { GrantedPermissionsProvider } from '../../context/GrantedPermissionContext'
+import { WagmiPermissionsProvider } from '../../context/WagmiPermissionsContext'
 import { getPublicClientUrl } from '../../utils/PermissionsUtils'
 
 const queryClient = new QueryClient()
@@ -48,10 +48,10 @@ export default function Wagmi() {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <GrantedPermissionsProvider>
+        <WagmiPermissionsProvider>
           <Web3ModalButtons />
           <WagmiPermissionsTest />
-        </GrantedPermissionsProvider>
+        </WagmiPermissionsProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
