@@ -60,8 +60,8 @@ export const ApiController = {
 
     return {
       'x-project-id': projectId,
-      'x-sdk-type': sdkType,
-      'x-sdk-version': sdkVersion
+      'x-sdk-type': sdkType || 'w3m',
+      'x-sdk-version': sdkVersion || 'html-wagmi-4.2.2'
     }
   },
 
@@ -150,29 +150,33 @@ export const ApiController = {
   },
 
   async fetchRecommendedWallets() {
-    const { includeWalletIds, excludeWalletIds, featuredWalletIds } = OptionsController.state
-    const exclude = [...(excludeWalletIds ?? []), ...(featuredWalletIds ?? [])].filter(Boolean)
-    const { data, count } = await api.get<ApiGetWalletsResponse>({
-      path: '/getWallets',
-      headers: ApiController._getApiHeaders(),
-      params: {
-        page: '1',
-        chains: NetworkController.state.caipNetwork?.id,
-        entries: recommendedEntries,
-        include: includeWalletIds?.join(','),
-        exclude: exclude?.join(',')
-      }
-    })
-    const recent = StorageUtil.getRecentWallets()
-    const recommendedImages = data.map(d => d.image_id).filter(Boolean)
-    const recentImages = recent.map(r => r.image_id).filter(Boolean)
-    await Promise.allSettled(
-      ([...recommendedImages, ...recentImages] as string[]).map(id =>
-        ApiController._fetchWalletImage(id)
+    try {
+      const { includeWalletIds, excludeWalletIds, featuredWalletIds } = OptionsController.state
+      const exclude = [...(excludeWalletIds ?? []), ...(featuredWalletIds ?? [])].filter(Boolean)
+      const { data, count } = await api.get<ApiGetWalletsResponse>({
+        path: '/getWallets',
+        headers: ApiController._getApiHeaders(),
+        params: {
+          page: '1',
+          chains: NetworkController.state.caipNetwork?.id,
+          entries: recommendedEntries,
+          include: includeWalletIds?.join(','),
+          exclude: exclude?.join(',')
+        }
+      })
+      const recent = StorageUtil.getRecentWallets()
+      const recommendedImages = data.map(d => d.image_id).filter(Boolean)
+      const recentImages = recent.map(r => r.image_id).filter(Boolean)
+      await Promise.allSettled(
+        ([...recommendedImages, ...recentImages] as string[]).map(id =>
+          ApiController._fetchWalletImage(id)
+        )
       )
-    )
-    state.recommended = data
-    state.count = count ?? 0
+      state.recommended = data
+      state.count = count ?? 0
+    } catch {
+      // Catch silently
+    }
   },
 
   async fetchWallets({ page }: Pick<ApiGetWalletsRequest, 'page'>) {

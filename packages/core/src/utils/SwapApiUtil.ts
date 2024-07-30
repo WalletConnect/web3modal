@@ -78,7 +78,8 @@ export const SwapApiUtil = {
     })
 
     if (response?.allowance && sourceTokenAmount && sourceTokenDecimals) {
-      const parsedValue = ConnectionController.parseUnits(sourceTokenAmount, sourceTokenDecimals)
+      const parsedValue =
+        ConnectionController.parseUnits(sourceTokenAmount, sourceTokenDecimals) || 0
       const hasAllowance = BigInt(response.allowance) >= parsedValue
 
       return hasAllowance

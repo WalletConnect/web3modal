@@ -1,37 +1,48 @@
-import type { Web3ModalOptions } from '../src/client.js'
-import { Web3Modal } from '../src/client.js'
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { EVMEthersClient, type AdapterOptions } from '@web3modal/base/adapters/evm/ethers'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import { getWeb3Modal } from '@web3modal/scaffold-vue'
 import { onUnmounted, ref } from 'vue'
 import type { Eip1193Provider } from 'ethers'
-// -- Types -------------------------------------------------------------------
-export type { Web3ModalOptions } from '../src/client.js'
+
+// -- Configs -----------------------------------------------------------
+export { defaultConfig } from '@web3modal/base/adapters/evm/ethers'
 
 // -- Setup -------------------------------------------------------------------
-let modal: Web3Modal | undefined = undefined
+let appkit: AppKit | undefined = undefined
+let ethersAdapter: EVMEthersClient | undefined = undefined
 
-export function createWeb3Modal(options: Web3ModalOptions) {
-  if (!modal) {
-    modal = new Web3Modal({
-      ...options,
-      _sdkVersion: `vue-ethers-${ConstantsUtil.VERSION}`
-    })
-    getWeb3Modal(modal)
-  }
+type EthersAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> &
+  AdapterOptions
 
-  return modal
+export function createWeb3Modal(options: EthersAppKitOptions) {
+  ethersAdapter = new EVMEthersClient({
+    ethersConfig: options.ethersConfig,
+    siweConfig: options.siweConfig,
+    chains: options.chains
+  })
+  appkit = new AppKit({
+    ...options,
+    adapters: [ethersAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `react-wagmi-${ConstantsUtil.VERSION}`
+  })
+  getWeb3Modal(appkit)
+
+  return appkit
 }
 
 // -- Composites --------------------------------------------------------------
 export function useWeb3ModalProvider() {
-  if (!modal) {
+  if (!ethersAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalProvider" composition')
   }
 
-  const walletProvider = ref(modal.getWalletProvider())
-  const walletProviderType = ref(modal.getWalletProviderType())
+  const walletProvider = ref(ethersAdapter.getWalletProvider())
+  const walletProviderType = ref(ethersAdapter.getWalletProviderType())
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = ethersAdapter.subscribeProvider(state => {
     walletProvider.value = state.provider as Eip1193Provider | undefined
     walletProviderType.value = state.providerType
   })
@@ -48,7 +59,7 @@ export function useWeb3ModalProvider() {
 
 export function useDisconnect() {
   async function disconnect() {
-    await modal?.disconnect()
+    await ethersAdapter?.disconnect()
   }
 
   return {
@@ -58,7 +69,7 @@ export function useDisconnect() {
 
 export function useSwitchNetwork() {
   async function switchNetwork(chainId: number) {
-    await modal?.switchNetwork(chainId)
+    await ethersAdapter?.switchNetwork(chainId)
   }
 
   return {
@@ -67,16 +78,16 @@ export function useSwitchNetwork() {
 }
 
 export function useWeb3ModalAccount() {
-  if (!modal) {
+  if (!ethersAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalAccount" composition')
   }
 
-  const address = ref(modal.getAddress())
-  const isConnected = ref(modal.getIsConnected())
-  const status = ref(modal.getStatus())
-  const chainId = ref(modal.getChainId())
+  const address = ref(ethersAdapter.getAddress())
+  const isConnected = ref(ethersAdapter.getIsConnected())
+  const status = ref(ethersAdapter.getStatus())
+  const chainId = ref(ethersAdapter.getChainId())
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = ethersAdapter.subscribeProvider(state => {
     address.value = state.address as string | undefined
     status.value = state.status
     isConnected.value = state.isConnected
@@ -95,13 +106,13 @@ export function useWeb3ModalAccount() {
 }
 
 export function useWeb3ModalError() {
-  if (!modal) {
+  if (!ethersAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalError" composition')
   }
 
-  const error = ref(modal.getError())
+  const error = ref(ethersAdapter.getError())
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = ethersAdapter.subscribeProvider(state => {
     error.value = state.error
   })
 
@@ -121,6 +132,3 @@ export {
   useWeb3ModalEvents,
   useWalletInfo
 } from '@web3modal/scaffold-vue'
-
-// -- Universal Exports -------------------------------------------------------
-export { defaultConfig } from '../src/utils/defaultConfig.js'

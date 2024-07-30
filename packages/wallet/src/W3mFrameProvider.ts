@@ -407,7 +407,9 @@ export class W3mFrameProvider {
     })
 
     return new Promise<W3mFrameTypes.Responses['FrameGetUserResponse']>((resolve, reject) => {
-      this.connectSocialResolver = { resolve, reject }
+      if (!this.connectSocialResolver) {
+        this.connectSocialResolver = { resolve, reject }
+      }
     })
   }
 
@@ -527,6 +529,7 @@ export class W3mFrameProvider {
     event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/CONNECT_EMAIL_SUCCESS' }>
   ) {
     this.connectEmailResolver?.resolve(event.payload)
+    this.connectEmailResolver = undefined
     this.setNewLastEmailLoginTime()
   }
 
@@ -534,6 +537,7 @@ export class W3mFrameProvider {
     event: Extract<W3mFrameTypes.FrameEvent, { type: '@w3m-frame/CONNECT_EMAIL_ERROR' }>
   ) {
     this.connectEmailResolver?.reject(event.payload.message)
+    this.connectEmailResolver = undefined
   }
 
   private onGetFarcasterUriSuccess(

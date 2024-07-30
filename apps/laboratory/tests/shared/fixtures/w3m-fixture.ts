@@ -39,4 +39,17 @@ export const testMSiwe = timingFixture.extend<ModalFixture>({
   }
 })
 
+export const testMultiChainM = timingFixture.extend<ModalFixture>({
+  library: ['multichain', { option: true }],
+  modalPage: async ({ page, library }, use) => {
+    const modalPage = new ModalPage(page, library, 'all')
+    await modalPage.load()
+    await use(modalPage)
+  },
+  modalValidator: async ({ modalPage }, use) => {
+    const modalValidator = new ModalValidator(modalPage.page)
+    await use(modalValidator)
+  }
+})
+
 export { expect } from '@playwright/test'

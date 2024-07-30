@@ -5,7 +5,7 @@ import { getLocalBravePath, BRAVE_LINUX_PATH } from '../constants/browsers'
 
 const availableDevices = getAvailableDevices()
 
-const LIBRARIES = ['ethers', 'wagmi', 'solana'] as const
+const LIBRARIES = ['ethers', 'wagmi', 'solana', 'multichain'] as const
 
 const PERMUTATIONS = availableDevices.flatMap(device =>
   LIBRARIES.map(library => ({ device, library }))

@@ -11,6 +11,12 @@ export default css`
     height: var(--local-height);
   }
 
+  :host([data-round='true']) {
+    background: var(--wui-color-gray-glass-002);
+    border-radius: 100%;
+    outline: 1px solid var(--wui-color-gray-glass-005);
+  }
+
   svg {
     position: absolute;
     top: 0;

@@ -16,7 +16,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@web3modal/scaffold": "workspace:*"
+    "@web3modal/scaffold": "workspace:*",
+    "@web3modal/scaffold-ui": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=17",

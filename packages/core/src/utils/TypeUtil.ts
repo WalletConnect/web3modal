@@ -104,6 +104,7 @@ export type SdkVersion =
   | `${'html' | 'react' | 'vue'}-ethers5-${string}`
   | `${'html' | 'react' | 'vue'}-ethers-${string}`
   | `${'html' | 'react' | 'vue'}-solana-${string}`
+  | `${'html' | 'react' | 'vue'}-multichain-${string}`
 
 export interface BaseError {
   message?: string
@@ -141,6 +142,7 @@ export interface WcWallet {
 
 export interface ApiGetWalletsRequest {
   page: number
+  chains: string
   entries: number
   search?: string
   include?: string[]
@@ -828,5 +830,6 @@ export type ChainAdapter = {
   networkControllerClient?: NetworkControllerClient
   accountState?: AccountControllerState
   networkState?: NetworkControllerState
+  defaultChain?: CaipNetwork
   chain: Chain
 }

@@ -1,17 +1,31 @@
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { SolanaWeb3JsClient } from '@web3modal/base/adapters/solana/web3js'
+import type { Chain, ProviderType, BaseWalletAdapter } from '@web3modal/base/adapters/solana/web3js'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 
-import { Web3Modal } from '../src/client.js'
+// -- Configs -----------------------------------------------------------
+export { defaultSolanaConfig } from '@web3modal/base/adapters/solana/web3js'
 
-import type { Web3ModalOptions } from '../src/client.js'
+// -- Setup -------------------------------------------------------------
+type SolanaAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> & {
+  solanaConfig: ProviderType
+  chains: Chain[]
+  wallets: BaseWalletAdapter[]
+}
 
-export type { Web3Modal, Web3ModalOptions } from '../src/client.js'
+export function createWeb3Modal(options: SolanaAppKitOptions) {
+  const wagmiAdapter = new SolanaWeb3JsClient({
+    solanaConfig: options.solanaConfig,
+    chains: options.chains,
+    wallets: options.wallets,
+    projectId: options.projectId
+  })
 
-export { defaultSolanaConfig } from '../src/utils/defaultConfig.js'
-
-export function createWeb3Modal(options: Web3ModalOptions) {
-  return new Web3Modal({
+  return new AppKit({
     ...options,
-    defaultChain: undefined,
-    _sdkVersion: `html-solana-${ConstantsUtil.VERSION}`
+    adapters: [wagmiAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `html-solana-${ConstantsUtil.VERSION}`
   })
 }

@@ -1,4 +1,4 @@
-import { ConnectorController, CoreHelperUtil } from '@web3modal/core'
+import { ChainController, ConnectorController, CoreHelperUtil } from '@web3modal/core'
 import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
@@ -6,6 +6,7 @@ import { ref, createRef } from 'lit/directives/ref.js'
 import type { Ref } from 'lit/directives/ref.js'
 import styles from './styles.js'
 import { SnackController, RouterController, EventsController } from '@web3modal/core'
+import { ConstantsUtil } from '@web3modal/common'
 
 @customElement('w3m-email-login-widget')
 export class W3mEmailLoginWidget extends LitElement {
@@ -104,6 +105,16 @@ export class W3mEmailLoginWidget extends LitElement {
   }
 
   private async onSubmitEmail(event: Event) {
+    const isActiveChainEVM = ChainController.state.activeChain === ConstantsUtil.CHAIN.EVM
+
+    if (!isActiveChainEVM) {
+      RouterController.push('SwitchActiveChain', {
+        switchToChain: ConstantsUtil.CHAIN.EVM
+      })
+
+      return
+    }
+
     try {
       if (this.loading) {
         return

@@ -48,6 +48,7 @@ import type { WuiNetworkImage } from '../composites/wui-network-image/index.js'
 import type { WuiOtp } from '../composites/wui-otp/index.js'
 import type { WuiQrCode } from '../composites/wui-qr-code/index.js'
 import type { WuiSearchBar } from '../composites/wui-search-bar/index.js'
+import type { WuiSelect } from '../composites/wui-select/index.js'
 import type { WuiSnackbar } from '../composites/wui-snackbar/index.js'
 import type { WuiTabs } from '../composites/wui-tabs/index.js'
 import type { WuiTag } from '../composites/wui-tag/index.js'
@@ -133,6 +134,7 @@ declare global {
       'wui-promo': CustomElement<WuiPromo>
       'wui-qr-code': CustomElement<WuiQrCode>
       'wui-search-bar': CustomElement<WuiSearchBar>
+      'wui-select': CustomElement<WuiSelect>
       'wui-snackbar': CustomElement<WuiSnackbar>
       'wui-tabs': CustomElement<WuiTabs>
       'wui-tag': CustomElement<WuiTag>

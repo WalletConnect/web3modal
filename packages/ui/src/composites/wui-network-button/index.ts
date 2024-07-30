@@ -21,7 +21,7 @@ export class WuiNetworkButton extends LitElement {
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
-      <button ?disabled=${this.disabled}>
+      <button data-testid="w3m-network-button" ?disabled=${this.disabled}>
         ${this.visualTemplate()}
         <wui-text variant="paragraph-600" color="inherit">
           <slot></slot>

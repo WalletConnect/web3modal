@@ -56,13 +56,4 @@ export class ModalWalletPage extends ModalPage {
 
     return signature as `0x${string}`
   }
-
-  async switchNetworkWithNetworkButton(networkName: string) {
-    const networkButton = this.page.getByTestId('w3m-network-button')
-    await networkButton.click()
-
-    const networkToSwitchButton = this.page.getByTestId(`w3m-network-switch-${networkName}`)
-    await networkToSwitchButton.click()
-    await networkToSwitchButton.waitFor({ state: 'hidden' })
-  }
 }

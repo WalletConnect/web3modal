@@ -13,6 +13,7 @@ import { WagmiModalInfo } from '../../components/Wagmi/WagmiModalInfo'
 const queryClient = new QueryClient()
 
 const wagmiConfig = getWagmiConfig('default')
+
 const modal = createWeb3Modal({
   wagmiConfig,
   projectId: ConstantsUtil.ProjectId,

@@ -1,5 +1,11 @@
 import type { Connector } from '@web3modal/core'
-import { AssetUtil, ConnectorController, CoreHelperUtil, RouterController } from '@web3modal/core'
+import {
+  AssetUtil,
+  ChainController,
+  ConnectorController,
+  CoreHelperUtil,
+  RouterController
+} from '@web3modal/core'
 import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
@@ -32,7 +38,10 @@ export class W3mConnectWalletConnectWidget extends LitElement {
       return null
     }
 
-    const connector = this.connectors.find(c => c.type === 'WALLET_CONNECT')
+    const connector = this.connectors.find(
+      c => c.type === 'WALLET_CONNECT' && c.chain === ChainController.state.activeChain
+    )
+
     if (!connector) {
       this.style.cssText = `display: none`
 

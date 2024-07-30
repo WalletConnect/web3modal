@@ -298,7 +298,9 @@ const containsRelativeImportWithoutJSExtension = (addition: string | undefined) 
   return hasImportStatement && lacksJSExtension && hasRelativePath
 }
 async function checkClientPackages() {
-  const client_files = modified_files.filter(f => /\/(wagmi|solana|ethers|ethers5)\//.test(f))
+  const client_files = modified_files.filter(f =>
+    /\/packages\/(wagmi|solana|ethers|ethers5)\//.test(f)
+  )
 
   for (const f of client_files) {
     const diff = await diffForFile(f)

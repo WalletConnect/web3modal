@@ -141,10 +141,14 @@ export class W3mRouter extends LitElement {
         return html`<w3m-wallet-compatible-networks-view></w3m-wallet-compatible-networks-view>`
       case 'WhatIsAWallet':
         return html`<w3m-what-is-a-wallet-view></w3m-what-is-a-wallet-view>`
+      case 'ConnectingMultiChain':
+        return html`<w3m-connecting-multi-chain-view></w3m-connecting-multi-chain-view>`
       case 'WhatIsANetwork':
         return html`<w3m-what-is-a-network-view></w3m-what-is-a-network-view>`
       case 'ConnectingFarcaster':
         return html`<w3m-connecting-farcaster-view></w3m-connecting-farcaster-view>`
+      case 'SwitchActiveChain':
+        return html`<w3m-switch-active-chain-view></w3m-switch-active-chain-view>`
       default:
         return html`<w3m-connect-view></w3m-connect-view>`
     }

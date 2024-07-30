@@ -1,25 +1,34 @@
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { EVMWagmiClient, type AdapterOptions } from '@web3modal/base/adapters/evm/wagmi'
 import { getWeb3Modal } from '@web3modal/scaffold-vue'
-import type { Web3ModalOptions } from '../src/client.js'
-import { Web3Modal } from '../src/client.js'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import type { Config } from '@wagmi/core'
 
-// -- Types -------------------------------------------------------------------
-export type { Web3ModalOptions } from '../src/client.js'
+// -- Configs -----------------------------------------------------------
+export { defaultWagmiCoreConfig as defaultWagmiConfig } from '@web3modal/base/adapters/evm/wagmi'
 
 // -- Setup -------------------------------------------------------------------
-let modal: Web3Modal | undefined = undefined
+let appkit: AppKit | undefined = undefined
+let wagmiAdapter: EVMWagmiClient | undefined = undefined
 
-export function createWeb3Modal(options: Web3ModalOptions<Config>) {
-  if (!modal) {
-    modal = new Web3Modal({
-      ...options,
-      _sdkVersion: `vue-wagmi-${ConstantsUtil.VERSION}`
-    })
-    getWeb3Modal(modal)
-  }
+type WagmiAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> &
+  AdapterOptions<Config>
 
-  return modal
+export function createWeb3Modal(options: WagmiAppKitOptions) {
+  wagmiAdapter = new EVMWagmiClient({
+    wagmiConfig: options.wagmiConfig,
+    siweConfig: options.siweConfig
+  })
+  appkit = new AppKit({
+    ...options,
+    adapters: [wagmiAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `vue-wagmi-${ConstantsUtil.VERSION}`
+  })
+  getWeb3Modal(appkit)
+
+  return appkit
 }
 
 // -- Composites --------------------------------------------------------------
@@ -30,6 +39,3 @@ export {
   useWeb3ModalEvents,
   useWalletInfo
 } from '@web3modal/scaffold-vue'
-
-// -- Universal Exports -------------------------------------------------------
-export { defaultWagmiConfig } from '../src/utils/defaultWagmiCoreConfig.js'

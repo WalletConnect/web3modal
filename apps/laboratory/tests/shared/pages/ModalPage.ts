@@ -47,8 +47,10 @@ export class ModalPage {
     return value!
   }
 
-  async getConnectUri(timingRecords?: TimingRecords): Promise<string> {
-    await this.page.goto(this.url)
+  async getConnectUri(timingRecords?: TimingRecords, goToPage = true): Promise<string> {
+    if (goToPage) {
+      await this.page.goto(this.url)
+    }
     await this.connectButton.click()
     const connect = this.page.getByTestId('wallet-selector-walletconnect')
     await connect.waitFor({
@@ -240,7 +242,10 @@ export class ModalPage {
   }
 
   async clickSignatureRequestButton(name: string) {
+    const signatureHeader = this.page.getByText('Approve Transaction')
     await this.page.frameLocator('#w3m-iframe').getByRole('button', { name, exact: true }).click()
+    await expect(signatureHeader, 'Signature request should be closed').not.toBeVisible()
+    await this.page.waitForTimeout(1000)
   }
 
   async approveSign() {
@@ -347,6 +352,15 @@ export class ModalPage {
     const otp = email.getOtpCodeFromBody(emailBody)
 
     await this.enterOTP(otp, headerTitle)
+  }
+
+  async switchNetworkWithNetworkButton(networkName: string) {
+    const networkButton = this.page.getByTestId('w3m-network-button')
+    await networkButton.click()
+
+    const networkToSwitchButton = this.page.getByTestId(`w3m-network-switch-${networkName}`)
+    await networkToSwitchButton.click()
+    await networkToSwitchButton.waitFor({ state: 'hidden' })
   }
 
   async openModal() {

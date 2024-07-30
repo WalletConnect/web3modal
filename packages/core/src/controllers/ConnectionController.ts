@@ -74,8 +74,8 @@ export const ConnectionController = {
     return subKey(state, key, callback)
   },
 
-  _getClient() {
-    return ChainController.getConnectionControllerClient()
+  _getClient(chain?: Chain) {
+    return ChainController.getConnectionControllerClient(chain)
   },
 
   setClient(client: ConnectionControllerClient) {
@@ -149,8 +149,8 @@ export const ConnectionController = {
     return this._getClient().getEnsAvatar(value)
   },
 
-  checkInstalled(ids?: string[]) {
-    return this._getClient().checkInstalled?.(ids)
+  checkInstalled(ids?: string[], chain?: Chain) {
+    return this._getClient(chain).checkInstalled?.(ids) || false
   },
 
   resetWcConnection() {

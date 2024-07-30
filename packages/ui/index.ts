@@ -74,6 +74,7 @@ export * from './src/composites/wui-list-account/index.js'
 export * from './src/composites/wui-icon-button/index.js'
 export * from './src/composites/wui-list-button/index.js'
 export * from './src/composites/wui-list-social/index.js'
+export * from './src/composites/wui-select/index.js'
 
 export * from './src/layout/wui-flex/index.js'
 export * from './src/layout/wui-grid/index.js'

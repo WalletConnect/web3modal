@@ -46,6 +46,7 @@
     "@wagmi/core": "2.11.6",
     "@walletconnect/ethereum-provider": "2.14.0",
     "@walletconnect/utils": "2.14.0",
+    "@web3modal/base": "workspace:*",
     "@web3modal/ethers": "workspace:*",
     "@web3modal/siwe": "workspace:*",
     "@web3modal/solana": "workspace:*",

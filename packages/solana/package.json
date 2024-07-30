@@ -61,6 +61,7 @@
     "@wallet-standard/features": "1.0.3",
     "@wallet-standard/wallet": "1.0.1",
     "@walletconnect/universal-provider": "2.14.0",
+    "@web3modal/base": "workspace:*",
     "@web3modal/core": "workspace:*",
     "@web3modal/common": "workspace:*",
     "@web3modal/polyfills": "workspace:*",

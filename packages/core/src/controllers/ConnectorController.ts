@@ -4,6 +4,7 @@ import type { AuthConnector, Connector } from '../utils/TypeUtil.js'
 import { getW3mThemeVariables } from '@web3modal/common'
 import { OptionsController } from './OptionsController.js'
 import { ThemeController } from './ThemeController.js'
+import { ChainController } from './ChainController.js'
 
 // -- Types --------------------------------------------- //
 export interface ConnectorControllerState {
@@ -25,47 +26,43 @@ export const ConnectorController = {
     return subKey(state, key, callback)
   },
 
-  setConnectors(connectors: ConnectorControllerState['connectors'], multiChain?: boolean) {
-    if (multiChain) {
-      state.connectors = [...state.connectors, ...connectors.map(c => ref(c))]
-
-      state.connectors = this.mergeMultiChainConnectors(state.connectors)
+  setConnectors(connectors: ConnectorControllerState['connectors']) {
+    if (ChainController.state.multiChainEnabled) {
+      state.connectors = this.mergeMultiChainConnectors([...state.connectors, ...connectors])
     } else {
       state.connectors = connectors.map(c => ref(c))
     }
   },
 
-  mergeMultiChainConnectors(connectors: ConnectorControllerState['connectors']) {
-    const mergedConnectors: Connector[] = []
+  mergeMultiChainConnectors(connectors: Connector[]) {
+    // Create a map to hold unique connectors by name
+    const connectorMap = new Map()
 
     connectors.forEach(connector => {
-      const { name, chain, type } = connector
+      const { name, imageUrl } = connector
+      if (connectorMap.has(name) || connectorMap.has(imageUrl)) {
+        const existingConnector = connectorMap.get(name)
 
-      const existingConnectorIndex = mergedConnectors.findIndex(
-        existingConnector => existingConnector.name === name
-      )
-
-      if (existingConnectorIndex === -1) {
-        mergedConnectors.push({ ...connector })
-      } else {
-        const existingConnector = mergedConnectors[existingConnectorIndex]
-        if (existingConnector) {
-          if (existingConnector?.chain === chain || existingConnector.type === type) {
-            mergedConnectors.push({ ...connector })
-          } else if (existingConnector.type === 'MULTI_CHAIN') {
-            mergedConnectors.push({ ...connector })
-          } else {
-            mergedConnectors[existingConnectorIndex] = {
-              ...existingConnector,
-              type: 'MULTI_CHAIN',
-              providers: [existingConnector, connector]
-            }
-          }
+        // If an existing connector with the same name is found, ensure it's a MULTI_CHAIN type
+        if (existingConnector.type === 'MULTI_CHAIN') {
+          // If it's already a MULTI_CHAIN type, add the new connector to the providers array
+          existingConnector.providers.push(connector)
+        } else {
+          connectorMap.set(name, {
+            type: 'MULTI_CHAIN',
+            imageUrl,
+            name,
+            providers: [existingConnector, connector]
+          })
         }
+      } else {
+        // If no existing connector with the same name, add the connector to the map
+        connectorMap.set(name, connector)
       }
     })
 
-    return mergedConnectors
+    // Convert the map back to an array and return it
+    return Array.from(connectorMap.values())
   },
 
   addConnector(connector: Connector | AuthConnector) {

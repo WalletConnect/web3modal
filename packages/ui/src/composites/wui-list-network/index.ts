@@ -17,29 +17,42 @@ export class WuiListNetwork extends LitElement {
 
   @property({ type: Boolean }) public disabled = false
 
+  @property({ type: Boolean }) public selected = false
+
   @property({ type: Boolean }) public transparent = false
 
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
       <button data-transparent=${this.transparent} ?disabled=${this.disabled} ontouchstart>
-        ${this.templateNetworkImage()}
-        <wui-text variant="paragraph-500" color="inherit">${this.name}</wui-text>
+        <wui-flex gap="s" alignItems="center">
+          ${this.templateNetworkImage()}
+          <wui-text variant="paragraph-500" color="inherit">${this.name}</wui-text></wui-flex
+        >
+        ${this.checkmarkTemplate()}
       </button>
     `
   }
 
   // -- Private ------------------------------------------- //
+  private checkmarkTemplate() {
+    if (this.selected) {
+      return html`<wui-icon size="sm" color="accent-100" name="checkmarkBold"></wui-icon>`
+    }
+
+    return null
+  }
+
   private templateNetworkImage() {
     if (this.imageSrc) {
-      return html`<wui-network-image
-        size="sm"
-        imageSrc=${this.imageSrc}
-        name=${this.name}
-      ></wui-network-image>`
+      return html`<wui-image size="sm" src=${this.imageSrc} name=${this.name}></wui-image>`
     }
     if (!this.imageSrc) {
-      return html`<wui-network-image size="sm" name=${this.name}></wui-network-image>`
+      return html`<wui-network-image
+        ?round=${true}
+        size="md"
+        name=${this.name}
+      ></wui-network-image>`
     }
 
     return null

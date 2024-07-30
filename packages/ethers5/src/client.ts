@@ -376,7 +376,10 @@ export class Web3Modal extends Web3ModalScaffold {
       networkControllerClient,
       connectionControllerClient,
       siweControllerClient: siweConfig,
-      defaultChain: EthersHelpersUtil.getCaipDefaultChain(defaultChain),
+      defaultChain: {
+        ...EthersHelpersUtil.getCaipDefaultChain(defaultChain),
+        chain: CommonConstantsUtil.CHAIN.EVM
+      } as CaipNetwork,
       tokens: HelpersUtil.getCaipTokens(tokens),
       _sdkVersion: _sdkVersion ?? `html-ethers5-${ConstantsUtil.VERSION}`,
       ...w3mOptions

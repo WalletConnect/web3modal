@@ -1,13 +1,13 @@
 import { onUnmounted, reactive, ref } from 'vue'
+import type { Web3ModalScaffold } from '@web3modal/scaffold'
 import type { Event } from '@web3modal/core'
 import type {
   W3mAccountButton,
   W3mButton,
   W3mConnectButton,
   W3mNetworkButton,
-  W3mOnrampWidget,
-  Web3ModalScaffold
-} from '@web3modal/scaffold'
+  W3mOnrampWidget
+} from '@web3modal/scaffold-ui'
 
 type OpenOptions = Parameters<Web3ModalScaffold['open']>[0]
 

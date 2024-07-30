@@ -1,4 +1,4 @@
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+import { defaultWagmiConfig } from '@web3modal/wagmi/react'
 import {
   arbitrum,
   aurora,

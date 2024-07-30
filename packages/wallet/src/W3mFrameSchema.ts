@@ -62,6 +62,7 @@ export const AppSyncDappDataRequest = z.object({
     | `${'html' | 'react' | 'vue'}-ethers5-${string}`
     | `${'html' | 'react' | 'vue'}-ethers-${string}`
     | `${'html' | 'react' | 'vue'}-solana-${string}`
+    | `${'html' | 'react' | 'vue'}-multichain-${string}`
   >,
   projectId: z.string()
 })

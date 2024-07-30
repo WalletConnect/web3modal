@@ -34,6 +34,7 @@ export class W3mConnectCustomWidget extends LitElement {
   // -- Render -------------------------------------------- //
   public override render() {
     const { customWallets } = OptionsController.state
+
     if (!customWallets?.length) {
       this.style.cssText = `display: none`
 

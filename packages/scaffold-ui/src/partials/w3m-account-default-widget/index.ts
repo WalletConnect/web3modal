@@ -2,9 +2,7 @@ import {
   AccountController,
   CoreHelperUtil,
   ModalController,
-  NetworkController,
   RouterController,
-  AssetUtil,
   StorageUtil,
   ConnectorController,
   EventsController,
@@ -37,8 +35,6 @@ export class W3mAccountDefaultWidget extends LitElement {
 
   @state() private profileName = AccountController.state.profileName
 
-  @state() private network = NetworkController.state.caipNetwork
-
   @state() private disconnecting = false
 
   @state() private balance = AccountController.state.balance
@@ -59,11 +55,6 @@ export class W3mAccountDefaultWidget extends LitElement {
           } else if (!this.disconnecting) {
             SnackController.showError('Account not found')
           }
-        }),
-        NetworkController.subscribeKey('caipNetwork', val => {
-          if (val?.id) {
-            this.network = val
-          }
         })
       ]
     )
@@ -78,8 +69,6 @@ export class W3mAccountDefaultWidget extends LitElement {
     if (!this.address) {
       throw new Error('w3m-account-view: No account provided')
     }
-
-    const networkImage = AssetUtil.getNetworkImage(this.network)
 
     return html`<wui-flex
         flexDirection="column"
@@ -100,20 +89,6 @@ export class W3mAccountDefaultWidget extends LitElement {
 
       <wui-flex flexDirection="column" gap="xs" .padding=${['0', 's', 's', 's'] as const}>
         ${this.authCardTemplate()} <w3m-account-auth-button></w3m-account-auth-button>
-
-        <wui-list-item
-          .variant=${networkImage ? 'image' : 'icon'}
-          iconVariant="overlay"
-          icon="networkPlaceholder"
-          imageSrc=${ifDefined(networkImage)}
-          ?chevron=${this.isAllowedNetworkSwitch()}
-          @click=${this.onNetworks.bind(this)}
-          data-testid="w3m-account-select-network"
-        >
-          <wui-text variant="paragraph-500" color="fg-100">
-            ${this.network?.name ?? 'Unknown'}
-          </wui-text>
-        </wui-list-item>
         ${this.onrampTemplate()} ${this.swapsTemplate()} ${this.activityTemplate()}
         <wui-list-item
           variant="icon"
@@ -290,14 +265,6 @@ export class W3mAccountDefaultWidget extends LitElement {
     `
   }
 
-  private isAllowedNetworkSwitch() {
-    const requestedCaipNetworks = NetworkController.getRequestedCaipNetworks()
-    const isMultiNetwork = requestedCaipNetworks ? requestedCaipNetworks.length > 1 : false
-    const isValidNetwork = requestedCaipNetworks?.find(({ id }) => id === this.network?.id)
-
-    return isMultiNetwork || !isValidNetwork
-  }
-
   private onCopyAddress() {
     try {
       if (this.address) {
@@ -306,13 +273,6 @@ export class W3mAccountDefaultWidget extends LitElement {
       }
     } catch {
       SnackController.showError('Failed to copy')
-    }
-  }
-
-  private onNetworks() {
-    if (this.isAllowedNetworkSwitch()) {
-      EventsController.sendEvent({ type: 'track', event: 'CLICK_NETWORKS' })
-      RouterController.push('Networks')
     }
   }
 

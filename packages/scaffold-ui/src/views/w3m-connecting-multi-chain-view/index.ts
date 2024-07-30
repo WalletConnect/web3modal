@@ -31,6 +31,10 @@ export class W3mConnectingMultiChainView extends LitElement {
     )
   }
 
+  public override disconnectedCallback() {
+    this.unsubscribe.forEach(unsubscribe => unsubscribe())
+  }
+
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
@@ -46,7 +50,6 @@ export class W3mConnectingMultiChainView extends LitElement {
             imageSrc=${ifDefined(this.activeConnector?.imageUrl)}
           ></wui-wallet-image>
         </wui-flex>
-
         <wui-flex
           flexDirection="column"
           alignItems="center"
@@ -79,6 +82,7 @@ export class W3mConnectingMultiChainView extends LitElement {
     const approvedCaipNetworkIds = NetworkController.state.approvedCaipNetworkIds
     const supportsAllNetworks = NetworkController.state.supportsAllNetworks
     const chains = ChainController.state.chains
+    const chainKeys = [...chains.keys()]
 
     const sortedNetworks = CoreHelperUtil.sortRequestedNetworks(
       approvedCaipNetworkIds,
@@ -87,18 +91,16 @@ export class W3mConnectingMultiChainView extends LitElement {
 
     const networks: CaipNetwork[] | null | undefined = []
 
-    if (chains.get(ConstantsUtil.CHAIN.EVM)) {
-      const network = sortedNetworks.find(element => element.name === 'Ethereum')
-      if (network) {
-        networks.push(network)
+    chainKeys.forEach(chain => {
+      if (chains.get(chain)) {
+        const network = sortedNetworks.find(
+          element => element.name === ConstantsUtil.CHAIN_NAME_MAP[chain]
+        )
+        if (network) {
+          networks.push(network)
+        }
       }
-    }
-    if (chains.get(ConstantsUtil.CHAIN.SOLANA)) {
-      const network = sortedNetworks.find(element => element.name === 'Solana')
-      if (network) {
-        networks.push(network)
-      }
-    }
+    })
 
     return networks?.map(
       network => html`
@@ -116,18 +118,11 @@ export class W3mConnectingMultiChainView extends LitElement {
   }
 
   private onSwitchNetwork(network: CaipNetwork) {
-    NetworkController.setCaipNetwork(network)
-    if (network.name === ConstantsUtil.CHAIN_NAME.EVM) {
-      const connector = this.activeConnector?.providers?.find(
-        provider => provider.chain === ConstantsUtil.CHAIN.EVM
-      )
-      RouterController.push('ConnectingExternal', { connector })
-    } else if (network.name === ConstantsUtil.CHAIN_NAME.SOLANA) {
-      const connector = this.activeConnector?.providers?.find(
-        provider => provider.chain === ConstantsUtil.CHAIN.SOLANA
-      )
-      RouterController.push('ConnectingExternal', { connector })
-    }
+    NetworkController.setActiveCaipNetwork(network)
+    const connector = this.activeConnector?.providers?.find(
+      provider => provider.chain === network.chain
+    )
+    RouterController.push('ConnectingExternal', { connector })
   }
 }
 

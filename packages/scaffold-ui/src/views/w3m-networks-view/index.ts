@@ -2,6 +2,7 @@ import type { CaipNetwork } from '@web3modal/core'
 import {
   AccountController,
   AssetUtil,
+  ChainController,
   CoreHelperUtil,
   EventsController,
   NetworkController,
@@ -25,6 +26,11 @@ export class W3mNetworksView extends LitElement {
 
   @state() public requestedCaipNetworks = NetworkController.getRequestedCaipNetworks()
 
+  @state() private filteredNetworks?: CaipNetwork[]
+
+  @state() private search = ''
+
+  // -- Lifecycle ----------------------------------------- //
   public constructor() {
     super()
     this.unsubscribe.push(
@@ -39,9 +45,15 @@ export class W3mNetworksView extends LitElement {
   // -- Render -------------------------------------------- //
   public override render() {
     return html`
-      <wui-grid padding="s" gridTemplateColumns="repeat(4, 1fr)" rowGap="l" columnGap="xs">
+      ${this.templateSearchInput()}
+      <wui-flex
+        class="container"
+        .padding=${['0', 's', 's', 's'] as const}
+        flexDirection="column"
+        gap="xs"
+      >
         ${this.networksTemplate()}
-      </wui-grid>
+      </wui-flex>
 
       <wui-separator></wui-separator>
 
@@ -58,6 +70,28 @@ export class W3mNetworksView extends LitElement {
   }
 
   // Private Methods ------------------------------------- //
+  private templateSearchInput() {
+    return html`
+      <wui-flex gap="xs" .padding=${['0', 's', 's', 's'] as const}>
+        <wui-input-text
+          @inputChange=${this.onInputChange.bind(this)}
+          class="network-search-input"
+          size="md"
+          placeholder="Search network"
+          icon="search"
+        ></wui-input-text>
+      </wui-flex>
+    `
+  }
+
+  private onInputChange(event: CustomEvent<string>) {
+    this.onDebouncedSearch(event.detail)
+  }
+
+  private onDebouncedSearch = CoreHelperUtil.debounce((value: string) => {
+    this.search = value
+  }, 100)
+
   private onNetworkHelp() {
     EventsController.sendEvent({ type: 'track', event: 'CLICK_NETWORK_HELP' })
     RouterController.push('WhatIsANetwork')
@@ -73,29 +107,49 @@ export class W3mNetworksView extends LitElement {
       requestedCaipNetworks
     )
 
-    return sortedNetworks?.map(
+    if (this.search) {
+      this.filteredNetworks = sortedNetworks?.filter(
+        network => network?.name?.toLowerCase().includes(this.search.toLowerCase())
+      )
+    } else {
+      this.filteredNetworks = sortedNetworks
+    }
+
+    return this.filteredNetworks?.map(
       network => html`
-        <wui-card-select
+        <wui-list-network
           .selected=${this.caipNetwork?.id === network.id}
           imageSrc=${ifDefined(AssetUtil.getNetworkImage(network))}
           type="network"
           name=${network.name ?? network.id}
           @click=${() => this.onSwitchNetwork(network)}
-          .disabled=${!supportsAllNetworks && !approvedCaipNetworkIds?.includes(network.id)}
+          .disabled=${!supportsAllNetworks &&
+          !approvedCaipNetworkIds?.includes(network.id) &&
+          network.chain === ChainController.state.activeChain}
           data-testid=${`w3m-network-switch-${network.name ?? network.id}`}
-        ></wui-card-select>
+        ></wui-list-network>
       `
     )
   }
 
   private async onSwitchNetwork(network: CaipNetwork) {
     const isConnected = AccountController.state.isConnected
+    const isNetworkChainConnected = AccountController.getChainIsConnected(network.chain)
     const approvedCaipNetworkIds = NetworkController.state.approvedCaipNetworkIds
     const supportsAllNetworks = NetworkController.state.supportsAllNetworks
     const caipNetwork = NetworkController.state.caipNetwork
     const routerData = RouterController.state.data
 
     if (isConnected && caipNetwork?.id !== network.id) {
+      if (!isNetworkChainConnected) {
+        RouterController.push('SwitchActiveChain', {
+          switchToChain: network.chain,
+          navigateTo: 'Connect',
+          navigateWithReplace: true
+        })
+
+        return
+      }
       if (approvedCaipNetworkIds?.includes(network.id)) {
         await NetworkController.switchActiveNetwork(network)
         await NetworkUtil.onNetworkChange()
@@ -103,8 +157,10 @@ export class W3mNetworksView extends LitElement {
         RouterController.push('SwitchNetwork', { ...routerData, network })
       }
     } else if (!isConnected) {
-      NetworkController.setCaipNetwork(network)
-      RouterController.push('Connect')
+      NetworkController.setActiveCaipNetwork(network)
+      if (!isNetworkChainConnected) {
+        RouterController.push('Connect')
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ import { getWagmiConfig } from '../../utils/WagmiConstants'
 const queryClient = new QueryClient()
 
 const wagmiConfig = getWagmiConfig('email')
+
 const modal = createWeb3Modal({
   wagmiConfig,
   projectId: ConstantsUtil.ProjectId,

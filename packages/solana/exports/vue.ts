@@ -1,35 +1,48 @@
 import { onUnmounted, ref } from 'vue'
-
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import { getWeb3Modal } from '@web3modal/scaffold-vue'
-
-import type { Web3ModalOptions } from '../src/client.js'
 import type { CaipNetwork } from 'packages/core/dist/types/index.js'
-import type { Provider } from '../src/utils/scaffold/index.js'
-import { SolStoreUtil } from '../src/utils/scaffold/SolanaStoreUtil.js'
-import { Web3Modal } from '../src/client.js'
-
-// -- Types -------------------------------------------------------------------
-export type { Web3ModalOptions } from '../src/client.js'
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { SolanaWeb3JsClient, SolStoreUtil } from '@web3modal/base/adapters/solana/web3js'
+import type {
+  Chain,
+  Provider,
+  ProviderType,
+  BaseWalletAdapter
+} from '@web3modal/base/adapters/solana/web3js'
 
 // -- Setup -------------------------------------------------------------------
-let modal: Web3Modal | undefined = undefined
+let appkit: AppKit | undefined = undefined
+let solanaAdapter: SolanaWeb3JsClient | undefined = undefined
 
-export function createWeb3Modal(options: Web3ModalOptions) {
-  if (!modal) {
-    modal = new Web3Modal({
-      ...options,
-      _sdkVersion: `vue-solana-${ConstantsUtil.VERSION}`
-    })
-    getWeb3Modal(modal)
-  }
+type SolanaAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> & {
+  solanaConfig: ProviderType
+  chains: Chain[]
+  wallets: BaseWalletAdapter[]
+}
 
-  return modal
+export function createWeb3Modal(options: SolanaAppKitOptions) {
+  solanaAdapter = new SolanaWeb3JsClient({
+    solanaConfig: options.solanaConfig,
+    chains: options.chains,
+    wallets: options.wallets,
+    projectId: options.projectId
+  })
+  appkit = new AppKit({
+    ...options,
+    adapters: [solanaAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `vue-solana-${ConstantsUtil.VERSION}`
+  })
+  getWeb3Modal(appkit)
+
+  return appkit
 }
 
 // -- Composites --------------------------------------------------------------
 export function useWeb3ModalProvider() {
-  if (!modal) {
+  if (!solanaAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalProvider" composition')
   }
 
@@ -37,7 +50,7 @@ export function useWeb3ModalProvider() {
   const walletProviderType = ref(SolStoreUtil.state.providerType)
   const connection = ref(SolStoreUtil.state.connection)
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = solanaAdapter.subscribeProvider(state => {
     walletProvider.value = state.provider as Provider
     walletProviderType.value = state.providerType
   })
@@ -55,7 +68,7 @@ export function useWeb3ModalProvider() {
 
 export function useDisconnect() {
   function disconnect() {
-    modal?.disconnect()
+    solanaAdapter?.disconnect()
   }
 
   return {
@@ -65,7 +78,7 @@ export function useDisconnect() {
 
 export function useSwitchNetwork() {
   async function switchNetwork(chainId: string) {
-    await modal?.switchNetwork({ id: chainId } as CaipNetwork)
+    await solanaAdapter?.switchNetwork({ id: chainId } as CaipNetwork)
   }
 
   return {
@@ -74,15 +87,15 @@ export function useSwitchNetwork() {
 }
 
 export function useWeb3ModalAccount() {
-  if (!modal) {
+  if (!solanaAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalAccount" composition')
   }
 
-  const address = ref(modal.getAddress())
+  const address = ref(solanaAdapter.getAddress())
   const isConnected = ref(SolStoreUtil.state.isConnected)
   const chainId = ref(SolStoreUtil.state.currentChain?.chainId)
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = solanaAdapter.subscribeProvider(state => {
     address.value = state.address ?? ''
     isConnected.value = state.isConnected
     chainId.value = state.chainId
@@ -100,13 +113,13 @@ export function useWeb3ModalAccount() {
 }
 
 export function useWeb3ModalError() {
-  if (!modal) {
+  if (!solanaAdapter) {
     throw new Error('Please call "createWeb3Modal" before using "useWeb3ModalError" composition')
   }
 
   const error = ref(SolStoreUtil.state.error)
 
-  const unsubscribe = modal.subscribeProvider(state => {
+  const unsubscribe = solanaAdapter.subscribeProvider(state => {
     error.value = state.error
   })
 
@@ -127,4 +140,4 @@ export {
 } from '@web3modal/scaffold-vue'
 
 // -- Universal Exports -------------------------------------------------------
-export { defaultSolanaConfig } from '../src/utils/defaultConfig.js'
+export { defaultSolanaConfig } from '@web3modal/base/adapters/solana/web3js'

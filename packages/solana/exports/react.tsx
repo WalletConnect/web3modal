@@ -3,30 +3,45 @@
 import { useSnapshot } from 'valtio'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import { getWeb3Modal } from '@web3modal/scaffold-react'
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { SolanaWeb3JsClient, SolStoreUtil } from '@web3modal/base/adapters/solana/web3js'
+import type {
+  Chain,
+  Provider,
+  ProviderType,
+  BaseWalletAdapter
+} from '@web3modal/base/adapters/solana/web3js'
 
-import { Web3Modal } from '../src/client.js'
+// -- Configs -----------------------------------------------------------
+export { defaultSolanaConfig } from '@web3modal/base/adapters/solana/web3js'
 
-import { SolStoreUtil } from '../src/utils/scaffold/index.js'
+// -- Setup -------------------------------------------------------------
+let appkit: AppKit | undefined = undefined
+let solanaAdapter: SolanaWeb3JsClient | undefined = undefined
 
-import type { Web3ModalOptions } from '../src/client.js'
-import type { Provider } from '../src/utils/scaffold/index.js'
+type SolanaAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> & {
+  solanaConfig: ProviderType
+  chains: Chain[]
+  wallets: BaseWalletAdapter[]
+}
 
-// -- Setup -------------------------------------------------------------------
-let modal: Web3Modal | undefined = undefined
+export function createWeb3Modal(options: SolanaAppKitOptions) {
+  solanaAdapter = new SolanaWeb3JsClient({
+    solanaConfig: options.solanaConfig,
+    chains: options.chains,
+    wallets: options.wallets,
+    projectId: options.projectId
+  })
+  appkit = new AppKit({
+    ...options,
+    adapters: [solanaAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `react-solana-${ConstantsUtil.VERSION}`
+  })
+  getWeb3Modal(appkit)
 
-// -- Types -------------------------------------------------------------------
-export type { Web3Modal, Web3ModalOptions } from '../src/client.js'
-
-export function createWeb3Modal(options: Web3ModalOptions) {
-  if (!modal) {
-    modal = new Web3Modal({
-      ...options,
-      _sdkVersion: `react-solana-${ConstantsUtil.VERSION}`
-    })
-  }
-  getWeb3Modal(modal)
-
-  return modal
+  return appkit
 }
 
 // -- Hooks -------------------------------------------------------------------
@@ -42,7 +57,7 @@ export function useWeb3ModalProvider() {
 
 export function useDisconnect() {
   function disconnect() {
-    modal?.disconnect()
+    solanaAdapter?.disconnect()
   }
 
   return {
@@ -67,6 +82,3 @@ export {
   useWeb3ModalState,
   useWeb3ModalEvents
 } from '@web3modal/scaffold-react'
-
-// -- Universal Exports -------------------------------------------------------
-export { defaultSolanaConfig } from '../src/utils/defaultConfig.js'

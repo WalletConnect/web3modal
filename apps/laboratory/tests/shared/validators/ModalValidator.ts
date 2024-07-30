@@ -53,6 +53,12 @@ export class ModalValidator {
     })
   }
 
+  async expectConnectScreen() {
+    await expect(this.page.getByText('Connect Wallet')).toBeVisible({
+      timeout: MAX_WAIT
+    })
+  }
+
   async expectAddress(expectedAddress: string) {
     const address = this.page.getByTestId('w3m-address')
 
@@ -88,9 +94,7 @@ export class ModalValidator {
   async expectSwitchedNetwork(network: string) {
     const switchNetworkButton = this.page.getByTestId('w3m-account-select-network')
     await expect(switchNetworkButton).toBeVisible()
-    await expect(switchNetworkButton, `Switched network should include ${network}`).toContainText(
-      network
-    )
+    await expect(switchNetworkButton).toHaveAttribute('active-network', network)
   }
 
   async expectValidSignature(signature: `0x${string}`, address: `0x${string}`, chainId: number) {

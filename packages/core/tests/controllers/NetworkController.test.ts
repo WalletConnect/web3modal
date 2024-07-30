@@ -57,7 +57,7 @@ describe('NetworkController', () => {
   })
 
   it('should update state correctly on setCaipNetwork()', () => {
-    NetworkController.setCaipNetwork(caipNetwork)
+    NetworkController.setActiveCaipNetwork(caipNetwork)
     expect(NetworkController.state.caipNetwork).toEqual(caipNetwork)
   })
 
@@ -88,13 +88,14 @@ describe('NetworkController', () => {
   })
 
   it('should check correctly if smart accounts are enabled on the network', () => {
+    NetworkController.setActiveCaipNetwork(caipNetwork)
     NetworkController.setSmartAccountEnabledNetworks([1])
     expect(NetworkController.checkIfSmartAccountEnabled()).toEqual(true)
     NetworkController.setSmartAccountEnabledNetworks([])
     expect(NetworkController.checkIfSmartAccountEnabled()).toEqual(false)
     NetworkController.setSmartAccountEnabledNetworks([2])
     expect(NetworkController.checkIfSmartAccountEnabled()).toEqual(false)
-    NetworkController.setCaipNetwork({
+    NetworkController.setActiveCaipNetwork({
       id: 'eip155:2',
       name: 'Ethereum',
       chain: ConstantsUtil.CHAIN.EVM

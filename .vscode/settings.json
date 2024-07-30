@@ -6,7 +6,6 @@
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "explorer.sortOrder": "type",
   "extensions.ignoreRecommendations": true,
-  "files.autoSave": "onWindowChange",
   "files.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,

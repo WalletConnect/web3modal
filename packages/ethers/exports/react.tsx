@@ -1,29 +1,39 @@
 'use client'
 
-import type { Web3ModalOptions } from '../src/client.js'
-import { Web3Modal } from '../src/client.js'
+import { AppKit } from '@web3modal/base'
+import type { AppKitOptions } from '@web3modal/base'
+import { EVMEthersClient, type AdapterOptions } from '@web3modal/base/adapters/evm/ethers'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import { EthersStoreUtil } from '@web3modal/scaffold-utils/ethers'
 import { getWeb3Modal } from '@web3modal/scaffold-react'
 import { useSnapshot } from 'valtio'
 import type { Eip1193Provider } from 'ethers'
 
-// -- Types -------------------------------------------------------------------
-export type { Web3ModalOptions } from '../src/client.js'
+// -- Configs -----------------------------------------------------------
+export { defaultConfig } from '@web3modal/base/adapters/evm/ethers'
 
 // -- Setup -------------------------------------------------------------------
-let modal: Web3Modal | undefined = undefined
+let appkit: AppKit | undefined = undefined
+let ethersAdapter: EVMEthersClient | undefined = undefined
 
-export function createWeb3Modal(options: Web3ModalOptions) {
-  if (!modal) {
-    modal = new Web3Modal({
-      ...options,
-      _sdkVersion: `react-ethers-${ConstantsUtil.VERSION}`
-    })
-  }
-  getWeb3Modal(modal)
+type WagmiAppKitOptions = Omit<AppKitOptions, 'adapters' | 'sdkType' | 'sdkVersion'> &
+  AdapterOptions
 
-  return modal
+export function createWeb3Modal(options: WagmiAppKitOptions) {
+  ethersAdapter = new EVMEthersClient({
+    ethersConfig: options.ethersConfig,
+    siweConfig: options.siweConfig,
+    chains: options.chains
+  })
+  appkit = new AppKit({
+    ...options,
+    adapters: [ethersAdapter],
+    sdkType: 'w3m',
+    sdkVersion: `react-wagmi-${ConstantsUtil.VERSION}`
+  })
+  getWeb3Modal(appkit)
+
+  return appkit
 }
 
 // -- Hooks -------------------------------------------------------------------
@@ -41,7 +51,7 @@ export function useWeb3ModalProvider() {
 
 export function useDisconnect() {
   async function disconnect() {
-    await modal?.disconnect()
+    await ethersAdapter?.disconnect()
   }
 
   return {
@@ -51,7 +61,7 @@ export function useDisconnect() {
 
 export function useSwitchNetwork() {
   async function switchNetwork(chainId: number) {
-    await modal?.switchNetwork(chainId)
+    await ethersAdapter?.switchNetwork(chainId)
   }
 
   return {
@@ -85,6 +95,3 @@ export {
   useWeb3ModalEvents,
   useWalletInfo
 } from '@web3modal/scaffold-react'
-
-// -- Universal Exports -------------------------------------------------------
-export { defaultConfig } from '../src/utils/defaultConfig.js'

@@ -19,28 +19,49 @@ export class WuiNetworkImage extends LitElement {
 
   @property() public name = 'uknown'
 
+  @property({ type: Object }) public networkImagesBySize = {
+    sm: networkSvgSm,
+    md: networkSvgMd,
+    lg: networkSvgLg
+  }
+
   @property() public imageSrc?: string
 
   @property({ type: Boolean }) public selected?: boolean = false
 
+  @property({ type: Boolean }) public round?: boolean = false
+
   // -- Render -------------------------------------------- //
   public override render() {
-    const networkImagesBySize = { sm: networkSvgSm, md: networkSvgMd, lg: networkSvgLg }
-    this.style.cssText = `
-      --local-stroke: ${
-        this.selected ? 'var(--wui-color-accent-100)' : 'var(--wui-color-gray-glass-010)'
-      };
+    if (this.round) {
+      this.dataset['round'] = 'true'
+      this.style.cssText = `
+      --local-width: var(--wui-spacing-3xl);
+      --local-height: var(--wui-spacing-3xl);
+      --local-icon-size: var(--wui-spacing-l);
+    `
+    } else {
+      this.style.cssText = `
+
       --local-path: var(--wui-path-network-${this.size});
       --local-width:  var(--wui-width-network-${this.size});
       --local-height:  var(--wui-height-network-${this.size});
       --local-icon-size:  var(--wui-icon-size-network-${this.size});
     `
+    }
 
     // eslint-disable-next-line no-nested-ternary
-    return html`${this.templateVisual()} ${networkImagesBySize[this.size]}`
+    return html`${this.templateVisual()} ${this.svgTemplate()} `
   }
 
   // -- Private ------------------------------------------- //
+  private svgTemplate() {
+    if (this.round) {
+      return null
+    }
+
+    return this.networkImagesBySize[this.size]
+  }
   private templateVisual() {
     if (this.imageSrc) {
       return html`<wui-image src=${this.imageSrc} alt=${this.name}></wui-image>`

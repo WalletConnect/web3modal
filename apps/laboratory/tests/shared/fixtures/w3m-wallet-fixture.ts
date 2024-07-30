@@ -1,6 +1,6 @@
 /* eslint no-console: 0 */
 
-import { testM as base, testMSiwe as siwe } from './w3m-fixture'
+import { testM as base, testMSiwe as siwe, testMultiChainM as multiChain } from './w3m-fixture'
 import { WalletPage } from '../pages/WalletPage'
 import { WalletValidator } from '../validators/WalletValidator'
 
@@ -87,11 +87,28 @@ export const testConnectedMW = base.extend<ModalWalletFixture>({
     await use(walletPage)
   }
 })
+
 export const testMWSiwe = siwe.extend<ModalWalletFixture>({
   walletPage: async ({ context }, use) => {
     const walletPage = new WalletPage(await context.newPage())
     await walletPage.load()
     await use(walletPage)
+  }
+})
+
+export const testMWMultiChain = multiChain.extend<ModalWalletFixture>({
+  walletPage: async ({ context, modalPage, modalValidator }, use) => {
+    const walletPage = new WalletPage(await context.newPage())
+    await walletPage.load()
+    const uri = await modalPage.getConnectUri()
+    await walletPage.connectWithUri(uri)
+    await walletPage.handleSessionProposal(DEFAULT_SESSION_PARAMS)
+    await modalValidator.expectConnected()
+    await use(walletPage)
+  },
+  walletValidator: async ({ walletPage }, use) => {
+    const walletValidator = new WalletValidator(walletPage.page)
+    await use(walletValidator)
   }
 })
 

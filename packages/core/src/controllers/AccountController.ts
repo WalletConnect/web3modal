@@ -53,8 +53,12 @@ const state = proxy<AccountControllerState>({
 export const AccountController = {
   state,
 
-  replaceState(newState: AccountControllerState) {
-    Object.assign(state, newState)
+  replaceState(newState: AccountControllerState | undefined) {
+    if (!newState) {
+      return
+    }
+
+    Object.assign(state, ref(newState))
   },
 
   subscribe(callback: (val: AccountControllerState) => void) {
@@ -86,6 +90,10 @@ export const AccountController = {
 
   setIsConnected(isConnected: AccountControllerState['isConnected'], chain?: Chain) {
     ChainController.setAccountProp('isConnected', isConnected, chain)
+  },
+
+  getChainIsConnected(chain?: Chain) {
+    return ChainController.getAccountProp('isConnected', chain)
   },
 
   setCaipAddress(caipAddress: AccountControllerState['caipAddress'], chain?: Chain) {
@@ -120,8 +128,8 @@ export const AccountController = {
     ChainController.setAccountProp('smartAccountDeployed', isDeployed, chain)
   },
 
-  setCurrentTab(currentTab: AccountControllerState['currentTab'], chain?: Chain) {
-    ChainController.setAccountProp('currentTab', currentTab, chain)
+  setCurrentTab(currentTab: AccountControllerState['currentTab']) {
+    ChainController.setAccountProp('currentTab', currentTab, ChainController.state.activeChain)
   },
 
   setTokenBalance(tokenBalance: AccountControllerState['tokenBalance'], chain?: Chain) {
@@ -137,16 +145,16 @@ export const AccountController = {
     ChainController.setAccountProp('allAccounts', accounts, chain)
   },
 
-  addAddressLabel(address: string, label: string) {
-    const map = ChainController.getAccountProp('addressLabels') || new Map()
+  addAddressLabel(address: string, label: string, chain?: Chain) {
+    const map = ChainController.getAccountProp('addressLabels', chain) || new Map()
     map.set(address, label)
-    ChainController.setAccountProp('addressLabels', map)
+    ChainController.setAccountProp('addressLabels', map, chain)
   },
 
-  removeAddressLabel(address: string) {
-    const map = ChainController.getAccountProp('addressLabels') || new Map()
+  removeAddressLabel(address: string, chain?: Chain) {
+    const map = ChainController.getAccountProp('addressLabels', chain) || new Map()
     map.delete(address)
-    ChainController.setAccountProp('addressLabels', map)
+    ChainController.setAccountProp('addressLabels', map, chain)
   },
 
   setConnectedWalletInfo(

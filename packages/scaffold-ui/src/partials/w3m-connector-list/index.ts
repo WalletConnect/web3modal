@@ -36,13 +36,25 @@ export class W3mConnectorList extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
-    const { custom, recent, announced, coinbase, injected, recommended, featured, external } =
-      this.getConnectorsByType()
+    const {
+      custom,
+      recent,
+      announced,
+      coinbase,
+      injected,
+      multiChain,
+      recommended,
+      featured,
+      external
+    } = this.getConnectorsByType()
 
     return html`
       <wui-flex flexDirection="column" gap="xs">
         <w3m-connect-walletconnect-widget></w3m-connect-walletconnect-widget>
         ${recent.length ? html`<w3m-connect-recent-widget></w3m-connect-recent-widget>` : null}
+        ${multiChain.length
+          ? html`<w3m-connect-multi-chain-widget></w3m-connect-multi-chain-widget>`
+          : null}
         ${announced.length
           ? html`<w3m-connect-announced-widget></w3m-connect-announced-widget>`
           : null}
@@ -72,6 +84,7 @@ export class W3mConnectorList extends LitElement {
     const filteredRecommended = WalletUtil.filterOutDuplicateWallets(recommended)
     const filteredFeatured = WalletUtil.filterOutDuplicateWallets(featured)
 
+    const multiChain = this.connectors.filter(connector => connector.type === 'MULTI_CHAIN')
     const announced = this.connectors.filter(connector => connector.type === 'ANNOUNCED')
     const injected = this.connectors.filter(connector => connector.type === 'INJECTED')
     const external = this.connectors.filter(connector => connector.type === 'EXTERNAL')
@@ -86,6 +99,7 @@ export class W3mConnectorList extends LitElement {
       recent,
       coinbase,
       external,
+      multiChain,
       announced: includeAnnouncedAndInjected ? announced : [],
       injected: includeAnnouncedAndInjected ? injected : [],
       recommended: filteredRecommended,

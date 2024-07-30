@@ -2,6 +2,7 @@ import type { Connector } from '@web3modal/core'
 import {
   ApiController,
   AssetUtil,
+  ChainController,
   ConnectionController,
   ConnectorController,
   CoreHelperUtil,
@@ -53,7 +54,7 @@ export class W3mConnectInjectedWidget extends LitElement {
             return null
           }
 
-          if (!ConnectionController.checkInstalled()) {
+          if (!ConnectionController.checkInstalled(undefined, connector.chain)) {
             this.style.cssText = `display: none`
 
             return null
@@ -84,6 +85,7 @@ export class W3mConnectInjectedWidget extends LitElement {
 
   // -- Private Methods ----------------------------------- //
   private onConnector(connector: Connector) {
+    ChainController.setActiveConnector(connector)
     RouterController.push('ConnectingExternal', { connector })
   }
 }

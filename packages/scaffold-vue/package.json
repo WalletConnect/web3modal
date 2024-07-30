@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@web3modal/scaffold": "workspace:*",
+    "@web3modal/scaffold-ui": "workspace:*",
     "@web3modal/core": "workspace:*"
   },
   "peerDependencies": {
