@@ -1,38 +1,39 @@
+import { ConstantsUtil, type Chain } from '@web3modal/common'
 import type {
+  CaipNetwork,
+  ConnectedWalletInfo,
   ConnectionControllerClient,
   EventsControllerState,
+  ModalControllerState,
   NetworkControllerClient,
   NetworkControllerState,
   OptionsControllerState,
   PublicStateControllerState,
+  RouterControllerState,
   ThemeControllerState,
   ThemeMode,
-  ThemeVariables,
-  ModalControllerState,
-  ConnectedWalletInfo,
-  RouterControllerState,
-  CaipNetwork
+  ThemeVariables
 } from '@web3modal/core'
 import {
+  AccountController,
+  ApiController,
   BlockchainApiController,
+  ChainController,
   ConnectionController,
   ConnectorController,
   CoreHelperUtil,
+  EnsController,
   EventsController,
   ModalController,
   NetworkController,
   OptionsController,
   PublicStateController,
-  ThemeController,
-  SnackController,
   RouterController,
-  EnsController,
-  ChainController,
-  AccountController
+  SnackController,
+  ThemeController
 } from '@web3modal/core'
-import { setColorTheme, setThemeVariables } from '@web3modal/ui'
 import type { SIWEControllerClient } from '@web3modal/siwe'
-import { ConstantsUtil, type Chain } from '@web3modal/common'
+import { setColorTheme, setThemeVariables } from '@web3modal/ui'
 
 // -- Helpers -------------------------------------------------------------------
 let isInitialized = false
@@ -53,6 +54,7 @@ export interface LibraryOptions {
   customWallets?: OptionsControllerState['customWallets']
   isUniversalProvider?: OptionsControllerState['isUniversalProvider']
   enableAnalytics?: OptionsControllerState['enableAnalytics']
+  enableAuth?: OptionsControllerState['enableAuth']
   metadata?: OptionsControllerState['metadata']
   enableOnramp?: OptionsControllerState['enableOnramp']
   disableAppend?: OptionsControllerState['disableAppend']
@@ -240,6 +242,8 @@ export class Web3ModalScaffold {
 
   protected getCaipNetwork = () => NetworkController.state.caipNetwork
 
+  protected getIsSiweEnabled = () => OptionsController.state.isSiweEnabled
+
   protected setRequestedCaipNetworks: (typeof NetworkController)['setRequestedCaipNetworks'] = (
     requestedCaipNetworks,
     chain
@@ -325,6 +329,7 @@ export class Web3ModalScaffold {
 
   protected setClientId: (typeof BlockchainApiController)['setClientId'] = clientId => {
     BlockchainApiController.setClientId(clientId)
+    ConnectionController.setClientId(clientId)
   }
 
   // -- Private ------------------------------------------------------------------
@@ -347,6 +352,7 @@ export class Web3ModalScaffold {
     OptionsController.setTermsConditionsUrl(options.termsConditionsUrl)
     OptionsController.setPrivacyPolicyUrl(options.privacyPolicyUrl)
     OptionsController.setEnableAnalytics(options.enableAnalytics)
+    OptionsController.setEnableAuth(options.enableAuth)
     OptionsController.setCustomWallets(options.customWallets)
     OptionsController.setIsUniversalProvider(options.isUniversalProvider)
     OptionsController.setSdkVersion(options._sdkVersion)
@@ -375,11 +381,29 @@ export class Web3ModalScaffold {
     if (options.allowUnsupportedChain) {
       NetworkController.setAllowUnsupportedChain(options.allowUnsupportedChain)
     }
+    const { isAnalyticsEnabled, isAppKitAuthEnabled } = await ApiController.fetchProjectConfig()
 
-    if (options.siweControllerClient) {
-      const { SIWEController } = await import('@web3modal/siwe')
+    // Only set the analytics state if it's not already set through the SDK config
+    if (options.enableAnalytics === undefined) {
+      OptionsController.setEnableAnalytics(isAnalyticsEnabled)
+    }
 
-      SIWEController.setSIWEClient(options.siweControllerClient)
+    // Only set the AppKit Auth state if it's not already set through the SDK config
+    if (options.enableAuth === undefined) {
+      OptionsController.setEnableAuth(isAppKitAuthEnabled)
+    }
+
+    if (options.siweControllerClient || OptionsController.state.enableAuth) {
+      const { SIWEController, appKitAuthConfig } = await import('@web3modal/siwe')
+
+      const siweClient = options.siweControllerClient ?? appKitAuthConfig
+      SIWEController.setSIWEClient(siweClient)
+      const session = await siweClient.getSession()
+      OptionsController.setIsSiweEnabled(true)
+      if (session?.address && session?.chainId) {
+        SIWEController.setStatus('success')
+        SIWEController.setSession(session)
+      }
     }
   }
 

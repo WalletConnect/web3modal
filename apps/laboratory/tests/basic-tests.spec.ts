@@ -1,5 +1,5 @@
 import { testMExternal } from './shared/fixtures/w3m-external-fixture'
-import { testM, expect } from './shared/fixtures/w3m-fixture'
+import { expect, testM } from './shared/fixtures/w3m-fixture'
 import { ModalValidator } from './shared/validators/ModalValidator'
 
 testM.describe('Modal only tests', () => {

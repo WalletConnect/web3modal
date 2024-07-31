@@ -1,11 +1,11 @@
+import { NetworkUtil, type Chain } from '@web3modal/common'
 import { proxy } from 'valtio/vanilla'
+import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import type { CaipNetwork, CaipNetworkId } from '../utils/TypeUtil.js'
-import { PublicStateController } from './PublicStateController.js'
+import { ChainController } from './ChainController.js'
 import { EventsController } from './EventsController.js'
 import { ModalController } from './ModalController.js'
-import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
-import { NetworkUtil, type Chain } from '@web3modal/common'
-import { ChainController } from './ChainController.js'
+import { PublicStateController } from './PublicStateController.js'
 
 // -- Types --------------------------------------------- //
 export interface NetworkControllerClient {

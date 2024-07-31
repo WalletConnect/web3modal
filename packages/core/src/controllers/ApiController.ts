@@ -4,7 +4,7 @@ import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { FetchUtil } from '../utils/FetchUtil.js'
 import { StorageUtil } from '../utils/StorageUtil.js'
 import type {
-  ApiGetAnalyticsConfigResponse,
+  ApiGetProjectConfigResponse,
   ApiGetWalletsRequest,
   ApiGetWalletsResponse,
   WcWallet
@@ -266,17 +266,16 @@ export const ApiController = {
       ApiController.fetchNetworkImages(),
       ApiController.fetchConnectorImages()
     ]
-    if (OptionsController.state.enableAnalytics === undefined) {
-      promises.push(ApiController.fetchAnalyticsConfig())
-    }
+
     state.prefetchPromise = Promise.race([Promise.allSettled(promises), CoreHelperUtil.wait(3000)])
   },
 
-  async fetchAnalyticsConfig() {
-    const { isAnalyticsEnabled } = await api.get<ApiGetAnalyticsConfigResponse>({
+  async fetchProjectConfig() {
+    const { isAnalyticsEnabled, isAppKitAuthEnabled } = await api.get<ApiGetProjectConfigResponse>({
       path: '/getAnalyticsConfig',
       headers: ApiController._getApiHeaders()
     })
-    OptionsController.setEnableAnalytics(isAnalyticsEnabled)
+
+    return { isAnalyticsEnabled, isAppKitAuthEnabled }
   }
 }

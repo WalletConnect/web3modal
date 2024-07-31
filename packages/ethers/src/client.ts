@@ -1,3 +1,12 @@
+import type { EthereumProviderOptions } from '@walletconnect/ethereum-provider'
+import EthereumProvider, { OPTIONAL_METHODS } from '@walletconnect/ethereum-provider'
+import { getChainsFromAccounts } from '@walletconnect/utils'
+import type { Chain as AvailableChain } from '@web3modal/common'
+import {
+  ConstantsUtil as CommonConstants,
+  ConstantsUtil as CommonConstantsUtil,
+  NetworkUtil
+} from '@web3modal/common'
 /* eslint-disable max-depth */
 import type {
   CaipAddress,
@@ -13,51 +22,44 @@ import type {
   WriteContractArgs
 } from '@web3modal/scaffold'
 import { Web3ModalScaffold } from '@web3modal/scaffold'
-import { ConstantsUtil, PresetsUtil, HelpersUtil } from '@web3modal/scaffold-utils'
-import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
-import EthereumProvider, { OPTIONAL_METHODS } from '@walletconnect/ethereum-provider'
-import { getChainsFromAccounts } from '@walletconnect/utils'
-import type { Web3ModalSIWEClient } from '@web3modal/siwe'
-import { ConstantsUtil as CommonConstants } from '@web3modal/common'
-import type { Chain as AvailableChain } from '@web3modal/common'
+import { ConstantsUtil, HelpersUtil, PresetsUtil } from '@web3modal/scaffold-utils'
 import type {
   Address,
+  Chain,
+  CombinedProvider,
+  EthersStoreUtilState,
   Metadata,
   Provider,
-  ProviderType,
-  Chain,
-  EthersStoreUtilState
+  ProviderType
 } from '@web3modal/scaffold-utils/ethers'
-import {
-  formatEther,
-  JsonRpcProvider,
-  InfuraProvider,
-  getAddress as getOriginalAddress,
-  parseUnits,
-  formatUnits,
-  JsonRpcSigner,
-  BrowserProvider,
-  Contract,
-  hexlify,
-  toUtf8Bytes,
-  isHexString
-} from 'ethers'
 import {
   EthersConstantsUtil,
   EthersHelpersUtil,
   EthersStoreUtil
 } from '@web3modal/scaffold-utils/ethers'
-import type { EthereumProviderOptions } from '@walletconnect/ethereum-provider'
+import type { Web3ModalSIWEClient } from '@web3modal/siwe'
+import type { W3mFrameTypes } from '@web3modal/wallet'
+import {
+  W3mFrameConstants,
+  W3mFrameHelpers,
+  W3mFrameProvider,
+  W3mFrameRpcConstants
+} from '@web3modal/wallet'
 import type { Eip1193Provider } from 'ethers'
 import {
-  W3mFrameProvider,
-  W3mFrameHelpers,
-  W3mFrameRpcConstants,
-  W3mFrameConstants
-} from '@web3modal/wallet'
-import type { CombinedProvider } from '@web3modal/scaffold-utils/ethers'
-import { NetworkUtil } from '@web3modal/common'
-import type { W3mFrameTypes } from '@web3modal/wallet'
+  BrowserProvider,
+  Contract,
+  InfuraProvider,
+  JsonRpcProvider,
+  JsonRpcSigner,
+  formatEther,
+  formatUnits,
+  getAddress as getOriginalAddress,
+  hexlify,
+  isHexString,
+  parseUnits,
+  toUtf8Bytes
+} from 'ethers'
 // -- Types ---------------------------------------------------------------------
 export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultChain' | 'tokens'> {
   ethersConfig: ProviderType
@@ -204,32 +206,41 @@ export class Web3Modal extends Web3ModalScaffold {
           onUri(uri)
         })
 
-        // When connecting through walletconnect, we need to set the clientId in the store
-        const clientId = await WalletConnectProvider.signer?.client?.core?.crypto?.getClientId()
-        if (clientId) {
-          this.setClientId(clientId)
-        }
-
-        const params = await siweConfig?.getMessageParams?.()
-        // Must perform these checks to satify optional types
-        if (siweConfig?.options?.enabled && params && Object.keys(params || {}).length > 0) {
+        if (this.getIsSiweEnabled()) {
           const { SIWEController, getDidChainId, getDidAddress } = await import('@web3modal/siwe')
+          if (!SIWEController.state._client) {
+            return
+          }
 
-          // Make active chain first in requested chains to make it default for siwe message
+          const params = await SIWEController?.getMessageParams?.()
+
+          /*
+           * Must perform these checks to satify optional types
+           * Make active chain first in requested chains to make it default for siwe message
+           */
+          if (!params || !Object.keys(params || {}).length) {
+            return
+          }
           const chainId = NetworkUtil.caipNetworkIdToNumber(this.getCaipNetwork()?.id)
-          let reorderedChains = params.chains
+          let reorderedChains = this.chains.map(chain => chain.chainId)
           if (chainId) {
-            reorderedChains = [chainId, ...params.chains.filter(c => c !== chainId)]
+            reorderedChains = [chainId, ...reorderedChains.filter(c => c !== chainId)]
           }
 
           const result = await WalletConnectProvider.authenticate({
-            nonce: await siweConfig.getNonce(),
-            methods: [...OPTIONAL_METHODS],
+            nonce: await SIWEController.getNonce(),
+            methods: OPTIONAL_METHODS,
             ...params,
             chains: reorderedChains
           })
           // Auths is an array of signed CACAO objects https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-74.md
           const signedCacao = result?.auths?.[0]
+
+          const clientId = await WalletConnectProvider?.signer?.client?.core?.crypto?.getClientId()
+          if (clientId) {
+            this.setClientId(clientId)
+          }
+
           if (signedCacao) {
             const { p, s } = signedCacao
             const cacaoChainId = getDidChainId(p.iss)
@@ -250,7 +261,8 @@ export class Web3Modal extends Web3ModalScaffold {
               await SIWEController.verifyMessage({
                 message,
                 signature: s.s,
-                cacao: signedCacao
+                cacao: signedCacao,
+                clientId
               })
             } catch (error) {
               // eslint-disable-next-line no-console
@@ -339,10 +351,11 @@ export class Web3Modal extends Web3ModalScaffold {
         const providerType = EthersStoreUtil.state.providerType
         localStorage.removeItem(EthersConstantsUtil.WALLET_ID)
         EthersStoreUtil.reset()
-        this.setClientId(null)
         if (siweConfig?.options?.signOutOnDisconnect) {
           const { SIWEController } = await import('@web3modal/siwe')
-          await SIWEController.signOut()
+          if (SIWEController.state?._client?.options?.signOutOnDisconnect) {
+            await SIWEController.signOut()
+          }
         }
         if (
           providerType === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID ||
@@ -919,7 +932,8 @@ export class Web3Modal extends Web3ModalScaffold {
         EthersStoreUtil.setIsConnected(true)
         EthersStoreUtil.setAddress(address as Address)
         EthersStoreUtil.setPreferredAccountType(preferredAccountType as W3mFrameTypes.AccountType)
-        this.setSmartAccountDeployed(Boolean(smartAccountDeployed), this.chain)
+        this.setSmartAccountDeployed(Boolean(smartAccountDeployed))
+
         this.watchAuth()
         this.watchModal()
       }

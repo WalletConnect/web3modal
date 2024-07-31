@@ -1,5 +1,5 @@
 import { Connection } from '@solana/web3.js'
-import { Web3ModalScaffold } from '@web3modal/scaffold'
+import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
 import {
   ApiController,
   AssetController,
@@ -8,29 +8,29 @@ import {
   NetworkController,
   OptionsController
 } from '@web3modal/core'
+import { Web3ModalScaffold } from '@web3modal/scaffold'
 import { ConstantsUtil, HelpersUtil, PresetsUtil } from '@web3modal/scaffold-utils'
-import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
 
-import { SolConstantsUtil, SolHelpersUtil, SolStoreUtil } from './utils/scaffold/index.js'
 import { WalletConnectConnector } from './connectors/walletConnectConnector.js'
+import { SolConstantsUtil, SolHelpersUtil, SolStoreUtil } from './utils/scaffold/index.js'
 
 import type { BaseWalletAdapter, StandardWalletAdapter } from '@solana/wallet-adapter-base'
-import type { PublicKey, Commitment, ConnectionConfig } from '@solana/web3.js'
+import type { Commitment, ConnectionConfig, PublicKey } from '@solana/web3.js'
 import type UniversalProvider from '@walletconnect/universal-provider'
+import type { Chain as AvailableChain } from '@web3modal/common'
 import type {
+  CaipAddress,
+  CaipNetwork,
   CaipNetworkId,
   ConnectionControllerClient,
+  Connector,
   LibraryOptions,
   NetworkControllerClient,
-  Token,
   ScaffoldOptions,
-  Connector,
-  CaipAddress,
-  CaipNetwork
+  Token
 } from '@web3modal/scaffold'
-import type { Chain as AvailableChain } from '@web3modal/common'
 
-import type { ProviderType, Chain, Provider, SolStoreUtilState } from './utils/scaffold/index.js'
+import type { Chain, Provider, ProviderType, SolStoreUtilState } from './utils/scaffold/index.js'
 import { watchStandard } from './utils/wallet-standard/watchStandard.js'
 
 export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultChain' | 'tokens'> {

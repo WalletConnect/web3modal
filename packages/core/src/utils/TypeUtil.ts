@@ -152,8 +152,9 @@ export interface ApiGetWalletsResponse {
   count: number
 }
 
-export interface ApiGetAnalyticsConfigResponse {
+export interface ApiGetProjectConfigResponse {
   isAnalyticsEnabled: boolean
+  isAppKitAuthEnabled: boolean
 }
 
 export type ThemeMode = 'dark' | 'light'

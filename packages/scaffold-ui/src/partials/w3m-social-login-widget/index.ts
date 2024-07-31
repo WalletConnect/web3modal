@@ -12,9 +12,9 @@ import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 
-import styles from './styles.js'
-import { ifDefined } from 'lit/directives/if-defined.js'
 import { SocialProviderEnum } from '@web3modal/scaffold-utils'
+import { ifDefined } from 'lit/directives/if-defined.js'
+import styles from './styles.js'
 
 const MAX_TOP_VIEW = 2
 const MAXIMUM_LENGTH = 6

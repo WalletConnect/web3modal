@@ -14,14 +14,20 @@ import {
 type Web3ModalInfoProps = {
   address?: string
   chainId?: number
-  clientId: string | null
+  clientId?: string | null
+  heading?: string
 }
 
-export function Web3ModalInfo({ address, chainId, clientId }: Web3ModalInfoProps) {
+export function Web3ModalInfo({
+  address,
+  chainId,
+  clientId,
+  heading = 'Account Information'
+}: Web3ModalInfoProps) {
   return (
     <Card marginTop={10} marginBottom={10}>
       <CardHeader>
-        <Heading size="md">Account Information</Heading>
+        <Heading size="md">{heading}</Heading>
       </CardHeader>
 
       <CardBody>

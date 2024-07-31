@@ -1,20 +1,19 @@
+import type { Balance, Chain } from '@web3modal/common'
+import type { W3mFrameTypes } from '@web3modal/wallet'
+import { proxy, ref } from 'valtio'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
+import { SwapApiUtil } from '../utils/SwapApiUtil.js'
 import type {
   AccountType,
   CaipAddress,
   ConnectedWalletInfo,
   SocialProvider
 } from '../utils/TypeUtil.js'
-import type { Balance } from '@web3modal/common'
 import { BlockchainApiController } from './BlockchainApiController.js'
+import { ChainController } from './ChainController.js'
+import { NetworkController } from './NetworkController.js'
 import { SnackController } from './SnackController.js'
 import { SwapController } from './SwapController.js'
-import { SwapApiUtil } from '../utils/SwapApiUtil.js'
-import type { W3mFrameTypes } from '@web3modal/wallet'
-import { ChainController } from './ChainController.js'
-import type { Chain } from '@web3modal/common'
-import { NetworkController } from './NetworkController.js'
-import { proxy, ref } from 'valtio'
 
 // -- Types --------------------------------------------- //
 export interface AccountControllerState {

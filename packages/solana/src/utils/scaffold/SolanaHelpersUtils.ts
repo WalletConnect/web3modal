@@ -1,12 +1,12 @@
-import { PresetsUtil, ConstantsUtil } from '@web3modal/scaffold-utils'
 import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
+import { ConstantsUtil, PresetsUtil } from '@web3modal/scaffold-utils'
 
 import { SolConstantsUtil } from './SolanaConstantsUtil.js'
 
 import type { CaipNetwork } from '@web3modal/core'
-import type { Chain, Provider } from './SolanaTypesUtil.js'
 import type { ExtendedBaseWalletAdapter } from '../../client.js'
 import type { SolStoreUtilState } from './SolanaStoreUtil.js'
+import type { Chain, Provider } from './SolanaTypesUtil.js'
 
 export const SolHelpersUtil = {
   detectRpcUrl(chain: Chain, projectId: string) {

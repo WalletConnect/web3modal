@@ -1,5 +1,7 @@
-import { subscribeKey as subKey } from 'valtio/vanilla/utils'
+import type { Chain } from '@web3modal/common'
+import { type W3mFrameTypes } from '@web3modal/wallet'
 import { proxy, ref } from 'valtio/vanilla'
+import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { StorageUtil } from '../utils/StorageUtil.js'
 import type {
@@ -9,14 +11,12 @@ import type {
   WcWallet,
   WriteContractArgs
 } from '../utils/TypeUtil.js'
-import { TransactionsController } from './TransactionsController.js'
 import { ChainController } from './ChainController.js'
-import { type W3mFrameTypes } from '@web3modal/wallet'
-import { ModalController } from './ModalController.js'
 import { ConnectorController } from './ConnectorController.js'
 import { EventsController } from './EventsController.js'
-import type { Chain } from '@web3modal/common'
+import { ModalController } from './ModalController.js'
 import { NetworkController } from './NetworkController.js'
+import { TransactionsController } from './TransactionsController.js'
 
 // -- Types --------------------------------------------- //
 export interface ConnectExternalOptions {
@@ -53,6 +53,7 @@ export interface ConnectionControllerState {
   wcError?: boolean
   recentWallet?: WcWallet
   buffering: boolean
+  wcClientId?: string | null
 }
 
 type StateKey = keyof ConnectionControllerState
@@ -177,6 +178,10 @@ export const ConnectionController = {
 
   setBuffering(buffering: ConnectionControllerState['buffering']) {
     state.buffering = buffering
+  },
+
+  setClientId(clientId: ConnectionControllerState['wcClientId']) {
+    state.wcClientId = clientId
   },
 
   async disconnect() {

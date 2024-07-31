@@ -1,20 +1,20 @@
+import { SIWEController, type SIWEControllerClient } from '../core/controller/SIWEController.js'
 import type {
-  SIWECreateMessageArgs,
-  SIWEVerifyMessageArgs,
-  SIWEConfig,
   SIWEClientMethods,
+  SIWEConfig,
+  SIWECreateMessageArgs,
+  SIWEMessageArgs,
   SIWESession,
-  SIWEMessageArgs
+  SIWEVerifyMessageArgs
 } from '../core/utils/TypeUtils.js'
-import type { SIWEControllerClient } from '../core/controller/SIWEController.js'
 
 import {
+  AccountController,
   ConnectionController,
-  RouterUtil,
-  RouterController,
-  StorageUtil,
   NetworkController,
-  AccountController
+  RouterController,
+  RouterUtil,
+  StorageUtil
 } from '@web3modal/core'
 
 import { NetworkUtil } from '@web3modal/common'
@@ -81,20 +81,21 @@ export class Web3ModalSIWEClient {
 
   async getSession() {
     const session = await this.methods.getSession()
-    if (!session) {
-      throw new Error('siweControllerClient:getSession - session is undefined')
-    }
 
     return session
   }
 
   async signIn(): Promise<SIWESession> {
     const address = AccountController.state.address
-    const nonce = await this.methods.getNonce(address)
+    let nonce = SIWEController.state.nonce
+    if (!nonce) {
+      nonce = await SIWEController.getNonce()
+    }
     if (!address) {
       throw new Error('An address is required to create a SIWE message.')
     }
     const chainId = NetworkUtil.caipNetworkIdToNumber(NetworkController.state.caipNetwork?.id)
+
     if (!chainId) {
       throw new Error('A chainId is required to create a SIWE message.')
     }
@@ -108,6 +109,7 @@ export class Web3ModalSIWEClient {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       ...messageParams!
     })
+
     const type = StorageUtil.getConnectedConnector()
     if (type === 'AUTH') {
       RouterController.pushTransactionStack({
@@ -119,8 +121,9 @@ export class Web3ModalSIWEClient {
         }
       })
     }
+    const clientId = ConnectionController.state.wcClientId
     const signature = await ConnectionController.signMessage(message)
-    const isValid = await this.methods.verifyMessage({ message, signature })
+    const isValid = await this.methods.verifyMessage({ message, signature, clientId })
     if (!isValid) {
       throw new Error('Error verifying SIWE signature')
     }

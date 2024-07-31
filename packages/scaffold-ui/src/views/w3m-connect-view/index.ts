@@ -1,8 +1,8 @@
+import { ConnectorController, RouterController } from '@web3modal/core'
 import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
-import styles from './styles.js'
-import { ConnectorController, RouterController } from '@web3modal/core'
 import { state } from 'lit/decorators/state.js'
+import styles from './styles.js'
 
 @customElement('w3m-connect-view')
 export class W3mConnectView extends LitElement {

@@ -1,12 +1,12 @@
-import { subscribeKey as subKey } from 'valtio/vanilla/utils'
+import { OptionsController } from '@web3modal/core'
 import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
+import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import type {
   SIWEClientMethods,
-  SIWESession,
   SIWECreateMessageArgs,
+  SIWESession,
   SIWEVerifyMessageArgs
 } from '../utils/TypeUtils.js'
-import { OptionsController } from '@web3modal/core'
 
 // -- Types --------------------------------------------- //
 export interface SIWEControllerClient extends SIWEClientMethods {
@@ -71,9 +71,10 @@ export const SIWEController = {
     try {
       const client = this._getClient()
       const session = await client.getSession()
-      if (session) {
+      if (session?.address && session?.chainId) {
         this.setSession(session)
-        this.setStatus('success')
+      } else {
+        this.setSession(undefined)
       }
 
       return session
@@ -97,9 +98,17 @@ export const SIWEController = {
     return isValid
   },
 
+  async getMessageParams() {
+    const client = this._getClient()
+    const messageParams = await client.getMessageParams?.()
+
+    return messageParams
+  },
+
   async signIn() {
     const client = this._getClient()
     const session = await client.signIn()
+    this.setSession(session)
 
     return session
   },
@@ -109,7 +118,7 @@ export const SIWEController = {
     await client.signOut()
     this.setStatus('ready')
     this.setSession(undefined)
-    client.onSignOut?.()
+    this.setNonce(undefined)
   },
 
   onSignIn(args: SIWESession) {
@@ -142,6 +151,6 @@ export const SIWEController = {
 
   setSession(session: SIWEControllerClientState['session']) {
     state.session = session
-    state.status = session ? 'success' : 'ready'
+    state.status = session?.address && session?.chainId ? 'success' : 'ready'
   }
 }
