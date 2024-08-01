@@ -1,6 +1,6 @@
 {
   "name": "@web3modal/scaffold-utils",
-  "version": "5.0.10",
+  "version": "5.0.11",
   "type": "module",
   "main": "./dist/esm/exports/index.js",
   "types": "./dist/types/exports/index.d.ts",

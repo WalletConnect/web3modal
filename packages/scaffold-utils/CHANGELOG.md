@@ -1,5 +1,16 @@
 # @web3modal/scaffold-utils
 
+## 5.0.11
+
+### Patch Changes
+
+- - Hotfix to prevent loading state with QR code
+
+- Updated dependencies []:
+  - @web3modal/polyfills@5.0.11
+  - @web3modal/wallet@5.0.11
+  - @web3modal/core@5.0.11
+
 ## 5.0.10
 
 - chore: update with v5 by @tomiir in https://github.com/WalletConnect/web3modal/pull/2612

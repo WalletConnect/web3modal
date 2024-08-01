@@ -316,7 +316,7 @@ export class Web3Modal extends Web3ModalScaffold {
             throw new Error((error as CoinbaseProviderError).message)
           }
         } else if (id === ConstantsUtil.AUTH_CONNECTOR_ID) {
-          this.setAuthProvider()
+          await this.setAuthProvider()
         }
       },
 
