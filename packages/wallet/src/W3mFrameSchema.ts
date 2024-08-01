@@ -13,7 +13,7 @@ export const GetTransactionByHashResponse = z.object({
   accessList: z.array(z.string()),
   blockHash: z.string().nullable(),
   blockNumber: z.string().nullable(),
-  chainId: z.string(),
+  chainId: z.string().or(z.number()),
   from: z.string(),
   gas: z.string(),
   hash: z.string(),
@@ -29,12 +29,12 @@ export const GetTransactionByHashResponse = z.object({
   v: z.string(),
   value: z.string()
 })
-export const AppSwitchNetworkRequest = z.object({ chainId: z.number() })
+export const AppSwitchNetworkRequest = z.object({ chainId: z.string().or(z.number()) })
 export const AppConnectEmailRequest = z.object({ email: z.string().email() })
 export const AppConnectOtpRequest = z.object({ otp: z.string() })
 export const AppConnectSocialRequest = z.object({ uri: z.string() })
 export const AppGetUserRequest = z.object({
-  chainId: z.optional(z.number()),
+  chainId: z.optional(z.string().or(z.number())),
   preferredAccountType: z.optional(z.string())
 })
 export const AppGetSocialRedirectUriRequest = z.object({
@@ -82,7 +82,7 @@ export const FrameConnectFarcasterResponse = z.object({
 export const FrameConnectSocialResponse = z.object({
   email: z.string(),
   address: z.string(),
-  chainId: z.number(),
+  chainId: z.string().or(z.number()),
   accounts: z
     .array(
       z.object({
@@ -102,7 +102,7 @@ export const FrameUpdateEmailResponse = z.object({
 export const FrameGetUserResponse = z.object({
   email: z.string().email().optional().nullable(),
   address: z.string(),
-  chainId: z.number(),
+  chainId: z.string().or(z.number()),
   smartAccountDeployed: z.optional(z.boolean()),
   accounts: z
     .array(
@@ -119,8 +119,8 @@ export const FrameGetUserResponse = z.object({
 })
 export const FrameGetSocialRedirectUriResponse = z.object({ uri: z.string() })
 export const FrameIsConnectedResponse = z.object({ isConnected: z.boolean() })
-export const FrameGetChainIdResponse = z.object({ chainId: z.number() })
-export const FrameSwitchNetworkResponse = z.object({ chainId: z.number() })
+export const FrameGetChainIdResponse = z.object({ chainId: z.string().or(z.number()) })
+export const FrameSwitchNetworkResponse = z.object({ chainId: z.string().or(z.number()) })
 export const FrameUpdateEmailSecondaryOtpResponse = z.object({ newEmail: z.string().email() })
 export const FrameGetSmartAccountEnabledNetworksResponse = z.object({
   smartAccountEnabledNetworks: z.array(z.number())
@@ -314,7 +314,7 @@ export const WalletSendCallsRequest = z.object({
   method: z.literal('wallet_sendCalls'),
   params: z.array(
     z.object({
-      chainId: z.string().optional(),
+      chainId: z.string().or(z.number()).optional(),
       from: z.string().optional(),
       version: z.string().optional(),
       capabilities: z.any().optional(),

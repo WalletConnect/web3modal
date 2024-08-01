@@ -71,6 +71,7 @@ import {
   WalletGrantPermissionsRequest
 } from './W3mFrameSchema.js'
 import type { W3mFrameRpcConstants } from './W3mFrameConstants.js'
+import type { CaipNetworkId } from '@web3modal/common'
 
 export namespace W3mFrameTypes {
   export type AppEvent = z.infer<typeof W3mFrameSchema.appEvent>
@@ -125,7 +126,7 @@ export namespace W3mFrameTypes {
 
   export interface Network {
     rpcUrl: string
-    chainId: number
+    chainId: number | CaipNetworkId
   }
 
   export type RPCRequest =

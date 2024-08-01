@@ -912,7 +912,8 @@ export class Web3Modal extends Web3ModalScaffold {
             ? accounts
             : [{ address, type: preferredAccountType as 'eoa' | 'smartAccount' }]
         )
-        EthersStoreUtil.setChainId(chainId)
+
+        EthersStoreUtil.setChainId(NetworkUtil.parseEvmChainId(chainId))
         EthersStoreUtil.setProviderType(ConstantsUtil.AUTH_CONNECTOR_ID as 'w3mAuth')
         EthersStoreUtil.setProvider(this.authProvider as unknown as CombinedProvider)
         EthersStoreUtil.setStatus('connected')

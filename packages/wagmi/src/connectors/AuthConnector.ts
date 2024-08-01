@@ -4,13 +4,11 @@ import { SwitchChainError, getAddress } from 'viem'
 import type { Address } from 'viem'
 import { ConstantsUtil } from '@web3modal/scaffold-utils'
 import type { SocialProvider } from '@web3modal/scaffold-utils'
+import { NetworkUtil } from '@web3modal/common'
+
 // -- Types ----------------------------------------------------------------------------------------
 interface W3mFrameProviderOptions {
   projectId: string
-}
-
-interface ConnectOptions {
-  chainId?: number
 }
 
 export type AuthParameters = {
@@ -28,6 +26,10 @@ export function authConnector(parameters: AuthParameters) {
     provider?: W3mFrameProvider
   }
 
+  function parseChainId(chainId: string | number) {
+    return NetworkUtil.parseEvmChainId(chainId) || 1
+  }
+
   return createConnector<W3mFrameProvider, Properties>(config => ({
     id: ConstantsUtil.AUTH_CONNECTOR_ID,
     name: 'Web3Modal Auth',
@@ -37,17 +39,21 @@ export function authConnector(parameters: AuthParameters) {
     showWallets: parameters.showWallets,
     walletFeatures: parameters.walletFeatures,
 
-    async connect(options: ConnectOptions = {}) {
+    async connect(options = {}) {
       const provider = await this.getProvider()
-      const { address, chainId } = await provider.connect({ chainId: options.chainId })
+      const { address, chainId } = await provider.connect({
+        chainId: options.chainId
+      })
       await provider.getSmartAccountEnabledNetworks()
+
+      const parsedChainId = parseChainId(chainId)
 
       return {
         accounts: [address as Address],
         account: address as Address,
-        chainId,
+        chainId: parsedChainId,
         chain: {
-          id: chainId,
+          id: parsedChainId,
           unsuported: false
         }
       }
@@ -78,7 +84,7 @@ export function authConnector(parameters: AuthParameters) {
       const provider: W3mFrameProvider = await this.getProvider()
       const { chainId } = await provider.getChainId()
 
-      return chainId
+      return parseChainId(chainId)
     },
 
     async isAuthorized() {
