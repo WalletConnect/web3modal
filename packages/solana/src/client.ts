@@ -121,16 +121,14 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     const connectionControllerClient: ConnectionControllerClient = {
-      connectWalletConnect: async onUri => {
+      connectWalletConnect: async () => {
         const WalletConnectProvider = await this.WalletConnectConnector.getProvider()
         if (!WalletConnectProvider) {
           throw new Error('connectionControllerClient:getWalletConnectUri - provider is undefined')
         }
 
-        WalletConnectProvider.on('display_uri', onUri)
         const address = await this.WalletConnectConnector.connect()
         this.setWalletConnectProvider(address)
-        WalletConnectProvider.removeListener('display_uri', onUri)
       },
 
       connectExternal: async ({ id }) => {
@@ -228,6 +226,15 @@ export class Web3Modal extends Web3ModalScaffold {
       chains,
       qrcode: true
     })
+
+    this.WalletConnectConnector.getProvider().then(provider => {
+      if (provider) {
+        provider.on('display_uri', (uri: string) => {
+          this.setQRCodeURI(uri)
+        })
+      }
+    })
+
     SolStoreUtil.setConnection(
       new Connection(
         SolHelpersUtil.detectRpcUrl(chain, OptionsController.state.projectId),

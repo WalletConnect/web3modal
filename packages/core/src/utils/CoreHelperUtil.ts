@@ -36,7 +36,8 @@ export const CoreHelperUtil = {
   },
 
   isPairingExpired(expiry?: number) {
-    return expiry ? expiry - Date.now() <= ConstantsUtil.TEN_SEC_MS : true
+    // QR code lasts 15mins
+    return expiry ? expiry - Date.now() <= 15 * 60 * 1000 : true
   },
 
   isAllowedRetry(lastRetry: number) {

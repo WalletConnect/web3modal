@@ -3,7 +3,6 @@ import {
   AssetUtil,
   ConnectionController,
   ConnectorController,
-  ConstantsUtil,
   CoreHelperUtil,
   EventsController,
   ModalController,
@@ -21,8 +20,6 @@ export class W3mConnectingWcView extends LitElement {
   // -- Members ------------------------------------------- //
   private interval?: ReturnType<typeof setInterval> = undefined
 
-  private lastRetry = Date.now()
-
   private wallet = RouterController.state.data?.wallet
 
   // -- State & Properties -------------------------------- //
@@ -33,7 +30,11 @@ export class W3mConnectingWcView extends LitElement {
   public constructor() {
     super()
     this.initializeConnection()
-    this.interval = setInterval(this.initializeConnection.bind(this), ConstantsUtil.TEN_SEC_MS)
+    /*
+     * For 15minutes, the relay handles retries and reconnections internally.
+     * We re-initialize the connection after that
+     */
+    this.interval = setInterval(this.initializeConnection.bind(this), 15 * 60 * 1000)
   }
 
   public override disconnectedCallback() {
@@ -55,58 +56,47 @@ export class W3mConnectingWcView extends LitElement {
   }
 
   // -- Private ------------------------------------------- //
-  private async initializeConnection(retry = false) {
-    try {
-      const { wcPairingExpiry } = ConnectionController.state
-      if (retry || CoreHelperUtil.isPairingExpired(wcPairingExpiry)) {
-        if (this.wallet) {
-          const url = AssetUtil.getWalletImage(this.wallet)
-          if (url) {
-            StorageUtil.setConnectedWalletImageUrl(url)
-          }
-        } else {
-          const connectors = ConnectorController.state.connectors
-          const connector = connectors.find(c => c.type === 'WALLET_CONNECT')
-          const url = AssetUtil.getConnectorImage(connector)
-          if (url) {
-            StorageUtil.setConnectedWalletImageUrl(url)
-          }
-        }
-
-        await ConnectionController.connectWalletConnect()
-        this.finalizeConnection()
-        if (
-          StorageUtil.getConnectedConnector() === 'AUTH' &&
-          OptionsController.state.hasMultipleAddresses
-        ) {
-          RouterController.push('SelectAddresses')
-        } else if (OptionsController.state.isSiweEnabled) {
-          const { SIWEController } = await import('@web3modal/siwe')
-          if (SIWEController.state.status === 'success') {
-            ModalController.close()
-          } else {
-            RouterController.push('ConnectingSiwe')
-          }
-        } else {
-          ModalController.close()
-        }
+  private setConnectorImage() {
+    if (this.wallet) {
+      const url = AssetUtil.getWalletImage(this.wallet)
+      if (url) {
+        StorageUtil.setConnectedWalletImageUrl(url)
       }
-    } catch (error) {
-      EventsController.sendEvent({
-        type: 'track',
-        event: 'CONNECT_ERROR',
-        properties: { message: (error as BaseError)?.message ?? 'Unknown' }
-      })
-      ConnectionController.setWcError(true)
-      if (CoreHelperUtil.isAllowedRetry(this.lastRetry)) {
-        SnackController.showError('Declined')
-        this.lastRetry = Date.now()
-        this.initializeConnection(true)
+    } else {
+      const connectors = ConnectorController.state.connectors
+      const connector = connectors.find(c => c.type === 'WALLET_CONNECT')
+      const url = AssetUtil.getConnectorImage(connector)
+      if (url) {
+        StorageUtil.setConnectedWalletImageUrl(url)
       }
     }
   }
 
-  private finalizeConnection() {
+  private async initializeConnection() {
+    try {
+      await ConnectionController.connectWalletConnect()
+      await this.finalizeConnection()
+    } catch (error) {
+      /**
+       * Potential errors:
+       * 1. User declined connection
+       * 2. QR Cannot be generated (network issue?)
+       * 3. QR Code expired
+       */
+      EventsController.sendEvent({
+        type: 'track',
+        event: 'CONNECT_ERROR',
+        properties: { message: (error as BaseError)?.message || 'Unknown' }
+      })
+      // ConnectionController.setWcError(true)
+      SnackController.showError((error as BaseError)?.message || 'Declined')
+
+      // We need to re-generate the session
+      this.initializeConnection()
+    }
+  }
+
+  private async finalizeConnection() {
     const { wcLinking, recentWallet } = ConnectionController.state
 
     if (wcLinking) {
@@ -124,6 +114,26 @@ export class W3mConnectingWcView extends LitElement {
         name: this.wallet?.name || 'Unknown'
       }
     })
+
+    // Setup connector images
+    this.setConnectorImage()
+
+    // Route after connect
+    if (
+      StorageUtil.getConnectedConnector() === 'AUTH' &&
+      OptionsController.state.hasMultipleAddresses
+    ) {
+      RouterController.push('SelectAddresses')
+    } else if (OptionsController.state.isSiweEnabled) {
+      const { SIWEController } = await import('@web3modal/siwe')
+      if (SIWEController.state.status === 'success') {
+        ModalController.close()
+      } else {
+        RouterController.push('ConnectingSiwe')
+      }
+    } else {
+      ModalController.close()
+    }
   }
 
   private determinePlatforms() {
@@ -171,17 +181,17 @@ export class W3mConnectingWcView extends LitElement {
         return html`<w3m-connecting-wc-browser></w3m-connecting-wc-browser>`
       case 'desktop':
         return html`
-          <w3m-connecting-wc-desktop .onRetry=${() => this.initializeConnection(true)}>
+          <w3m-connecting-wc-desktop .onRetry=${() => this.initializeConnection()}>
           </w3m-connecting-wc-desktop>
         `
       case 'web':
         return html`
-          <w3m-connecting-wc-web .onRetry=${() => this.initializeConnection(true)}>
+          <w3m-connecting-wc-web .onRetry=${() => this.initializeConnection()}>
           </w3m-connecting-wc-web>
         `
       case 'mobile':
         return html`
-          <w3m-connecting-wc-mobile isMobile .onRetry=${() => this.initializeConnection(true)}>
+          <w3m-connecting-wc-mobile isMobile .onRetry=${() => this.initializeConnection()}>
           </w3m-connecting-wc-mobile>
         `
       case 'qrcode':

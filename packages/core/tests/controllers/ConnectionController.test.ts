@@ -10,10 +10,7 @@ const type = 'AUTH' as ConnectorType
 const storageSpy = vi.spyOn(StorageUtil, 'setConnectedConnector')
 
 const client: ConnectionControllerClient = {
-  connectWalletConnect: async onUri => {
-    onUri(walletConnectUri)
-    await Promise.resolve(walletConnectUri)
-  },
+  connectWalletConnect: async () => Promise.resolve(),
   disconnect: async () => Promise.resolve(),
   signMessage: async (message: string) => Promise.resolve(message),
   estimateGas: async () => Promise.resolve(BigInt(0)),

@@ -194,15 +194,11 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     const connectionControllerClient: ConnectionControllerClient = {
-      connectWalletConnect: async onUri => {
+      connectWalletConnect: async () => {
         const WalletConnectProvider = await this.getWalletConnectProvider()
         if (!WalletConnectProvider) {
           throw new Error('connectionControllerClient:getWalletConnectUri - provider is undefined')
         }
-
-        WalletConnectProvider.on('display_uri', (uri: string) => {
-          onUri(uri)
-        })
 
         // When connecting through walletconnect, we need to set the clientId in the store
         const clientId = await WalletConnectProvider.signer?.client?.core?.crypto?.getClientId()
@@ -698,6 +694,10 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     this.walletConnectProvider = await EthereumProvider.init(walletConnectProviderOptions)
+
+    this.walletConnectProvider.on('display_uri', (uri: string) => {
+      this.setQRCodeURI(uri)
+    })
 
     await this.checkActiveWalletConnectProvider()
   }

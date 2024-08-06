@@ -327,6 +327,10 @@ export class Web3ModalScaffold {
     BlockchainApiController.setClientId(clientId)
   }
 
+  protected setQRCodeURI: (typeof ConnectionController)['setQRCodeURI'] = uri => {
+    ConnectionController.setQRCodeURI(uri)
+  }
+
   // -- Private ------------------------------------------------------------------
   private async initControllers(options: ScaffoldOptions) {
     ChainController.initialize([

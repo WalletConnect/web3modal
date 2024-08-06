@@ -75,6 +75,8 @@ interface Web3ModalState extends PublicStateControllerState {
   selectedNetworkId: number | undefined
 }
 
+type WalletConnectProvider = Awaited<ReturnType<(typeof EthereumProvider)['init']>>
+
 // -- Client --------------------------------------------------------------------
 export class Web3Modal extends Web3ModalScaffold {
   private hasSyncedConnectedAccount = false
@@ -125,20 +127,14 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     const connectionControllerClient: ConnectionControllerClient = {
-      connectWalletConnect: async onUri => {
+      connectWalletConnect: async () => {
         const connector = wagmiConfig.connectors.find(
           c => c.id === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID
         )
         if (!connector) {
           throw new Error('connectionControllerClient:getWalletConnectUri - connector is undefined')
         }
-        const provider = (await connector.getProvider()) as Awaited<
-          ReturnType<(typeof EthereumProvider)['init']>
-        >
-
-        provider.on('display_uri', data => {
-          onUri(data)
-        })
+        const provider = (await connector.getProvider()) as WalletConnectProvider
 
         const clientId = await provider.signer?.client?.core?.crypto?.getClientId()
         if (clientId) {
@@ -211,6 +207,7 @@ export class Web3Modal extends Web3ModalScaffold {
            */
           this.wagmiConfig.state.current = ''
         }
+
         await connect(this.wagmiConfig, { connector, chainId })
       },
 
@@ -378,6 +375,19 @@ export class Web3Modal extends Web3ModalScaffold {
     this.syncConnectors([...wagmiConfig.connectors])
     this.initAuthConnectorListeners([...wagmiConfig.connectors])
 
+    // Subscribe to wc connector events
+    const wcConnector = this.wagmiConfig.connectors.find(
+      connector => connector.id === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID
+    )
+    if (wcConnector) {
+      wcConnector.getProvider().then(provider => {
+        const wcProvider = provider as WalletConnectProvider
+        wcProvider.on('display_uri', uri => {
+          this.setQRCodeURI(uri)
+        })
+      })
+    }
+
     watchConnectors(this.wagmiConfig, {
       onChange: connectors => this.syncConnectors(connectors)
     })
@@ -450,14 +460,27 @@ export class Web3Modal extends Web3ModalScaffold {
     isDisconnected,
     chainId,
     connector,
-    addresses
+    addresses,
+    status
   }: Partial<
     Pick<
       GetAccountReturnType,
-      'address' | 'isConnected' | 'isDisconnected' | 'chainId' | 'connector' | 'addresses'
+      | 'address'
+      | 'isConnected'
+      | 'isDisconnected'
+      | 'chainId'
+      | 'connector'
+      | 'addresses'
+      | 'status'
     >
   >) {
     const caipAddress: CaipAddress = `${ConstantsUtil.EIP155}:${chainId}:${address}`
+
+    if (status === 'reconnecting') {
+      this.setLoading(true)
+
+      return
+    }
 
     if (this.getCaipAddress() === caipAddress) {
       return
@@ -593,9 +616,7 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     if (connector.id === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID && connector.getProvider) {
-      const walletConnectProvider = (await connector.getProvider()) as Awaited<
-        ReturnType<(typeof EthereumProvider)['init']>
-      >
+      const walletConnectProvider = (await connector.getProvider()) as WalletConnectProvider
       if (walletConnectProvider.session) {
         this.setConnectedWalletInfo(
           {
