@@ -11,7 +11,12 @@ import { EthersSendCallsWithPaymasterServiceTest } from './EthersSendCallsWithPa
 
 export function EthersTests() {
   const [ready, setReady] = React.useState(false)
+  const [callsHash, setCallsHash] = React.useState<string>('')
   const { isConnected } = useWeb3ModalAccount()
+
+  const onCallsHash = React.useCallback((hash: string) => {
+    setCallsHash(hash)
+  }, [])
 
   React.useEffect(() => {
     setReady(true)
@@ -59,13 +64,13 @@ export function EthersTests() {
             <Heading size="xs" textTransform="uppercase" pb="2">
               Send Calls (Atomic Batch)
             </Heading>
-            <EthersSendCallsTest />
+            <EthersSendCallsTest onCallsHash={onCallsHash} />
           </Box>
           <Box>
             <Heading size="xs" textTransform="uppercase" pb="2">
               Get Calls Status
             </Heading>
-            <EthersGetCallsStatusTest />
+            <EthersGetCallsStatusTest callsHash={callsHash} />
           </Box>
           <Box>
             <Heading size="xs" textTransform="uppercase" pb="2">
