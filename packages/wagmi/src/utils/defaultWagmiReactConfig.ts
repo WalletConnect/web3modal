@@ -2,7 +2,7 @@ import '@web3modal/polyfills'
 
 import type { CreateConfigParameters, CreateConnectorFn, Config } from 'wagmi'
 import { createConfig } from 'wagmi'
-import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors'
+import { coinbaseWallet, walletConnect, safe, injected } from 'wagmi/connectors'
 import { authConnector } from '../connectors/AuthConnector.js'
 import { getTransport } from './helpers.js'
 import type { SocialProvider } from '@web3modal/scaffold-utils'
@@ -12,6 +12,8 @@ export type ConfigOptions = Partial<CreateConfigParameters> & {
   projectId: string
   enableEIP6963?: boolean
   enableCoinbase?: boolean
+  enableSafe?: boolean
+  allowedDomainsSafe?: RegExp[] | undefined
   auth?: {
     email?: boolean
     socials?: SocialProvider[]
@@ -34,6 +36,7 @@ export function defaultWagmiConfig({
   chains,
   metadata,
   enableCoinbase,
+  enableSafe,
   enableInjected,
   auth = {},
   enableWalletConnect,
@@ -75,6 +78,14 @@ export function defaultWagmiConfig({
          * @see https://www.smartwallet.dev/sdk/v3-to-v4-changes#parameters
          */
         preference: wagmiConfig.coinbasePreference || 'all'
+      })
+    )
+  }
+
+  if (enableSafe !== false) {
+    connectors.push(
+      safe({
+        allowedDomains: wagmiConfig.allowedDomainsSafe
       })
     )
   }
