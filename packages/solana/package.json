@@ -55,7 +55,7 @@
     "@solana/wallet-adapter-base": "0.9.23",
     "@solana/wallet-standard-features": "1.2.0",
     "@solana/wallet-standard-util": "1.1.1",
-    "@solana/web3.js": "1.91.7",
+    "@solana/web3.js": "1.95.2",
     "@wallet-standard/app": "1.0.1",
     "@wallet-standard/base": "1.0.1",
     "@wallet-standard/features": "1.0.3",
