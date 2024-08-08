@@ -48,6 +48,7 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run --dir tests --coverage.enabled=true --coverage.reporter=json --coverage.reporter=json-summary --coverage.reportOnFailure=true",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
@@ -76,6 +77,9 @@
     "valtio": "1.11.2"
   },
   "devDependencies": {
+    "vitest": "2.0.3",
+    "@vitest/coverage-v8": "2.0.5",
+    "@web3modal/core": "workspace:*",
     "@types/bn.js": "5.1.5",
     "@walletconnect/types": "2.14.0"
   },

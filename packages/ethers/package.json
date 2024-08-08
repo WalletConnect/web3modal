@@ -40,6 +40,7 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run --dir tests --coverage.enabled=true --coverage.reporter=json --coverage.reporter=json-summary --coverage.reportOnFailure=true",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
@@ -63,6 +64,9 @@
     "vue": ">=3"
   },
   "devDependencies": {
+    "vitest": "2.0.3",
+    "@vitest/coverage-v8": "2.0.5",
+    "@web3modal/core": "workspace:*",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "vue": "3.4.3"

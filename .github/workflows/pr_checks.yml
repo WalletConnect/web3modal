@@ -55,6 +55,7 @@ jobs:
         run: pnpm ${{ matrix.style-command }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
 
   test:
     runs-on: ubuntu-latest
