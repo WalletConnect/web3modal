@@ -56,13 +56,13 @@
     "valtio": "1.11.2"
   },
   "devDependencies": {
-    "ethers": "5.7.2",
+    "ethers": "6.13.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "vue": "3.4.3"
   },
   "peerDependencies": {
-    "ethers": ">=4.1.0 <6.0.0",
+    "ethers": ">=4.1.0 <7.0.0",
     "react": ">=17",
     "react-dom": ">=17",
     "vue": ">=3"
