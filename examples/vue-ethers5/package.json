@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@web3modal/ethers5": "workspace:*",
-    "ethers": "5.7.2",
+    "ethers": "6.13.2",
     "vue": "3.4.3"
   },
   "devDependencies": {
