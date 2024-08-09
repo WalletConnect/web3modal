@@ -12,12 +12,12 @@ export default function NavSection() {
         <Image
           src={W3mLogo}
           placeholder="blur"
-          alt="Web3Modal Logo"
+          alt="AppKit Logo"
           width={40}
           height={40}
           className="rounded-lg"
         />
-        <span className="pt-0.5">Web3Modal</span>
+        <span className="pt-0.5">AppKit</span>
       </motion.a>
     </nav>
   )

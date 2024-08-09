@@ -11,13 +11,13 @@ import {
   Text
 } from '@chakra-ui/react'
 
-type Web3ModalInfoProps = {
+type AppKitInfoProps = {
   address?: string
   chainId?: number
   clientId: string | null
 }
 
-export function Web3ModalInfo({ address, chainId, clientId }: Web3ModalInfoProps) {
+export function AppKitInfo({ address, chainId, clientId }: AppKitInfoProps) {
   return (
     <Card marginTop={10} marginBottom={10}>
       <CardHeader>

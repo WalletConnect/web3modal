@@ -230,7 +230,7 @@ export class ModalPage {
   async signatureRequestFrameShouldVisible(headerText: string) {
     await expect(
       this.page.frameLocator('#w3m-iframe').getByText(headerText),
-      'Web3Modal iframe should be visible'
+      'AppKit iframe should be visible'
     ).toBeVisible({
       timeout: 10000
     })

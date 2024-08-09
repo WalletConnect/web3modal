@@ -2,7 +2,7 @@ import { createWeb3Modal, defaultSolanaConfig } from '@web3modal/solana/react'
 
 import { ThemeStore } from '../../utils/StoreUtil'
 import { solana, solanaDevnet, solanaTestnet } from '../../utils/ChainsUtil'
-import { Web3ModalButtons } from '../../components/Web3ModalButtons'
+import { AppKitButtons } from '../../components/AppKitButtons'
 import { ConstantsUtil } from '../../utils/ConstantsUtil'
 import { SolanaTests } from '../../components/Solana/SolanaTests'
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
@@ -33,7 +33,7 @@ ThemeStore.setModal(modal)
 export default function Solana() {
   return (
     <>
-      <Web3ModalButtons />
+      <AppKitButtons />
       <SolanaTests />
     </>
   )

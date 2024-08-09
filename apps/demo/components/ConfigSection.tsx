@@ -53,7 +53,7 @@ export default function ConfigSection() {
       >
         <div className="flex-grow px-12 py-8">
           <motion.h1 variants={VARIANTS} className="text-xl font-bold">
-            Build Your Own Web3Modal
+            Build Your Own AppKit
           </motion.h1>
           <motion.p variants={VARIANTS} className="text-[var(--navy-400)] text-sm mt-1 mb-6">
             Modify the configuration to suit your needs. You can copy the config and use it in your

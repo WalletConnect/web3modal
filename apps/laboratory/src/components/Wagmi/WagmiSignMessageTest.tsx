@@ -13,7 +13,7 @@ export function WagmiSignMessageTest() {
 
   async function onSignMessage() {
     try {
-      const sig = await signMessageAsync({ message: 'Hello Web3Modal!' })
+      const sig = await signMessageAsync({ message: 'Hello AppKit!' })
       setSignature(sig)
       toast({
         title: ConstantsUtil.SigningSucceededToastTitle,

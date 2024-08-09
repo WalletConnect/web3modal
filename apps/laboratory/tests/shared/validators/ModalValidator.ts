@@ -96,7 +96,7 @@ export class ModalValidator {
   async expectValidSignature(signature: `0x${string}`, address: `0x${string}`, chainId: number) {
     const isVerified = await verifySignature({
       address,
-      message: 'Hello Web3Modal!',
+      message: 'Hello AppKit!',
       signature,
       chainId
     })

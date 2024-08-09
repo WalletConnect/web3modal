@@ -30,9 +30,9 @@ const chains = [
 
 const ethersConfig = defaultConfig({
   metadata: {
-    name: 'Web3Modal',
-    description: 'Web3Modal Laboratory',
-    url: 'https://web3modal.com',
+    name: 'AppKit',
+    description: 'AppKit Laboratory',
+    url: 'https://example.com',
     icons: ['https://avatars.githubusercontent.com/u/37784886']
   },
   defaultChainId: 1

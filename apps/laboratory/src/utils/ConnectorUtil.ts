@@ -12,7 +12,7 @@ export function externalTestConnector() {
 
   return createConnector<() => Record<string, never>, Properties>(() => ({
     id: 'externalTestConnector',
-    name: 'Web3Modal external',
+    name: 'AppKit external',
     type: 'externalTestConnector',
 
     async connect(options: ConnectOptions = {}) {

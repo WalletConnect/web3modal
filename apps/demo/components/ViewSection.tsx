@@ -13,7 +13,7 @@ export default function ViewSection() {
       variants={VARIANTS}
       className="bg-white relative h-[36rem] w-96 grid place-items-center rounded-3xl text-xl shadow-slate-900/5 shadow-lg border-slate-200 border text-center p-8"
     >
-      <p className="absolute top-0 ml-auto py-8 opacity-50 text-sm">Hopefully Web3Modal here lol</p>
+      <p className="absolute top-0 ml-auto py-8 opacity-50 text-sm">Hopefully AppKit here lol</p>
       <div className="w-full">
         <p className="flex justify-between">
           Email:

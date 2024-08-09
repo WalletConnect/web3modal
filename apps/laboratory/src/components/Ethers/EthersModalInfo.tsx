@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useWeb3ModalAccount, useWeb3ModalProvider } from '@web3modal/ethers/react'
 import EthereumProvider from '@walletconnect/ethereum-provider'
 
-import { Web3ModalInfo } from '../Web3ModalInfo'
+import { AppKitInfo } from '../AppKitInfo'
 
 export function EthersModalInfo() {
   const { isConnected, address, chainId } = useWeb3ModalAccount()
@@ -28,6 +28,6 @@ export function EthersModalInfo() {
   }, [])
 
   return ready && isConnected ? (
-    <Web3ModalInfo address={address} chainId={chainId} clientId={clientId} />
+    <AppKitInfo address={address} chainId={chainId} clientId={clientId} />
   ) : null
 }

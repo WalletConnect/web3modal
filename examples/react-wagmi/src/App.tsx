@@ -24,8 +24,8 @@ const wagmiConfig = defaultWagmiConfig({
   chains: [mainnet, arbitrum],
   projectId,
   metadata: {
-    name: 'Web3Modal React Example',
-    description: 'Web3Modal React Example',
+    name: 'AppKit React Example',
+    description: 'AppKit React Example',
     url: '',
     icons: []
   }

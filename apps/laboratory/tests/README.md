@@ -9,7 +9,7 @@ We use Playwright as our functional test runner. It's configured to try multiple
 
 - Make sure your `.env.local` is set up (see `.env.example` for reference)
 - Run `pnpm playwright:install` to install the browsers required to run the tests
-- Build Web3Modal by running `pnpm build` in the root directory
+- Build AppKit by running `pnpm build` in the root directory
 
 ## Running Tests
 

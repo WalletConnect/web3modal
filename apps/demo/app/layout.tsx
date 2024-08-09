@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import '@/styles/globals.css'
-import Web3ModalProvider from '@/context/Web3Modal'
+import AppKitProvider from '@/context/AppKit'
 
 const abcDiatype = localFont({
   src: [
@@ -18,12 +18,12 @@ const abcDiatype = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'Web3Modal | Demo',
+  title: 'AppKit | Demo',
   description:
-    'Web3Modal is an elegantly simple yet powerful library that helps you manage your multi-chain wallet connection flows, all in one place.',
+    'AppKit is an elegantly simple yet powerful library that helps you manage your multi-chain wallet connection flows, all in one place.',
   openGraph: {
     description:
-      'Your on-ramp to web3 multichain. Web3Modal is a versatile library that makes it super easy to connect users with your Dapp and start interacting with the blockchain.'
+      'Your on-ramp to web3 multichain. AppKit is a versatile library that makes it super easy to connect users with your Dapp and start interacting with the blockchain.'
   }
 }
 
@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={abcDiatype.className}>
-        <Web3ModalProvider>{children}</Web3ModalProvider>
+        <AppKitProvider>{children}</AppKitProvider>
       </body>
     </html>
   )

@@ -1,10 +1,10 @@
 import { Stack, Card, CardHeader, Heading, CardBody, Box, StackDivider } from '@chakra-ui/react'
 
-export function Web3ModalButtons() {
+export function AppKitButtons() {
   return (
     <Card marginTop={20}>
       <CardHeader>
-        <Heading size="md">Web3Modal Interactions</Heading>
+        <Heading size="md">AppKit Interactions</Heading>
       </CardHeader>
 
       <CardBody>

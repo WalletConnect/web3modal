@@ -1,6 +1,6 @@
 import { SiweData } from '../../components/Siwe/SiweData'
 import { EthersTests } from '../../components/Ethers/EthersTests'
-import { Web3ModalButtons } from '../../components/Web3ModalButtons'
+import { AppKitButtons } from '../../components/AppKitButtons'
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers/react'
 import { ThemeStore } from '../../utils/StoreUtil'
 import { EthersConstants } from '../../utils/EthersConstants'
@@ -26,7 +26,7 @@ ThemeStore.setModal(modal)
 export default function EthersSiwe() {
   return (
     <>
-      <Web3ModalButtons />
+      <AppKitButtons />
       <EthersModalInfo />
       <SiweData />
       <EthersTests />

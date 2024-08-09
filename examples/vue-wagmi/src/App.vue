@@ -21,8 +21,8 @@ const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
   metadata: {
-    name: 'Web3Modal Vue Example',
-    description: 'Web3Modal Vue Example',
+    name: 'AppKit Vue Example',
+    description: 'AppKit Vue Example',
     url: '',
     icons: [],
     verifyUrl: ''

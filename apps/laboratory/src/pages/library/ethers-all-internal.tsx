@@ -3,7 +3,7 @@ import { ThemeStore } from '../../utils/StoreUtil'
 import { EthersConstants } from '../../utils/EthersConstants'
 import { ConstantsUtil } from '../../utils/ConstantsUtil'
 import { EthersTests } from '../../components/Ethers/EthersTests'
-import { Web3ModalButtons } from '../../components/Web3ModalButtons'
+import { AppKitButtons } from '../../components/AppKitButtons'
 import { siweConfig } from '../../utils/SiweUtils'
 import { SiweData } from '../../components/Siwe/SiweData'
 import { EthersModalInfo } from '../../components/Ethers/EthersModalInfo'
@@ -32,7 +32,7 @@ ThemeStore.setModal(modal)
 export default function Ethers() {
   return (
     <>
-      <Web3ModalButtons />
+      <AppKitButtons />
       <EthersModalInfo />
       <SiweData />
       <EthersTests />
