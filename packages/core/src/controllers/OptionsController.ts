@@ -17,6 +17,7 @@ export interface OptionsControllerState {
   termsConditionsUrl?: string
   privacyPolicyUrl?: string
   isSiweEnabled?: boolean
+  isSiwsEnabled?: boolean
   isUniversalProvider?: boolean
   enableAnalytics?: boolean
   metadata?: Metadata
@@ -89,6 +90,10 @@ export const OptionsController = {
 
   setIsUniversalProvider(isUniversalProvider: OptionsControllerState['isUniversalProvider']) {
     state.isUniversalProvider = isUniversalProvider
+  },
+
+  setIsSiwsEnabled(isSiwsEnabled: OptionsControllerState['isSiwsEnabled']) {
+    state.isSiwsEnabled = isSiwsEnabled
   },
 
   setEnableAnalytics(enableAnalytics: OptionsControllerState['enableAnalytics']) {

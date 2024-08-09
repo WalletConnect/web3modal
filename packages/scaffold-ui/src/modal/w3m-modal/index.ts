@@ -11,10 +11,13 @@ import {
   ThemeController
 } from '@web3modal/core'
 import { UiHelperUtil, customElement, initializeTheming } from '@web3modal/ui'
+import type { ICheckNewAddressGeneric, SignControlSiwXType } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 import styles from './styles.js'
-import type { CaipAddress } from '@web3modal/core'
+import type { CaipAddress, RouterControllerState } from '@web3modal/core'
+import type { SIWESession } from '@web3modal/siwe'
+import type { SIWSSession } from '@web3modal/siws'
 
 // -- Helpers --------------------------------------------- //
 const SCROLL_LOCK = 'scroll-lock'
@@ -35,6 +38,8 @@ export class W3mModal extends LitElement {
 
   @state() private isSiweEnabled = OptionsController.state.isSiweEnabled
 
+  @state() private isSiwsEnabled = OptionsController.state.isSiwsEnabled
+
   @state() private connected = AccountController.state.isConnected
 
   @state() private loading = ModalController.state.loading
@@ -51,7 +56,8 @@ export class W3mModal extends LitElement {
       }),
       AccountController.subscribeKey('isConnected', val => (this.connected = val)),
       AccountController.subscribeKey('caipAddress', val => this.onNewAddress(val)),
-      OptionsController.subscribeKey('isSiweEnabled', val => (this.isSiweEnabled = val))
+      OptionsController.subscribeKey('isSiweEnabled', val => (this.isSiweEnabled = val)),
+      OptionsController.subscribeKey('isSiwsEnabled', val => (this.isSiwsEnabled = val))
     )
     EventsController.sendEvent({ type: 'track', event: 'MODAL_LOADED' })
   }
@@ -89,6 +95,14 @@ export class W3mModal extends LitElement {
       const { SIWEController } = await import('@web3modal/siwe')
 
       if (SIWEController.state.status !== 'success' && this.connected) {
+        await ConnectionController.disconnect()
+      }
+    }
+
+    if (this.isSiwsEnabled) {
+      const { SIWSController } = await import('@web3modal/siws')
+
+      if (SIWSController.state.status !== 'success' && this.connected) {
         await ConnectionController.disconnect()
       }
     }
@@ -175,43 +189,82 @@ export class W3mModal extends LitElement {
     const newNetworkId = CoreHelperUtil.getNetworkId(caipAddress)
     this.caipAddress = caipAddress
 
+    const dataAddressGeneric = {
+      previousAddress,
+      newAddress,
+      previousNetworkId,
+      newNetworkId
+    }
+
     if (this.isSiweEnabled) {
-      const { SIWEController } = await import('@web3modal/siwe')
-      const session = await SIWEController.getSession()
+      await this.checkNewAddressGeneric({
+        typeSignControlSiwX: 'Siwe',
+        ...dataAddressGeneric
+      })
+    }
 
-      // If the address has changed and signOnAccountChange is enabled, sign out
-      if (session && previousAddress && newAddress && previousAddress !== newAddress) {
-        if (SIWEController.state._client?.options.signOutOnAccountChange) {
-          await SIWEController.signOut()
-          this.onSiweNavigation()
-        }
-
-        return
-      }
-
-      /*
-       * If the network has changed and signOnNetworkChange is enabled, sign out
-       * Covers case where network is switched wallet-side
-       */
-      if (session && previousNetworkId && newNetworkId && previousNetworkId !== newNetworkId) {
-        if (SIWEController.state._client?.options.signOutOnNetworkChange) {
-          await SIWEController.signOut()
-          this.onSiweNavigation()
-        }
-
-        return
-      }
-
-      this.onSiweNavigation()
+    if (this.isSiwsEnabled) {
+      await this.checkNewAddressGeneric({
+        typeSignControlSiwX: 'Siws',
+        ...dataAddressGeneric
+      })
     }
   }
 
-  private onSiweNavigation() {
+  private async checkNewAddressGeneric({
+    typeSignControlSiwX,
+    previousAddress,
+    newAddress,
+    previousNetworkId,
+    newNetworkId
+  }: ICheckNewAddressGeneric) {
+    const { SIWEController } = await import('@web3modal/siwe')
+    const { SIWSController } = await import('@web3modal/siws')
+
+    const moduleMap = {
+      Siwe: SIWEController,
+      Siws: SIWSController
+    }
+
+    const controller = moduleMap[typeSignControlSiwX]
+
+    const session: SIWESession | SIWSSession | null | undefined = await controller.getSession()
+
+    // If the address has changed and signOnAccountChange is enabled, sign out
+    if (session && previousAddress && newAddress && previousAddress !== newAddress) {
+      if (controller.state._client?.options.signOutOnAccountChange) {
+        await controller.signOut()
+
+        this.onNavigationGeneric(typeSignControlSiwX)
+      }
+
+      return
+    }
+
+    /*
+     * If the network has changed and signOnNetworkChange is enabled, sign out
+     * Covers case where network is switched wallet-side
+     */
+    if (session && previousNetworkId && newNetworkId && previousNetworkId !== newNetworkId) {
+      if (controller.state._client?.options.signOutOnNetworkChange) {
+        await controller.signOut()
+        this.onNavigationGeneric(typeSignControlSiwX)
+      }
+
+      return
+    }
+
+    this.onNavigationGeneric(typeSignControlSiwX)
+  }
+
+  private onNavigationGeneric(typeSignControlSiwX: SignControlSiwXType) {
+    const nameToNavigation = `Connecting${typeSignControlSiwX}` as RouterControllerState['view']
+
     if (this.open) {
-      RouterController.push('ConnectingSiwe')
+      RouterController.push(nameToNavigation)
     } else {
       ModalController.open({
-        view: 'ConnectingSiwe'
+        view: nameToNavigation
       })
     }
   }

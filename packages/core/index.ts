@@ -76,5 +76,6 @@ export { ConstantsUtil } from './src/utils/ConstantsUtil.js'
 export { CoreHelperUtil } from './src/utils/CoreHelperUtil.js'
 export { StorageUtil } from './src/utils/StorageUtil.js'
 export { RouterUtil } from './src/utils/RouterUtil.js'
+export { getAddressFromMessage, getChainIdFromMessage } from './src/utils/MessageUtil.js'
 
 export type * from './src/utils/TypeUtil.js'

@@ -1,3 +1,4 @@
+import base58 from 'bs58'
 import { Connection } from '@solana/web3.js'
 import { Web3ModalScaffold } from '@web3modal/scaffold'
 import {
@@ -6,7 +7,8 @@ import {
   CoreHelperUtil,
   EventsController,
   NetworkController,
-  OptionsController
+  OptionsController,
+  RouterController
 } from '@web3modal/core'
 import { ConstantsUtil, HelpersUtil, PresetsUtil } from '@web3modal/scaffold-utils'
 import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
@@ -14,7 +16,10 @@ import { ConstantsUtil as CommonConstantsUtil } from '@web3modal/common'
 import { SolConstantsUtil, SolHelpersUtil, SolStoreUtil } from './utils/scaffold/index.js'
 import { WalletConnectConnector } from './connectors/walletConnectConnector.js'
 
-import type { BaseWalletAdapter } from '@solana/wallet-adapter-base'
+import type {
+  BaseSignInMessageSignerWalletAdapter,
+  BaseWalletAdapter
+} from '@solana/wallet-adapter-base'
 import type { PublicKey, Commitment, ConnectionConfig } from '@solana/web3.js'
 import type UniversalProvider from '@walletconnect/universal-provider'
 import type {
@@ -26,9 +31,11 @@ import type {
   ScaffoldOptions,
   Connector,
   CaipAddress,
-  CaipNetwork
+  CaipNetwork,
+  EventsControllerState
 } from '@web3modal/scaffold'
 import type { Chain as AvailableChain } from '@web3modal/common'
+import type { Web3ModalSIWSClient } from '@web3modal/siws'
 
 import type { ProviderType, Chain, Provider, SolStoreUtilState } from './utils/scaffold/index.js'
 import { watchStandard } from './utils/wallet-standard/watchStandard.js'
@@ -37,6 +44,7 @@ import { SolanaChainIDs } from './utils/chainPath/constants.js'
 
 export interface Web3ModalClientOptions extends Omit<LibraryOptions, 'defaultChain' | 'tokens'> {
   solanaConfig: ProviderType
+  siwsConfig?: Web3ModalSIWSClient
   chains: Chain[]
   connectionSettings?: Commitment | ConnectionConfig
   defaultChain?: Chain
@@ -68,6 +76,7 @@ export class Web3Modal extends Web3ModalScaffold {
   public constructor(options: Web3ModalClientOptions) {
     const {
       solanaConfig,
+      siwsConfig,
       chains,
       tokens,
       _sdkVersion,
@@ -88,7 +97,7 @@ export class Web3Modal extends Web3ModalScaffold {
     }
 
     const networkControllerClient: NetworkControllerClient = {
-      switchCaipNetwork: async caipNetwork => {
+      switchCaipNetwork: async (caipNetwork: CaipNetwork | undefined) => {
         if (caipNetwork) {
           try {
             // Update chain for Solflare
@@ -169,6 +178,7 @@ export class Web3Modal extends Web3ModalScaffold {
 
         WalletConnectProvider.on('display_uri', onUri)
         const address = await this.WalletConnectConnector.connect()
+
         this.setWalletConnectProvider(address)
         WalletConnectProvider.removeListener('display_uri', onUri)
       },
@@ -181,7 +191,19 @@ export class Web3Modal extends Web3ModalScaffold {
         if (!adapter) {
           throw Error('connectionControllerClient:connectExternal - adapter was undefined')
         }
-        await adapter.connect()
+
+        // Only Phantom wallet support One Click Auth
+        const isPhantom = RouterController.state.data?.connector?.id === 'Phantom'
+
+        if (siwsConfig && isPhantom) {
+          const { SIWSController } = await import('@web3modal/siws')
+          await SIWSController.signIn(
+            adapter as BaseSignInMessageSignerWalletAdapter & ExtendedBaseWalletAdapter
+          )
+        } else {
+          await adapter.connect()
+        }
+
         this.setInjectedProvider(adapter as unknown as Provider)
       },
 
@@ -189,6 +211,12 @@ export class Web3Modal extends Web3ModalScaffold {
         const provider = SolStoreUtil.state.provider as Provider
         const providerType = SolStoreUtil.state.providerType
         localStorage.removeItem(SolConstantsUtil.WALLET_ID)
+
+        if (siwsConfig?.options?.signOutOnDisconnect) {
+          const { SIWSController } = await import('@web3modal/siws')
+          await SIWSController.signOut()
+        }
+
         if (providerType === ConstantsUtil.WALLET_CONNECT_CONNECTOR_ID) {
           const WalletConnectProvider = provider
           await (WalletConnectProvider as unknown as UniversalProvider).disconnect()
@@ -200,16 +228,26 @@ export class Web3Modal extends Web3ModalScaffold {
 
       signMessage: async (message: string) => {
         const provider = SolStoreUtil.state.provider
+        const encodedMessage = new TextEncoder().encode(message)
+
         if (!provider) {
           throw new Error('connectionControllerClient:signMessage - provider is undefined')
         }
 
-        const signature = await provider.request({
-          method: 'personal_sign',
-          params: [message, this.getAddress()]
-        })
+        const signResponse = await provider.signMessage(encodedMessage)
+        let signature: Uint8Array = signResponse
 
-        return signature as string
+        if ('signature' in signResponse && signResponse.signature instanceof Uint8Array) {
+          signature = signResponse.signature
+        } else if (signResponse instanceof Uint8Array) {
+          signature = signResponse
+        } else {
+          throw new Error('Unexpected response format')
+        }
+
+        const encodeSignature = base58.encode(signature)
+
+        return encodeSignature
       },
 
       estimateGas: async () => await Promise.resolve(BigInt(0)),
@@ -237,6 +275,7 @@ export class Web3Modal extends Web3ModalScaffold {
       networkControllerClient,
       connectionControllerClient,
       supportedWallets: wallets,
+      siwsControllerClient: siwsConfig,
 
       defaultChain: SolHelpersUtil.getChainFromCaip(
         chains,
@@ -302,7 +341,7 @@ export class Web3Modal extends Web3ModalScaffold {
       }
     })
 
-    EventsController.subscribe(state => {
+    EventsController.subscribe((state: EventsControllerState) => {
       if (state.data.event === 'SELECT_WALLET' && state.data.properties?.name === 'Phantom') {
         const isMobile = CoreHelperUtil.isMobile()
         const isClient = CoreHelperUtil.isClient()

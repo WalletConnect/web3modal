@@ -69,6 +69,7 @@
     "@web3modal/scaffold-utils": "workspace:*",
     "@web3modal/scaffold-vue": "workspace:*",
     "@web3modal/wallet": "workspace:*",
+    "@web3modal/siws": "workspace:*",
     "bn.js": "5.2.1",
     "bs58": "5.0.0",
     "borsh": "0.7.0",

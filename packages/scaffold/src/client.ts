@@ -32,6 +32,7 @@ import {
 } from '@web3modal/core'
 import { setColorTheme, setThemeVariables } from '@web3modal/ui'
 import type { SIWEControllerClient } from '@web3modal/siwe'
+import type { SIWSControllerClient } from '@web3modal/siws'
 import { ConstantsUtil, type Chain } from '@web3modal/common'
 
 // -- Helpers -------------------------------------------------------------------
@@ -67,6 +68,7 @@ export interface ScaffoldOptions extends LibraryOptions {
   networkControllerClient: NetworkControllerClient
   connectionControllerClient: ConnectionControllerClient
   siweControllerClient?: SIWEControllerClient
+  siwsControllerClient?: SIWSControllerClient
 }
 
 export interface OpenOptions {
@@ -380,6 +382,12 @@ export class Web3ModalScaffold {
       const { SIWEController } = await import('@web3modal/siwe')
 
       SIWEController.setSIWEClient(options.siweControllerClient)
+    }
+
+    if (options.siwsControllerClient) {
+      const { SIWSController } = await import('@web3modal/siws')
+
+      SIWSController.setSIWSClient(options.siwsControllerClient)
     }
   }
 

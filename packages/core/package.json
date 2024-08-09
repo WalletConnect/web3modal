@@ -30,6 +30,7 @@
     "web3",
     "crypto",
     "ethereum",
+    "solana",
     "web3modal",
     "walletconnect",
     "lit",

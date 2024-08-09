@@ -23,6 +23,7 @@
     "@web3modal/ui": "workspace:*",
     "@web3modal/siwe": "workspace:*",
     "@web3modal/wallet": "workspace:*",
+    "@web3modal/siws": "workspace:*",
     "lit": "3.1.0"
   },
   "keywords": [

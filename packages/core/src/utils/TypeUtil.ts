@@ -519,6 +519,38 @@ export type Event =
     }
   | {
       type: 'track'
+      event: 'CLICK_SIGN_SIWS_MESSAGE'
+      properties: {
+        network: string
+        isSmartAccount: boolean
+      }
+    }
+  | {
+      type: 'track'
+      event: 'CLICK_CANCEL_SIWS'
+      properties: {
+        network: string
+        isSmartAccount: boolean
+      }
+    }
+  | {
+      type: 'track'
+      event: 'SIWS_AUTH_SUCCESS'
+      properties: {
+        network: string
+        isSmartAccount: boolean
+      }
+    }
+  | {
+      type: 'track'
+      event: 'SIWS_AUTH_ERROR'
+      properties: {
+        network: string
+        isSmartAccount: boolean
+      }
+    }
+  | {
+      type: 'track'
       event: 'EMAIL_LOGIN_SELECTED'
     }
   | {

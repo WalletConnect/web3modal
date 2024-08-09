@@ -10,6 +10,7 @@ packages:
   - 'packages/polyfills'
   - 'packages/wallet'
   - 'packages/siwe'
+  - 'packages/siws'
   - 'packages/wagmi'
   - 'packages/ethers'
   - 'packages/ethers5'

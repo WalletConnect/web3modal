@@ -27,6 +27,7 @@ export interface RouterControllerState {
     | 'ConnectingFarcaster'
     | 'ConnectingWalletConnect'
     | 'ConnectingSiwe'
+    | 'ConnectingSiws'
     | 'ConnectingSocial'
     | 'ConnectSocials'
     | 'ConnectWallets'

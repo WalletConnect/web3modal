@@ -1,0 +1,50 @@
+{
+  "name": "@web3modal/siws",
+  "version": "5.0.8",
+  "type": "module",
+  "main": "./dist/esm/exports/index.js",
+  "types": "./dist/types/exports/index.d.ts",
+  "files": [
+    "dist",
+    "!tsconfig.tsbuildinfo"
+  ],
+  "scripts": {
+    "build:clean": "rm -rf dist",
+    "build": "tsc --build",
+    "watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  },
+  "dependencies": {
+    "@learnweb3dao/siwx-common": "0.3.0",
+    "@walletconnect/utils": "2.12.0",
+    "@web3modal/core": "workspace:*",
+    "@web3modal/scaffold-utils": "workspace:*",
+    "@web3modal/ui": "workspace:*",
+    "@web3modal/wallet": "workspace:*",
+    "@solana/web3.js": "1.91.7",
+    "bs58": "6.0.0",
+    "lit": "3.1.0",
+    "valtio": "1.11.2"
+  },
+  "keywords": [
+    "web3",
+    "crypto",
+    "solana",
+    "web3modal",
+    "walletconnect",
+    "lit",
+    "webcomponents",
+    "siws"
+  ],
+  "author": "WalletConnect <walletconnect.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/web3modal/web3modal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3modal/web3modal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/web3modal/web3modal/issues"
+  }
+}

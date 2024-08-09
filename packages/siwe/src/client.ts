@@ -119,6 +119,7 @@ export class Web3ModalSIWEClient {
         }
       })
     }
+
     const signature = await ConnectionController.signMessage(message)
     const isValid = await this.methods.verifyMessage({ message, signature })
     if (!isValid) {

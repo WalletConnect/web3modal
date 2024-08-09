@@ -69,5 +69,10 @@ export const solanaSdkOptions = [
     title: 'Default',
     link: '/library/solana',
     description: 'Basic configuration using solana as a driving library'
+  },
+  {
+    title: 'SIWS',
+    link: '/library/solana-siws/',
+    description: 'Configuration using siws and implementing sign in with solana'
   }
 ]

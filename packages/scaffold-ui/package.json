@@ -34,12 +34,14 @@
     "@web3modal/ui": "workspace:*",
     "lit": "3.1.0",
     "@web3modal/siwe": "workspace:*",
+    "@web3modal/siws": "workspace:*",
     "@web3modal/wallet": "workspace:*"
   },
   "keywords": [
     "web3",
     "crypto",
     "ethereum",
+    "solana",
     "web3modal",
     "walletconnect",
     "lit",

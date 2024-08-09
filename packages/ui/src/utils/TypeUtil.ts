@@ -340,3 +340,13 @@ export interface TokenInfo {
   isFoT?: boolean
   tags?: string[]
 }
+
+export type SignControlSiwXType = 'Siwe' | 'Siws'
+
+export interface ICheckNewAddressGeneric {
+  typeSignControlSiwX: SignControlSiwXType
+  previousAddress: string | undefined
+  newAddress: string | undefined
+  previousNetworkId: string | undefined
+  newNetworkId: string | undefined
+}

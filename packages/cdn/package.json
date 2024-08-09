@@ -30,6 +30,7 @@
     "@wagmi/core": "2.13.1",
     "@web3modal/wagmi": "workspace:*",
     "@web3modal/ethers": "workspace:*",
+    "@web3modal/solana": "workspace:*",
     "viem": "2.17.8",
     "vite": "5.2.11"
   }

@@ -10,16 +10,15 @@ import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 const chains = [solana, solanaTestnet, solanaDevnet]
 
 export const solanaConfig = defaultSolanaConfig({
-  chains,
   projectId: ConstantsUtil.ProjectId,
   metadata: ConstantsUtil.Metadata
 })
 
 const modal = createWeb3Modal({
   solanaConfig,
+  chains,
   projectId: ConstantsUtil.ProjectId,
   metadata: ConstantsUtil.Metadata,
-  chains,
   enableAnalytics: false,
   termsConditionsUrl: 'https://walletconnect.com/terms',
   privacyPolicyUrl: 'https://walletconnect.com/privacy',

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist/esm",
+    "declarationDir": "./dist/types"
+  },
+  "extends": "../../tsconfig.json",
+  "include": ["exports", "src", "core", "scaffold", "tests"]
+}

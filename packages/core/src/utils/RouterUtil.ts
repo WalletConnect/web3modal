@@ -21,10 +21,26 @@ export const RouterUtil = {
       ModalController.close()
     }
   },
+
   navigateAfterPreferredAccountTypeSelect() {
-    const { isSiweEnabled } = OptionsController.state
-    if (isSiweEnabled && ChainController.state.activeChain === ConstantsUtil.CHAIN.EVM) {
-      RouterController.push('ConnectingSiwe')
+    const { isSiweEnabled, isSiwsEnabled } = OptionsController.state
+    const isSiwxEnabled = isSiweEnabled || isSiwsEnabled
+    const { activeChain } = ChainController.state
+    const { CHAIN } = ConstantsUtil
+
+    if (isSiwxEnabled) {
+      switch (activeChain) {
+        case CHAIN.EVM:
+          RouterController.push('ConnectingSiwe')
+          break
+        case CHAIN.SOLANA:
+          RouterController.push('ConnectingSiws')
+          break
+        default:
+          console.warn(`Unsupported chain: ${activeChain}`)
+          RouterController.push('Account')
+          break
+      }
     } else {
       RouterController.push('Account')
     }

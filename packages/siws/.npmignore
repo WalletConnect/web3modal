@@ -1,0 +1,11 @@
+*.log
+*.env
+.eslintrc.json
+.turbo
+tests
+src
+exports
+node_modules
+package-lock.json
+tsconfig.json
+index.ts

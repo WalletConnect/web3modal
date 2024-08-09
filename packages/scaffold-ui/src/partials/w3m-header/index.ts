@@ -36,6 +36,7 @@ function headings() {
     ConnectingExternal: name ?? 'Connect Wallet',
     ConnectingWalletConnect: name ?? 'WalletConnect',
     ConnectingSiwe: 'Sign In',
+    ConnectingSiws: 'Sign In',
     Convert: 'Convert',
     ConvertSelectToken: 'Select token',
     ConvertPreview: 'Preview convert',

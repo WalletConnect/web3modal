@@ -75,6 +75,8 @@ export class W3mRouter extends LitElement {
         return html`<w3m-connecting-external-view></w3m-connecting-external-view>`
       case 'ConnectingSiwe':
         return html`<w3m-connecting-siwe-view></w3m-connecting-siwe-view>`
+      case 'ConnectingSiws':
+        return html`<w3m-connecting-siws-view></w3m-connecting-siws-view>`
       case 'ConnectWallets':
         return html`<w3m-connect-wallets-view></w3m-connect-wallets-view>`
       case 'ConnectSocials':

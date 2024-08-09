@@ -1,6 +1,6 @@
 import '@web3modal/polyfills'
 
-import type { Chain, Metadata, Provider, ProviderType } from './scaffold/index.js'
+import type { Metadata, Provider, ProviderType } from './scaffold/index.js'
 
 declare global {
   interface Navigator {
@@ -21,9 +21,7 @@ declare global {
 
 export interface ConfigOptions {
   projectId?: string
-  chains: Chain[]
   enableInjected?: boolean
-  rpcUrl?: string
   defaultChainId?: number
   metadata: Metadata
 }

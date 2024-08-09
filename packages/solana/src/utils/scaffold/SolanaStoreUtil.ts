@@ -2,8 +2,6 @@ import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
 import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { OptionsController } from '@web3modal/core'
 
-import UniversalProvider from '@walletconnect/universal-provider'
-
 import type { Chain, CombinedProvider, Provider, Connection } from './SolanaTypesUtil.js'
 import { SolConstantsUtil } from './SolanaConstantsUtil.js'
 import { SolHelpersUtil } from './SolanaHelpersUtils.js'
@@ -11,7 +9,7 @@ import { SolHelpersUtil } from './SolanaHelpersUtils.js'
 type StateKey = keyof SolStoreUtilState
 
 export interface SolStoreUtilState {
-  provider?: Provider | CombinedProvider | UniversalProvider
+  provider?: Provider | CombinedProvider
   providerType?: 'walletConnect' | `injected_${string}` | `announced_${string}`
   address?: string
   chainId?: string
