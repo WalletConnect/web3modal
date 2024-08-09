@@ -30,7 +30,7 @@ export const ConstantsUtil = {
     name: 'AppKit Lab',
     description: 'Laboratory environment for AppKit testing',
     url: getPublicUrl(),
-    icons: [`${getPublicUrl()}/metadata-icon.svg`],
+    icons: [`${getPublicUrl()}/metadata-icon.png`],
     verifyUrl: ''
   },
   CustomWallets: [
