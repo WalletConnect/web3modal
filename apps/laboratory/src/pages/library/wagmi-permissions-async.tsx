@@ -20,7 +20,7 @@ const connectors = [
     optionalMethods: [...OPTIONAL_METHODS, 'wallet_grantPermissions']
   })
 ]
-const wagmiEmailConfig = getWagmiConfig('email', connectors)
+const wagmiEmailConfig = getWagmiConfig('email', { connectors })
 const modal = createWeb3Modal({
   wagmiConfig: wagmiEmailConfig,
   projectId: ConstantsUtil.ProjectId,

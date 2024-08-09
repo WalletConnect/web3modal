@@ -8,13 +8,28 @@ import { DeviceRegistrationPage } from './DeviceRegistrationPage'
 import type { TimingRecords } from '../fixtures/timing-fixture'
 import { WalletPage } from './WalletPage'
 import { WalletValidator } from '../validators/WalletValidator'
+import { routeInterceptUrl } from '../utils/verify'
 
-export type ModalFlavor = 'default' | 'siwe' | 'email' | 'wallet' | 'external' | 'all'
+const maliciousUrl = 'https://malicious-app-verify-simulation.vercel.app'
+
+export type ModalFlavor =
+  | 'default'
+  | 'siwe'
+  | 'email'
+  | 'wallet'
+  | 'external'
+  | 'verify-valid'
+  | 'verify-domain-mismatch'
+  | 'verify-evil'
+  | 'all'
 
 function getUrlByFlavor(baseUrl: string, library: string, flavor: ModalFlavor) {
   const urlsByFlavor: Partial<Record<ModalFlavor, string>> = {
     default: `${baseUrl}library/${library}/`,
-    external: `${baseUrl}library/external/`
+    external: `${baseUrl}library/external/`,
+    'verify-valid': `${baseUrl}library/verify-valid/`,
+    'verify-domain-mismatch': `${baseUrl}library/verify-domain-mismatch/`,
+    'verify-evil': maliciousUrl
   }
 
   return urlsByFlavor[flavor] || `${baseUrl}library/${library}-${flavor}/`
@@ -37,6 +52,10 @@ export class ModalPage {
   }
 
   async load() {
+    if (this.flavor === 'verify-evil') {
+      await routeInterceptUrl(this.page, maliciousUrl, this.baseURL, '/library/verify-evil/')
+    }
+
     await this.page.goto(this.url)
   }
 
