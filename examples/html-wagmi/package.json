@@ -7,8 +7,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@wagmi/connectors": "5.1.2",
-    "@wagmi/core": "2.13.1",
+    "@wagmi/connectors": "5.1.5",
+    "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "workspace:*",
     "react": "18.2.0",
     "react-dom": "18.2.0"

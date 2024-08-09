@@ -26,11 +26,11 @@
     }
   },
   "dependencies": {
-    "@wagmi/connectors": "5.1.2",
-    "@wagmi/core": "2.13.1",
+    "@wagmi/connectors": "5.1.5",
+    "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "workspace:*",
     "@web3modal/ethers": "workspace:*",
-    "viem": "2.17.8",
+    "viem": "2.19.3",
     "vite": "5.2.11"
   }
 }

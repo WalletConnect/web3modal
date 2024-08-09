@@ -14,8 +14,8 @@
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "viem": "2.17.8",
-    "wagmi": "2.12.2"
+    "viem": "2.19.3",
+    "wagmi": "2.12.5"
   },
   "devDependencies": {
     "@types/react": "18.2.62",
