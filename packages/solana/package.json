@@ -60,7 +60,7 @@
     "@wallet-standard/base": "1.0.1",
     "@wallet-standard/features": "1.0.3",
     "@wallet-standard/wallet": "1.0.1",
-    "@walletconnect/universal-provider": "2.14.0",
+    "@walletconnect/universal-provider": "2.14.0-canary.1",
     "@web3modal/core": "workspace:*",
     "@web3modal/common": "workspace:*",
     "@web3modal/polyfills": "workspace:*",
