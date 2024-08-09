@@ -7,7 +7,8 @@ import {
   RouterController,
   NetworkController,
   BlockchainApiController,
-  EventsController
+  EventsController,
+  ChainController
 } from '@web3modal/core'
 import { customElement } from '@web3modal/ui'
 import { LitElement, html } from 'lit'
@@ -61,19 +62,23 @@ export class W3mOnRampProvidersView extends LitElement {
 
   // -- Private ------------------------------------------- //
   private onRampProvidersTemplate() {
-    return this.providers.map(
-      provider => html`
-        <w3m-onramp-provider-item
-          label=${provider.label}
-          name=${provider.name}
-          feeRange=${provider.feeRange}
-          @click=${() => {
-            this.onClickProvider(provider)
-          }}
-          ?disabled=${!provider.url}
-        ></w3m-onramp-provider-item>
-      `
-    )
+    return this.providers
+      .filter(provider =>
+        provider.supportedChains.includes(ChainController.state.activeChain ?? 'evm')
+      )
+      .map(
+        provider => html`
+          <w3m-onramp-provider-item
+            label=${provider.label}
+            name=${provider.name}
+            feeRange=${provider.feeRange}
+            @click=${() => {
+              this.onClickProvider(provider)
+            }}
+            ?disabled=${!provider.url}
+          ></w3m-onramp-provider-item>
+        `
+      )
   }
 
   private onClickProvider(provider: OnRampProvider) {

@@ -174,6 +174,7 @@ export type IconType =
 
 export type VisualType =
   | 'browser'
+  | 'meld'
   | 'coinbase'
   | 'dao'
   | 'defi'

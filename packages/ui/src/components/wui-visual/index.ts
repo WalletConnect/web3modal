@@ -25,6 +25,8 @@ import { onrampCardSvg } from '../../assets/visual/onramp-card.js'
 import { googleSvg } from '../../assets/visual/google.js'
 import { pencilSvg } from '../../assets/visual/pencil.js'
 import { lightbulbSvg } from '../../assets/visual/lightbulb.js'
+import { meldSvg } from '../../assets/visual/meld.js'
+
 import styles from './styles.js'
 
 // -- Svg's-------------------------------- //
@@ -43,6 +45,7 @@ const svgOptions: Record<VisualType, TemplateResult<2>> = {
   profile: profileSvg,
   system: systemSvg,
   coinbase: coinbaseSvg,
+  meld: meldSvg,
   onrampCard: onrampCardSvg,
   moonpay: moonpaySvg,
   stripe: stripeSvg,
