@@ -124,7 +124,6 @@ export class W3mFrame {
           throw new Error('W3mFrame: iframe is not set')
         }
         W3mFrameSchema.appEvent.parse(event)
-        window.postMessage(event)
         this.iframe.contentWindow.postMessage(event, '*')
       }
     },
