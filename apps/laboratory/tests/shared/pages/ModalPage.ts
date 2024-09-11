@@ -15,9 +15,12 @@ const maliciousUrl = 'https://malicious-app-verify-simulation.vercel.app'
 export type ModalFlavor =
   | 'default'
   | 'external'
-  | 'verify-valid'
-  | 'verify-domain-mismatch'
-  | 'verify-evil'
+  | 'wagmi-verify-valid'
+  | 'wagmi-verify-domain-mismatch'
+  | 'wagmi-verify-evil'
+  | 'ethers-verify-valid'
+  | 'ethers-verify-domain-mismatch'
+  | 'ethers-verify-evil'
   | 'no-email'
   | 'no-socials'
   | 'all'
@@ -26,9 +29,12 @@ function getUrlByFlavor(baseUrl: string, library: string, flavor: ModalFlavor) {
   const urlsByFlavor: Partial<Record<ModalFlavor, string>> = {
     default: `${baseUrl}library/${library}/`,
     external: `${baseUrl}library/external/`,
-    'verify-valid': `${baseUrl}library/verify-valid/`,
-    'verify-domain-mismatch': `${baseUrl}library/verify-domain-mismatch/`,
-    'verify-evil': maliciousUrl
+    'wagmi-verify-valid': `${baseUrl}library/wagmi-verify-valid/`,
+    'wagmi-verify-domain-mismatch': `${baseUrl}library/wagmi-verify-domain-mismatch/`,
+    'wagmi-verify-evil': maliciousUrl,
+    'ethers-verify-valid': `${baseUrl}library/ethers-verify-valid/`,
+    'ethers-verify-domain-mismatch': `${baseUrl}library/ethers-verify-domain-mismatch/`,
+    'ethers-verify-evil': maliciousUrl
   }
 
   return urlsByFlavor[flavor] || `${baseUrl}library/${library}-${flavor}/`
@@ -51,8 +57,11 @@ export class ModalPage {
   }
 
   async load() {
-    if (this.flavor === 'verify-evil') {
-      await routeInterceptUrl(this.page, maliciousUrl, this.baseURL, '/library/verify-evil/')
+    if (this.flavor === 'wagmi-verify-evil') {
+      await routeInterceptUrl(this.page, maliciousUrl, this.baseURL, '/library/wagmi-verify-evil/')
+    }
+    if (this.flavor === 'ethers-verify-evil') {
+      await routeInterceptUrl(this.page, maliciousUrl, this.baseURL, '/library/ethers-verify-evil/')
     }
 
     await this.page.goto(this.url)

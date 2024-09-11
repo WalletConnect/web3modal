@@ -23,6 +23,18 @@ export const testM = timingFixture.extend<ModalFixture>({
     await use(modalPage)
   }
 })
+export const testMEthers = timingFixture.extend<ModalFixture>({
+  library: ['ethers', { option: true }],
+  modalPage: async ({ page, library }, use) => {
+    timeStart('new ModalPage')
+    const modalPage = new ModalPage(page, library, 'default')
+    timeEnd('new ModalPage')
+    timeStart('modalPage.load')
+    await modalPage.load()
+    timeEnd('modalPage.load')
+    await use(modalPage)
+  }
+})
 
 export const testMSiwe = timingFixture.extend<ModalFixture>({
   library: ['wagmi', { option: true }],
