@@ -143,7 +143,7 @@ export class W3mProfileView extends LitElement {
         : html`<wui-button
             slot="action"
             textVariant="small-600"
-            size="sm"
+            size="md"
             variant="accent"
             @click=${() => this.onSwitchAccount(account)}
             >Switch</wui-button

@@ -53,7 +53,6 @@ function headings() {
     OnRampTokenSelect: 'Select Token',
     OnRampFiatSelect: 'Select Currency',
     Profile: undefined,
-    SelectAddresses: 'Select accounts',
     SwitchNetwork: networkName ?? 'Switch Network',
     SwitchAddress: 'Switch Address',
     Transactions: 'Activity',
@@ -213,7 +212,7 @@ export class W3mHeader extends LitElement {
       return html`<wui-select
         id="dynamic"
         data-testid="w3m-account-select-network"
-        active-network=${this.network?.name}
+        active-network=${ifDefined(this.network?.name)}
         @click=${this.onNetworks.bind(this)}
         imageSrc=${ifDefined(AssetUtil.getNetworkImage(this.network))}
       ></wui-select>`

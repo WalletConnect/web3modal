@@ -59,15 +59,7 @@ export class W3mConnectingWcView extends LitElement {
       if (retry || CoreHelperUtil.isPairingExpired(wcPairingExpiry)) {
         await ConnectionController.connectWalletConnect()
         this.finalizeConnection()
-
-        if (
-          StorageUtil.getConnectedConnector() === 'AUTH' &&
-          OptionsController.state.hasMultipleAddresses
-        ) {
-          RouterController.push('SelectAddresses')
-        } else {
-          ModalController.close()
-        }
+        ModalController.close()
       }
     } catch (error) {
       EventsController.sendEvent({

@@ -60,7 +60,6 @@ export * from '../src/views/w3m-connect-wallets-view/index.js'
 export * from '../src/views/w3m-connect-socials-view/index.js'
 export * from '../src/views/w3m-connecting-social-view/index.js'
 export * from '../src/views/w3m-profile-view/index.js'
-export * from '../src/views/w3m-select-addresses-view/index.js'
 export * from '../src/views/w3m-switch-address-view/index.js'
 export * from '../src/views/w3m-connecting-farcaster-view/index.js'
 

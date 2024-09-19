@@ -5,37 +5,15 @@ import {
   EventsController,
   ConnectionController,
   ModalController,
-  NetworkController,
-  RouterController,
-  AccountController,
-  ChainController,
-  OptionsController
+  ChainController
 } from '@reown/appkit-core'
-import { state } from 'lit/decorators.js'
 
 @customElement('w3m-email-verify-otp-view')
 export class W3mEmailVerifyOtpView extends W3mEmailOtpWidget {
-  // -- Members ------------------------------------------- //
-  private unsubscribe: (() => void)[] = []
-
-  // -- State ------------------------------------------- //
-  @state() private smartAccountDeployed = AccountController.state.smartAccountDeployed
-
-  public constructor() {
-    super()
-
-    this.unsubscribe.push(
-      AccountController.subscribeKey('smartAccountDeployed', val => {
-        this.smartAccountDeployed = val
-      })
-    )
-  }
-
   // --  Private ------------------------------------------ //
   override onOtpSubmit: OnOtpSubmitFn = async otp => {
     try {
       if (this.authConnector) {
-        const smartAccountEnabled = NetworkController.checkIfSmartAccountEnabled()
         await this.authConnector.provider.connectOtp({ otp })
         EventsController.sendEvent({ type: 'track', event: 'EMAIL_VERIFICATION_CODE_PASS' })
 
@@ -53,13 +31,7 @@ export class W3mEmailVerifyOtpView extends W3mEmailOtpWidget {
           event: 'CONNECT_SUCCESS',
           properties: { method: 'email', name: this.authConnector.name || 'Unknown' }
         })
-        if (AccountController.state.allAccounts.length > 1) {
-          RouterController.push('SelectAddresses')
-        } else if (smartAccountEnabled && !this.smartAccountDeployed) {
-          RouterController.push('UpgradeToSmartAccount')
-        } else if (!OptionsController.state.isSiweEnabled) {
-          ModalController.close()
-        }
+        ModalController.close()
       }
     } catch (error) {
       EventsController.sendEvent({ type: 'track', event: 'EMAIL_VERIFICATION_CODE_FAIL' })
