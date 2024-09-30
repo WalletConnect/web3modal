@@ -30,9 +30,10 @@ VITE_PROJECT_ID="your_project_id"
 
 # Releasing new versions
 
-### Enter prelease mode [Optional]
+> [!NOTE] 
+> If you need to release a canary/alpha/beta, you need to enter prelease mode first.
 
-If you need to release a canary/alpha/beta you need to enter prelease mode first
+### Enter prelease mode [Optional]
 
 ```sh
 pnpm changeset:pre <release tag>
@@ -42,7 +43,6 @@ For example: `pnpm changeset:pre a123bas2`
 
 ### Generate changeset
 
-If you need to release a canary/alpha/beta you need to enter prelease mode first
 
 ```sh
 pnpm changeset
