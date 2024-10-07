@@ -64,6 +64,16 @@ export const polygon: CaipNetwork = {
   chainNamespace: 'eip155'
 }
 
+export const rootstock: CaipNetwork = {
+  id: 'eip155:30',
+  chainId: 30,
+  name: 'Rootstock',
+  currency: 'RBTC',
+  explorerUrl: 'https://explorer.rootstock.io',
+  rpcUrl: getBlockchainApiRpcUrl(30, 'eip155'),
+  chainNamespace: 'eip155'
+}
+
 export const gnosis: CaipNetwork = {
   id: 'eip155:100',
   chainId: 100,
@@ -144,6 +154,16 @@ export const baseSepolia: CaipNetwork = {
   chainNamespace: 'eip155'
 }
 
+export const rootstockTestnet: CaipNetwork = {
+  id: 'eip155:31',
+  chainId: 31,
+  name: 'Rootstock Testnet',
+  currency: 'tRBTC',
+  explorerUrl: 'https://explorer.testnet.rootstock.io',
+  rpcUrl: getBlockchainApiRpcUrl(31, 'eip155'),
+  chainNamespace: 'eip155'
+}
+
 export const solana: CaipNetwork = {
   id: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
   chainId: '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
@@ -181,6 +201,7 @@ export const allChains = [
   binanceSmartChain,
   optimism,
   polygon,
+  rootstock,
   gnosis,
   zkSync,
   zora,
@@ -188,6 +209,7 @@ export const allChains = [
   base,
   aurora,
   sepolia,
+  rootstockTestnet,
   baseSepolia,
   solana,
   solanaTestnet,
