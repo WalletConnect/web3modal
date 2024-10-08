@@ -4,7 +4,7 @@ import { SolanaAdapter, useAppKitConnection } from '@reown/appkit-adapter-solana
 import type { Provider } from '@reown/appkit-adapter-solana/vue'
 import type { CaipNetwork } from '@reown/appkit-common'
 import type { SolanaAppKitOptions } from './options'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Types -------------------------------------------------------------------
 export type { SolanaAppKitOptions, Provider }

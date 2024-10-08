@@ -1,7 +1,7 @@
 import { AppKit } from '../src/client.js'
 import type { AppKitOptions } from '../src/utils/TypesUtil.js'
 import { getAppKit } from '../src/library/react/index.js'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 import { CoreHelperUtil } from '@reown/appkit-core'
 
 // -- Views ------------------------------------------------------------

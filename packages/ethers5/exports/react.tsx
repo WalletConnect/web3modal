@@ -8,7 +8,7 @@ import { Ethers5Adapter, type AdapterOptions } from '@reown/appkit-adapter-ether
 import { getAppKit } from '@reown/appkit/library/react'
 import { useSnapshot } from 'valtio'
 import { ethers } from 'ethers'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Setup -------------------------------------------------------------------
 let appkit: AppKit | undefined = undefined

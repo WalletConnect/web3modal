@@ -3,7 +3,7 @@ import type { AppKitOptions } from '@reown/appkit'
 import { Ethers5Adapter, type AdapterOptions } from '@reown/appkit-adapter-ethers5'
 
 import { getAppKit } from '@reown/appkit/library/vue'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Setup -------------------------------------------------------------------
 let appkit: AppKit | undefined = undefined

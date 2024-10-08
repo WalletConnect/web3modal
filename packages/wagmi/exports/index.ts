@@ -2,7 +2,7 @@ import { AppKit } from '@reown/appkit'
 import type { AppKitOptions } from '@reown/appkit'
 import { WagmiAdapter, type AdapterOptions } from '@reown/appkit-adapter-wagmi'
 import type { Config } from 'wagmi'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Types -------------------------------------------------------------
 export type { AdapterOptions } from '@reown/appkit-adapter-wagmi'

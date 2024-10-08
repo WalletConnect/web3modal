@@ -8,7 +8,7 @@ import {
 } from '@reown/appkit-adapter-solana/react'
 import { getAppKit } from '@reown/appkit/library/react'
 import type { SolanaAppKitOptions } from './options.js'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Types -------------------------------------------------------------------
 export type { SolanaAppKitOptions, Provider }

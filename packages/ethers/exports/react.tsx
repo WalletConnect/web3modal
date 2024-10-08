@@ -6,7 +6,7 @@ import { EthersAdapter, type AdapterOptions } from '@reown/appkit-adapter-ethers
 import { getAppKit } from '@reown/appkit/library/react'
 import { useSnapshot } from 'valtio'
 import type { CaipNetwork } from '@reown/appkit-common'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Types -------------------------------------------------------------
 export type { AdapterOptions } from '@reown/appkit-adapter-ethers'

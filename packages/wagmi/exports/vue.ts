@@ -3,7 +3,7 @@ import type { AppKitOptions } from '@reown/appkit'
 import { WagmiAdapter, type AdapterOptions } from '@reown/appkit-adapter-wagmi'
 import { getAppKit } from '@reown/appkit/library/vue'
 import type { Config } from '@wagmi/core'
-import packageJson from '../package.json' assert { type: 'json' }
+import packageJson from '../package.json' with { type: 'json' }
 
 // -- Setup -------------------------------------------------------------------
 let appkit: AppKit | undefined = undefined
