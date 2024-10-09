@@ -73,7 +73,7 @@
     "@chakra-ui/react": "2.8.2",
     "@emotion/react": "11.11.3",
     "@emotion/styled": "11.11.0",
-    "@sentry/browser": "7.119.1",
+    "@sentry/browser": "8.33.0",
     "@sentry/react": "7.92.0",
     "@solana/wallet-adapter-wallets": "0.19.32",
     "@solana/web3.js": "1.95.3",
