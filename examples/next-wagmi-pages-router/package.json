@@ -13,7 +13,7 @@
     "@reown/appkit-adapter-wagmi": "workspace:*",
     "@tanstack/react-query": "5.56.2",
     "@wagmi/core": "2.13.4",
-    "next": "14.2.3",
+    "next": "14.2.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "viem": "2.21.4",
