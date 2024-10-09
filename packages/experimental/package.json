@@ -39,7 +39,7 @@
     "@reown/appkit": "workspace:*",
     "@reown/appkit-core": "workspace:*",
     "@reown/appkit-common": "workspace:*",
-    "axios": "1.7.2",
+    "axios": "1.7.4",
     "zod": "3.22.4"
   },
   "devDependencies": {
