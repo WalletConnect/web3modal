@@ -234,6 +234,28 @@ export class ModalValidator {
     await expect(suggestion).toBeVisible()
   }
 
+  async expectHeaderText(text: string) {
+    const headerText = this.page.getByTestId('w3m-header-text')
+    await expect(headerText).toHaveText(text)
+  }
+
+  async expectSignatureRequestFrameByText(headerText: string) {
+    await expect(
+      this.page.frameLocator('#w3m-iframe').getByText(headerText),
+      'AppKit iframe should be visible'
+    ).toBeVisible({
+      timeout: 10000
+    })
+    await this.page.waitForTimeout(500)
+  }
+
+  async expectAccountNameApproveTransaction(name: string) {
+    await this.expectSignatureRequestFrameByText('requests a signature')
+    const iframe = this.page.frameLocator('#w3m-iframe')
+    const textContent = await iframe.locator('.textContent').textContent()
+    expect(textContent).toContain(`{"name":"${name}","attributes":{},"timestamp":`)
+  }
+
   async expectCallStatusSuccessOrRetry(sendCallsId: string, allowedRetry: boolean) {
     const callStatusReceipt = this.page.getByText('"status": "CONFIRMED"')
     const isConfirmed = await callStatusReceipt.isVisible({

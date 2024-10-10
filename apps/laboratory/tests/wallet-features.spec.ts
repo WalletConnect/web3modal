@@ -71,5 +71,8 @@ walletFeaturesTest('it should find account name as expected', async () => {
   await page.openChooseName()
   await page.typeName('test-ens-check')
   await validator.expectAccountNameFound('test-ens-check')
+  await page.clickAccountName('test-ens-check')
+  await validator.expectHeaderText('Approve Transaction')
+  await validator.expectAccountNameApproveTransaction('test-ens-check.reown.id')
   await page.closeModal()
 })

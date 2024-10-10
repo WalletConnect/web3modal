@@ -156,6 +156,7 @@ export class W3mRegisterAccountNameView extends LitElement {
         .padding=${['m', 'm', 'm', 'm'] as const}
         justifyContent="space-between"
         class="suggestion"
+        @click=${this.onSubmitName.bind(this)}
       >
         <wui-text color="fg-100" variant="paragraph-400" class="suggested-name">
           ${this.name}</wui-text

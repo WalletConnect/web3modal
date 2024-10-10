@@ -30,6 +30,12 @@ export class ModalWalletPage extends ModalPage {
     await this.page.getByRole('button', { name: 'Choose Name' }).click()
   }
 
+  async clickAccountName(name: string) {
+    const suggestion = this.page.getByTestId('account-name-suggestion').getByText(name)
+    await expect(suggestion).toBeVisible()
+    await suggestion.click()
+  }
+
   async typeName(name: string) {
     await this.page.getByTestId('wui-ens-input').getByTestId('wui-input-text').fill(name)
   }
