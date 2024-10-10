@@ -1,7 +1,6 @@
 export const ConstantsUtil = {
   ACCOUNT_TABS: [{ label: 'Tokens' }, { label: 'NFTs' }, { label: 'Activity' }],
-  SECURE_SITE_ORIGIN:
-    process.env['NEXT_PUBLIC_SECURE_SITE_ORIGIN'] || 'https://secure.walletconnect.org',
+  SECURE_SITE_ORIGIN: 'https://secure-appkit-git-chore-tma-support-reown-com.vercel.app',
   VIEW_DIRECTION: {
     Next: 'next',
     Prev: 'prev'

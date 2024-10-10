@@ -14,6 +14,7 @@ import { state } from 'lit/decorators.js'
 import styles from './styles.js'
 import type { SocialProvider } from '@reown/appkit-utils'
 import { SocialProviderEnum } from '@reown/appkit-utils'
+import { SafeLocalStorage, SafeLocalStorageKeys } from '@reown/appkit-common'
 
 @customElement('w3m-social-login-list')
 export class W3mSocialLoginList extends LitElement {
@@ -98,21 +99,26 @@ export class W3mSocialLoginList extends LitElement {
       RouterController.push('ConnectingSocial')
 
       const authConnector = ConnectorController.getAuthConnector()
-      this.popupWindow = CoreHelperUtil.returnOpenHref(
-        '',
-        'popupWindow',
-        'width=600,height=800,scrollbars=yes'
-      )
+      if (!CoreHelperUtil.isTelegram()) {
+        this.popupWindow = CoreHelperUtil.returnOpenHref(
+          '',
+          'popupWindow',
+          'width=600,height=800,scrollbars=yes'
+        )
+      }
 
       try {
         if (authConnector && socialProvider) {
           const { uri } = await authConnector.provider.getSocialRedirectUri({
             provider: socialProvider
           })
-
           if (this.popupWindow && uri) {
             AccountController.setSocialWindow(this.popupWindow, ChainController.state.activeChain)
             this.popupWindow.location.href = uri
+          } else if (CoreHelperUtil.isTelegram() && uri) {
+            SafeLocalStorage.setItem(SafeLocalStorageKeys.SOCIAL_PROVIDER, socialProvider)
+            const parsedUri = CoreHelperUtil.formatTelegramSocialLoginUrl(uri)
+            CoreHelperUtil.openHref(parsedUri, '_top')
           } else {
             this.popupWindow?.close()
             throw new Error('Something went wrong')
