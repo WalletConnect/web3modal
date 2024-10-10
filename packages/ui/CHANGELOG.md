@@ -1,5 +1,11 @@
 # @reown/appkit-ui
 
+## 1.1.3
+
+### Patch Changes
+
+- [#2777](https://github.com/reown-com/appkit/pull/2777) [`a4de9f8`](https://github.com/reown-com/appkit/commit/a4de9f8de3ae0bf807006325b2dd14d42b91a078) Thanks [@bulgakovk](https://github.com/bulgakovk)! - Fix displaying pure EIP-6963 wallets.
+
 ## 1.1.2
 
 ### Patch Changes
