@@ -71,12 +71,7 @@ jobs:
         shardTotal: [5]
     timeout-minutes: 20
     steps:
-      # Possibly this helps with GitHub-hosted runner network issues, but it's not confirmed
-      # It's not supported in self-hosted runners, however, so commenting it out for now
-      # - name: Tune GitHub-hosted runner network
-      #   uses: smorimoto/tune-github-hosted-runner-network@v1
-
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           repository: reown-com/appkit
@@ -85,61 +80,23 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
 
-      - name: setup-node
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: 'pnpm'
 
-      # - name: Get installed Playwright version
-      #   id: playwright-version
-      #   run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['apps/laboratory']['devDependencies']['@playwright/test'])")" >> $GITHUB_ENV
+      - name: Download laboratory artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: laboratory-package
 
-      # This cache causes weird errors on retry runs when using the self-hosted runners, disabling for now
-      # - name: Cache playwright binaries
-      #   uses: actions/cache@v4
-      #   id: playwright-cache
-      #   with:
-      #     path: |
-      #       ~/.cache/ms-playwright
-      #     key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}-${{ hashFiles('apps/laboratory/tests/shared/constants/devices.ts') }}
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: build packages and lab
-        run: pnpm build:laboratory
-        env:
-          NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
-          NEXTAUTH_SECRET: ${{ secrets.TESTS_NEXTAUTH_SECRET }}
-          MAILSAC_API_KEY: ${{ secrets.TESTS_MAILSAC_API_KEY }}
-          NEXT_PUBLIC_SECURE_SITE_SDK_URL: ${{ inputs.secure-site-url }}
-          SOCIAL_TEST_EMAIL: ${{ secrets.TESTS_SOCIAL_EMAIL }}
-          SOCIAL_TEST_PASSWORD: ${{ secrets.TESTS_SOCIAL_PASSWORD }}
+      - name: Extract laboratory package
+        run: mkdir -p apps/laboratory && tar -xzf laboratory.tar.gz -C apps/laboratory
 
       - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
         working-directory: ./apps/laboratory/
         run: pnpm playwright:install
-
-      # - name: Build MetaMask wallet cache
-      #   working-directory: ./apps/laboratory/
-      #   run: xvfb-run pnpm synpress
-
-      # - name: Run MetaMask Playwright tests (headful)
-      #   working-directory: ./apps/laboratory/
-      #   env:
-      #     BASE_URL: ${{ inputs.base-url }}
-      #     WALLET_URL: ${{ inputs.wallet-url }}
-      #     NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
-      #     SKIP_PLAYWRIGHT_WEBSERVER: ${{ inputs.skip-playwright-webserver }}
-      #     NEXTAUTH_SECRET: ${{ secrets.TESTS_NEXTAUTH_SECRET }}
-      #     MAILSAC_API_KEY: ${{ secrets.TESTS_MAILSEC_API_KEY }}
-      #     NEXT_PUBLIC_SECURE_SITE_SDK_URL: ${{ inputs.secure-site-url }}
-      #     SOCIAL_TEST_EMAIL: ${{ secrets.TESTS_SOCIAL_EMAIL }}
-      #     SOCIAL_TEST_PASSWORD: ${{ secrets.TESTS_SOCIAL_PASSWORD }}
-      #     CI: true
-      #   run: xvfb-run pnpm playwright:test:metamask
 
       - name: Run Playwright tests
         env:
@@ -158,8 +115,6 @@ jobs:
 
       - name: Run canary with minimal environment config
         env:
-          # DO NOT MODIFY THIS. If you are required to add variables here without adding
-          # them to the rs-relay repo it will cause alarms.
           NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
           CI: true
         working-directory: ./apps/laboratory/

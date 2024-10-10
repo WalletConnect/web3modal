@@ -18,6 +18,44 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  build_laboratory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build laboratory
+        run: pnpm build:laboratory
+        env:
+          NEXT_PUBLIC_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
+          NEXTAUTH_SECRET: ${{ secrets.TESTS_NEXTAUTH_SECRET }}
+          MAILSAC_API_KEY: ${{ secrets.TESTS_MAILSAC_API_KEY }}
+          NEXT_PUBLIC_SECURE_SITE_SDK_URL: ${{ secrets.NEXT_PUBLIC_SECURE_SITE_SDK_URL }}
+          SOCIAL_TEST_EMAIL: ${{ secrets.TESTS_SOCIAL_EMAIL }}
+          SOCIAL_TEST_PASSWORD: ${{ secrets.TESTS_SOCIAL_PASSWORD }}
+
+      - name: Package laboratory
+        run: tar -czf laboratory.tar.gz -C apps/laboratory .
+
+      - name: Upload laboratory artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: laboratory-package
+          path: laboratory.tar.gz
+          retention-days: 1
+
   code_style:
     runs-on: ubuntu-latest
     permissions:
@@ -101,6 +139,7 @@ jobs:
           json-summary-path: ./coverage/coverage-merged-summary.json
 
   ui-test:
+    needs: build_laboratory
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/ui_tests.yml
     secrets: inherit
