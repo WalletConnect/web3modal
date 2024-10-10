@@ -14,9 +14,9 @@ import { customElement } from '@reown/appkit-ui'
 import { LitElement, html } from 'lit'
 import { state, property } from 'lit/decorators.js'
 
-import styles from './styles.js'
-import { ifDefined } from 'lit/directives/if-defined.js'
 import { SocialProviderEnum } from '@reown/appkit-utils'
+import { ifDefined } from 'lit/directives/if-defined.js'
+import styles from './styles.js'
 
 const MAX_TOP_VIEW = 2
 const MAXIMUM_LENGTH = 6
@@ -56,9 +56,9 @@ export class W3mSocialLoginWidget extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
-    const socials = this.features?.socials
+    const socials = this.features?.socials ? this.features.socials : []
 
-    if (!this.authConnector || !socials || !socials?.length) {
+    if (!this.authConnector || !socials?.length) {
       return null
     }
 
@@ -78,9 +78,9 @@ export class W3mSocialLoginWidget extends LitElement {
 
   // -- Private ------------------------------------------- //
   private topViewTemplate() {
-    const socials = this.features?.socials
+    const socials = this.features?.socials ? this.features.socials : []
 
-    if (!this.authConnector || !socials || !socials?.length) {
+    if (!this.authConnector || !socials?.length) {
       return null
     }
 
@@ -111,9 +111,9 @@ export class W3mSocialLoginWidget extends LitElement {
   }
 
   private bottomViewTemplate() {
-    const socials = this.features?.socials
+    const socials = this.features?.socials ? this.features.socials : []
 
-    if (!this.authConnector || !socials || !socials?.length) {
+    if (!this.authConnector || !socials?.length) {
       return null
     }
 

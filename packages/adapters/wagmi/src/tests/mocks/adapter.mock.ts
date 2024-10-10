@@ -1,10 +1,10 @@
-import { mock } from 'wagmi/connectors'
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
 import { AppKit } from '@reown/appkit'
-import { WagmiAdapter } from '../../client'
-import { arbitrum, mainnet } from '@reown/appkit/networks'
 import type { CaipNetwork } from '@reown/appkit-common'
 import type { SdkVersion } from '@reown/appkit-core'
+import { arbitrum, mainnet } from '@reown/appkit/networks'
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
+import { mock } from 'wagmi/connectors'
+import { WagmiAdapter } from '../../client'
 
 const privateKey = generatePrivateKey()
 export const mockAccount = privateKeyToAccount(privateKey)
@@ -25,7 +25,8 @@ export const mockOptions = {
   enableWalletConnect: false,
   features: {
     email: false,
-    socials: []
+    socials: [],
+    analytics: false
   },
   metadata: {
     description: 'Desc',
@@ -34,7 +35,8 @@ export const mockOptions = {
     icons: ['icon.png']
   },
   projectId: '1234',
-  sdkVersion: `html-wagmi-5.1.6` as SdkVersion
+  sdkVersion: `html-wagmi-5.1.6` as SdkVersion,
+  enableAuth: false
 }
 
 export const mockAppKit = new AppKit(mockOptions)

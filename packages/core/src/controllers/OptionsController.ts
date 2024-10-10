@@ -1,5 +1,6 @@
-import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { proxy } from 'valtio/vanilla'
+import { subscribeKey as subKey } from 'valtio/vanilla/utils'
+import { ConstantsUtil } from '../utils/ConstantsUtil.js'
 import type {
   CustomWallet,
   Features,
@@ -8,7 +9,6 @@ import type {
   SdkVersion,
   Tokens
 } from '../utils/TypeUtil.js'
-import { ConstantsUtil } from '../utils/ConstantsUtil.js'
 
 // -- Types --------------------------------------------- //
 export interface OptionsControllerStatePublic {
@@ -74,6 +74,7 @@ export interface OptionsControllerStatePublic {
    * @default false
    */
   disableAppend?: boolean
+  enableAuth?: boolean
   /**
    * Enable or disable the all the wallet options (injected, Coinbase, QR, etc.). This is useful if you want to use only email and socials.
    * @default true
@@ -212,6 +213,13 @@ export const OptionsController = {
 
   setDisableAppend(disableAppend: OptionsControllerState['disableAppend']) {
     state.disableAppend = disableAppend
+  },
+
+  setEnableAuth(enableAuth: OptionsControllerState['enableAuth']) {
+    state.enableAuth = enableAuth
+    if (enableAuth) {
+      state.isSiweEnabled = enableAuth
+    }
   },
 
   setEIP6963Enabled(enableEIP6963: OptionsControllerState['enableEIP6963']) {

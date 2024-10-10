@@ -1,9 +1,7 @@
-import { proxyMap, subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
+import { proxyMap, subscribeKey as subKey } from 'valtio/vanilla/utils'
 import type { AdapterNetworkState, ChainAdapter, Connector } from '../utils/TypeUtil.js'
 
-import { AccountController, type AccountControllerState } from './AccountController.js'
-import { PublicStateController } from './PublicStateController.js'
 import {
   NetworkUtil,
   SafeLocalStorage,
@@ -13,11 +11,13 @@ import {
   type CaipNetworkId,
   type ChainNamespace
 } from '@reown/appkit-common'
-import { StorageUtil } from '../utils/StorageUtil.js'
-import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { ConstantsUtil } from '../utils/ConstantsUtil.js'
-import { ModalController } from './ModalController.js'
+import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
+import { StorageUtil } from '../utils/StorageUtil.js'
+import { AccountController, type AccountControllerState } from './AccountController.js'
 import { EventsController } from './EventsController.js'
+import { ModalController } from './ModalController.js'
+import { PublicStateController } from './PublicStateController.js'
 
 // -- Types --------------------------------------------- //
 export interface ChainControllerState {

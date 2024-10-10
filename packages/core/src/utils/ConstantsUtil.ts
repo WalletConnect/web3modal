@@ -1,5 +1,5 @@
-import type { Features } from './TypeUtil.js'
 import type { ChainNamespace } from '@reown/appkit-common'
+import type { Features } from './TypeUtil.js'
 
 const SECURE_SITE = 'https://secure.walletconnect.org'
 

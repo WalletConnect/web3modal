@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { mockAccount, mockAppKit, mockOptions, mockWagmiClient } from './mocks/adapter.mock'
+import type { CaipNetwork } from '@reown/appkit-common'
+import { CaipNetworksUtil, ConstantsUtil } from '@reown/appkit-utils'
 import {
   arbitrum as AppkitArbitrum,
+  bsc as AppkitBsc,
   mainnet as AppkitMainnet,
-  polygon as AppkitPolygon,
   optimism as AppkitOptimism,
-  bsc as AppkitBsc
+  polygon as AppkitPolygon
 } from '@reown/appkit/networks'
-import { connect, disconnect, getAccount, getChainId, getEnsName, getBalance } from '@wagmi/core'
-import { CaipNetworksUtil, ConstantsUtil } from '@reown/appkit-utils'
-import type { CaipNetwork } from '@reown/appkit-common'
+import { connect, disconnect, getAccount, getBalance, getChainId, getEnsName } from '@wagmi/core'
+import { mockAccount, mockAppKit, mockOptions, mockWagmiClient } from './mocks/adapter.mock'
 
 const [mainnet, arbitrum] = CaipNetworksUtil.extendCaipNetworks(
   [AppkitMainnet, AppkitArbitrum, AppkitPolygon, AppkitOptimism, AppkitBsc],

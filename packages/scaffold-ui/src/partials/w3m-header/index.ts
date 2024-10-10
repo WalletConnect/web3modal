@@ -12,9 +12,9 @@ import {
 import { customElement } from '@reown/appkit-ui'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
-import styles from './styles.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import { ConstantsUtil } from '../../utils/ConstantsUtil.js'
+import styles from './styles.js'
 
 // -- Constants ----------------------------------------- //
 const BETA_SCREENS: string[] = []
@@ -144,7 +144,6 @@ export class W3mHeader extends LitElement {
 
   // -- Private ------------------------------------------- //
 
-  // Temporarily added to test connecting with SIWE, replace with 'WhatIsAWallet' again when approved
   private onWalletHelp() {
     EventsController.sendEvent({ type: 'track', event: 'CLICK_WALLET_HELP' })
     RouterController.push('WhatIsAWallet')
@@ -154,7 +153,7 @@ export class W3mHeader extends LitElement {
     if (this.isSiweEnabled) {
       const { SIWEController } = await import('@reown/appkit-siwe')
       const isApproveSignScreen = RouterController.state.view === 'ApproveTransaction'
-      const isUnauthenticated = SIWEController.state.status !== 'success'
+      const isUnauthenticated = SIWEController.state.status !== 'success' && this.isConnected
 
       if (isUnauthenticated && isApproveSignScreen) {
         RouterController.popTransactionStack(true)

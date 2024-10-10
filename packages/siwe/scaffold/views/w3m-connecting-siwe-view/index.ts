@@ -9,10 +9,10 @@ import {
   SnackController
 } from '@reown/appkit-core'
 import { customElement } from '@reown/appkit-ui'
+import { W3mFrameRpcConstants } from '@reown/appkit-wallet'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 import { SIWEController } from '../../../core/controller/SIWEController.js'
-import { W3mFrameRpcConstants } from '@reown/appkit-wallet'
 
 @customElement('w3m-connecting-siwe-view')
 export class W3mConnectingSiweView extends LitElement {
@@ -111,7 +111,7 @@ export class W3mConnectingSiweView extends LitElement {
       if (isSmartAccount) {
         SnackController.showError('This application might not support Smart Accounts')
       } else {
-        SnackController.showError('Signature declined')
+        SnackController.showError(error instanceof Error ? error.message : 'Signature declined')
       }
       SIWEController.setStatus('error')
 

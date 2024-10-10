@@ -14,14 +14,21 @@ type AppKitInfoProps = {
   caipAddress?: string
   address?: string
   chainId?: number | string
-  clientId?: string
+  clientId?: string | null
+  heading?: string
 }
 
-export function AppKitInfo({ caipAddress, address, chainId, clientId }: AppKitInfoProps) {
+export function AppKitInfo({
+  caipAddress,
+  address,
+  chainId,
+  clientId,
+  heading = 'Account Information'
+}: AppKitInfoProps) {
   return (
     <Card marginTop={10} marginBottom={10}>
       <CardHeader>
-        <Heading size="md">Account Information</Heading>
+        <Heading size="md">{heading}</Heading>
       </CardHeader>
 
       <CardBody>

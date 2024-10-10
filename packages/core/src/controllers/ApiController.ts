@@ -1,18 +1,18 @@
-import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { proxy } from 'valtio/vanilla'
+import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
 import { FetchUtil } from '../utils/FetchUtil.js'
 import { StorageUtil } from '../utils/StorageUtil.js'
 import type {
-  ApiGetAnalyticsConfigResponse,
+  ApiGetProjectConfigResponse,
   ApiGetWalletsRequest,
   ApiGetWalletsResponse,
   WcWallet
 } from '../utils/TypeUtil.js'
 import { AssetController } from './AssetController.js'
+import { ChainController } from './ChainController.js'
 import { ConnectorController } from './ConnectorController.js'
 import { OptionsController } from './OptionsController.js'
-import { ChainController } from './ChainController.js'
 
 // -- Helpers ------------------------------------------- //
 const baseUrl = CoreHelperUtil.getApiUrl()
@@ -271,17 +271,22 @@ export const ApiController = {
       ApiController.fetchNetworkImages(),
       ApiController.fetchConnectorImages()
     ]
-    if (OptionsController.state.features?.analytics) {
-      promises.push(ApiController.fetchAnalyticsConfig())
-    }
-    state.prefetchPromise = Promise.race([Promise.allSettled(promises)])
+
+    state.prefetchPromise = Promise.allSettled(promises)
   },
 
-  async fetchAnalyticsConfig() {
-    const { isAnalyticsEnabled } = await api.get<ApiGetAnalyticsConfigResponse>({
-      path: '/getAnalyticsConfig',
-      headers: ApiController._getApiHeaders()
-    })
-    OptionsController.setFeatures({ analytics: isAnalyticsEnabled })
+  async fetchProjectConfig() {
+    try {
+      const { isAnalyticsEnabled, isAppKitAuthEnabled } =
+        await api.get<ApiGetProjectConfigResponse>({
+          path: '/getProjectConfig',
+          headers: ApiController._getApiHeaders()
+        })
+
+      return { isAnalyticsEnabled, isAppKitAuthEnabled }
+    } catch (error) {
+      // Catch silently and return default values
+      return { isAnalyticsEnabled: false, isAppKitAuthEnabled: false }
+    }
   }
 }

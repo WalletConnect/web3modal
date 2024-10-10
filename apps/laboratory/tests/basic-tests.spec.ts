@@ -1,8 +1,8 @@
 import { test, type BrowserContext, type Page } from '@playwright/test'
+import { BASE_URL } from './shared/constants'
 import { expect } from './shared/fixtures/w3m-fixture'
 import { ModalPage } from './shared/pages/ModalPage'
 import { ModalValidator } from './shared/validators/ModalValidator'
-import { BASE_URL } from './shared/constants'
 
 /* eslint-disable init-declarations */
 let modalPage: ModalPage

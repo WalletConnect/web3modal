@@ -1,6 +1,6 @@
+import { ConstantsUtil } from '@reown/appkit-common'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { AccountController, ChainController } from '../../exports/index.js'
-import { ConstantsUtil } from '@reown/appkit-common'
 
 // -- Setup --------------------------------------------------------------------
 const caipAddress = 'eip155:1:0x123'
@@ -28,7 +28,8 @@ describe('AccountController', () => {
       currentTab: 0,
       tokenBalance: [],
       allAccounts: [],
-      addressLabels: new Map<string, string>()
+      addressLabels: new Map<string, string>(),
+      isOneClickAuthenticating: false
     })
   })
 
@@ -84,9 +85,16 @@ describe('AccountController', () => {
       profileName: undefined,
       profileImage: undefined,
       addressExplorerUrl: undefined,
+      isOneClickAuthenticating: false,
       tokenBalance: [],
       allAccounts: [],
-      addressLabels: new Map<string, string>()
+      addressLabels: new Map<string, string>(),
+      connectedWalletInfo: undefined,
+      farcasterUrl: undefined,
+      preferredAccountType: undefined,
+      provider: undefined,
+      socialProvider: undefined,
+      socialWindow: undefined
     })
   })
 })

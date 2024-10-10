@@ -1,13 +1,13 @@
-import { subscribeKey as subKey } from 'valtio/vanilla/utils'
+import type { SIWEStatus } from '@reown/appkit-common'
+import { ChainController, OptionsController } from '@reown/appkit-core'
 import { proxy, ref, subscribe as sub } from 'valtio/vanilla'
+import { subscribeKey as subKey } from 'valtio/vanilla/utils'
 import type {
   SIWEClientMethods,
-  SIWESession,
   SIWECreateMessageArgs,
+  SIWESession,
   SIWEVerifyMessageArgs
 } from '../utils/TypeUtils.js'
-import { ChainController, OptionsController } from '@reown/appkit-core'
-import type { SIWEStatus } from '@reown/appkit-common'
 
 // -- Types --------------------------------------------- //
 export interface SIWEControllerClient extends SIWEClientMethods {
@@ -72,9 +72,10 @@ export const SIWEController = {
     try {
       const client = this._getClient()
       const session = await client.getSession()
-      if (session) {
+      if (session?.address && session?.chainId) {
         this.setSession(session)
-        this.setStatus('success')
+      } else {
+        this.setSession(undefined)
       }
 
       return session || undefined
@@ -98,9 +99,17 @@ export const SIWEController = {
     return isValid
   },
 
+  async getMessageParams() {
+    const client = this._getClient()
+    const messageParams = await client.getMessageParams?.()
+
+    return messageParams
+  },
+
   async signIn() {
     const client = this._getClient()
     const session = await client.signIn()
+    this.setSession(session)
 
     return session
   },
@@ -110,12 +119,12 @@ export const SIWEController = {
     await client.signOut()
     this.setStatus('ready')
     this.setSession(undefined)
-    client.onSignOut?.()
+    this.setNonce(undefined)
   },
 
-  onSignIn(args: SIWESession) {
+  async onSignIn(args: SIWESession) {
     const client = this._getClient()
-    client.onSignIn?.(args)
+    await client.onSignIn?.(args)
   },
 
   onSignOut() {
@@ -146,7 +155,11 @@ export const SIWEController = {
 
   setSession(session: SIWEControllerClientState['session']) {
     state.session = session
-    state.status = session ? 'success' : 'ready'
+    this.setStatus(session?.address && session?.chainId ? 'success' : 'ready')
     ChainController.setAccountProp('siweStatus', state.status, 'eip155')
+  },
+
+  setIsOneClickAuthenticating(isOneClickAuthenticating: boolean) {
+    ChainController.setAccountProp('isOneClickAuthenticating', isOneClickAuthenticating, 'eip155')
   }
 }

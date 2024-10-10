@@ -1,6 +1,3 @@
-import { customElement } from '@reown/appkit-ui'
-import { LitElement, html } from 'lit'
-import styles from './styles.js'
 import {
   ConnectionController,
   ConnectorController,
@@ -9,8 +6,11 @@ import {
   RouterController,
   type WalletGuideType
 } from '@reown/appkit-core'
-import { state } from 'lit/decorators/state.js'
+import { customElement } from '@reown/appkit-ui'
+import { LitElement, html } from 'lit'
 import { property } from 'lit/decorators.js'
+import { state } from 'lit/decorators/state.js'
+import styles from './styles.js'
 
 @customElement('w3m-connect-view')
 export class W3mConnectView extends LitElement {

@@ -9,11 +9,11 @@ import {
   SnackController
 } from '@reown/appkit-core'
 import { customElement } from '@reown/appkit-ui'
+import type { SocialProvider } from '@reown/appkit-utils'
+import { SocialProviderEnum } from '@reown/appkit-utils'
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 import styles from './styles.js'
-import type { SocialProvider } from '@reown/appkit-utils'
-import { SocialProviderEnum } from '@reown/appkit-utils'
 
 @customElement('w3m-social-login-list')
 export class W3mSocialLoginList extends LitElement {
@@ -48,9 +48,9 @@ export class W3mSocialLoginList extends LitElement {
 
   // -- Render -------------------------------------------- //
   public override render() {
-    const socials = this.features?.socials
+    const socials = this.features?.socials ? this.features.socials : []
 
-    if (!this.authConnector || !socials || !socials?.length) {
+    if (!this.authConnector || !socials?.length) {
       return null
     }
 

@@ -1,4 +1,9 @@
+import type { Balance, CaipAddress, ChainNamespace } from '@reown/appkit-common'
+import type { W3mFrameTypes } from '@reown/appkit-wallet'
+import type UniversalProvider from '@walletconnect/universal-provider'
+import { proxy, ref } from 'valtio/vanilla'
 import { CoreHelperUtil } from '../utils/CoreHelperUtil.js'
+import { SwapApiUtil } from '../utils/SwapApiUtil.js'
 import type {
   AccountType,
   CombinedProvider,
@@ -6,16 +11,10 @@ import type {
   Provider,
   SocialProvider
 } from '../utils/TypeUtil.js'
-import type { CaipAddress, ChainNamespace } from '@reown/appkit-common'
-import type { Balance } from '@reown/appkit-common'
 import { BlockchainApiController } from './BlockchainApiController.js'
+import { ChainController } from './ChainController.js'
 import { SnackController } from './SnackController.js'
 import { SwapController } from './SwapController.js'
-import { SwapApiUtil } from '../utils/SwapApiUtil.js'
-import type { W3mFrameTypes } from '@reown/appkit-wallet'
-import { ChainController } from './ChainController.js'
-import { proxy, ref } from 'valtio/vanilla'
-import type UniversalProvider from '@walletconnect/universal-provider'
 
 // -- Types --------------------------------------------- //
 export interface AccountControllerState {
@@ -37,9 +36,17 @@ export interface AccountControllerState {
   preferredAccountType?: W3mFrameTypes.AccountType
   socialWindow?: Window
   farcasterUrl?: string
+  isOneClickAuthenticating?: boolean
   provider?: UniversalProvider | Provider | CombinedProvider
   status?: 'reconnecting' | 'connected' | 'disconnected' | 'connecting'
-  siweStatus?: 'uninitialized' | 'ready' | 'loading' | 'success' | 'rejected' | 'error'
+  siweStatus?:
+    | 'uninitialized'
+    | 'ready'
+    | 'loading'
+    | 'success'
+    | 'rejected'
+    | 'error'
+    | 'authenticating'
 }
 
 // -- State --------------------------------------------- //
@@ -48,7 +55,8 @@ const state = proxy<AccountControllerState>({
   tokenBalance: [],
   smartAccountDeployed: false,
   addressLabels: new Map(),
-  allAccounts: []
+  allAccounts: [],
+  isOneClickAuthenticating: false
 })
 
 // -- Controller ---------------------------------------- //
@@ -249,5 +257,15 @@ export const AccountController = {
 
   setSiweStatus(status: AccountControllerState['siweStatus']) {
     ChainController.setAccountProp('siweStatus', status, ChainController.state.activeChain)
+  },
+
+  setIsOneClickAuthenticating(
+    isOneClickAuthenticating: AccountControllerState['isOneClickAuthenticating']
+  ) {
+    ChainController.setAccountProp(
+      'isOneClickAuthenticating',
+      isOneClickAuthenticating,
+      ChainController.state.activeChain
+    )
   }
 }

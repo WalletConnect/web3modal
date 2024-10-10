@@ -1,4 +1,10 @@
 import {
+  ConstantsUtil,
+  type CaipAddress,
+  type CaipNetwork,
+  type SIWEStatus
+} from '@reown/appkit-common'
+import {
   AccountController,
   ApiController,
   ChainController,
@@ -14,12 +20,6 @@ import { UiHelperUtil, customElement, initializeTheming } from '@reown/appkit-ui
 import { LitElement, html } from 'lit'
 import { state } from 'lit/decorators.js'
 import styles from './styles.js'
-import {
-  ConstantsUtil,
-  type CaipAddress,
-  type CaipNetwork,
-  type SIWEStatus
-} from '@reown/appkit-common'
 
 // -- Helpers --------------------------------------------- //
 const SCROLL_LOCK = 'scroll-lock'
@@ -36,11 +36,13 @@ export class W3mModal extends LitElement {
   // -- State & Properties -------------------------------- //
   @state() private open = ModalController.state.open
 
+  @state() private isSiweEnabled = OptionsController.state.isSiweEnabled
+
+  @state() private isOneClickAuthenticating = AccountController.state.isOneClickAuthenticating
+
   @state() private caipAddress = ChainController.state.activeCaipAddress
 
   @state() private caipNetwork = ChainController.state.activeCaipNetwork
-
-  @state() private isSiweEnabled = OptionsController.state.isSiweEnabled
 
   @state() private shake = ModalController.state.shake
 
@@ -52,6 +54,9 @@ export class W3mModal extends LitElement {
       ...[
         ModalController.subscribeKey('open', val => (val ? this.onOpen() : this.onClose())),
         ModalController.subscribeKey('shake', val => (this.shake = val)),
+        AccountController.subscribeKey('isOneClickAuthenticating', val => {
+          this.isOneClickAuthenticating = val
+        }),
         AccountController.subscribeKey('siweStatus', val => this.onSiweStatusChange(val), 'eip155'),
         ChainController.subscribeKey('activeCaipNetwork', val => this.onNewNetwork(val)),
         ChainController.subscribeKey('activeCaipAddress', val => this.onNewAddress(val)),
@@ -196,24 +201,17 @@ export class W3mModal extends LitElement {
     const nextConnected = caipAddress ? CoreHelperUtil.getPlainAddress(caipAddress) : undefined
     const isSameAddress = prevConnected === nextConnected
 
-    this.caipAddress = caipAddress
-
     if (nextConnected && !isSameAddress && this.isSiweEnabled) {
-      try {
-        const { SIWEController } = await import('@reown/appkit-siwe')
-        const signed = AccountController.state.siweStatus === 'success'
+      const { SIWEController } = await import('@reown/appkit-siwe')
+      const signed = AccountController.state.siweStatus === 'success'
 
-        if (!prevConnected && nextConnected) {
+      if (!prevConnected && nextConnected) {
+        this.onSiweNavigation()
+      } else if (signed && prevConnected && nextConnected && prevConnected !== nextConnected) {
+        if (SIWEController.state._client?.options.signOutOnAccountChange) {
+          await SIWEController.signOut()
           this.onSiweNavigation()
-        } else if (signed && prevConnected && nextConnected && prevConnected !== nextConnected) {
-          if (SIWEController.state._client?.options.signOutOnAccountChange) {
-            await SIWEController.signOut()
-            this.onSiweNavigation()
-          }
         }
-      } catch (err) {
-        this.caipAddress = prevCaipAddress
-        throw err
       }
     }
 
@@ -254,14 +252,10 @@ export class W3mModal extends LitElement {
     const isEIP155Namespace = ChainController.state.activeChain === ConstantsUtil.CHAIN.EVM
     const authenticated = AccountController.state.siweStatus === 'success'
 
-    if (!authenticated && isEIP155Namespace) {
-      if (this.open) {
-        RouterController.replace('ConnectingSiwe')
-      } else {
-        ModalController.open({
-          view: 'ConnectingSiwe'
-        })
-      }
+    if (!authenticated && isEIP155Namespace && !this.isOneClickAuthenticating) {
+      ModalController.open({
+        view: 'ConnectingSiwe'
+      })
     } else {
       RouterController.goBack()
     }

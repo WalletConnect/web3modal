@@ -4,31 +4,31 @@ import { WagmiProvider } from 'wagmi'
 import { AppKitButtons } from '../../components/AppKitButtons'
 import { WagmiTests } from '../../components/Wagmi/WagmiTests'
 import { ThemeStore } from '../../utils/StoreUtil'
-import { SiweData } from '../../components/Siwe/SiweData'
 import { ConstantsUtil } from '../../utils/ConstantsUtil'
+import { SiweData } from '../../components/Siwe/SiweData'
 import { WagmiModalInfo } from '../../components/Wagmi/WagmiModalInfo'
-import { siweConfig } from '../../utils/SiweUtils'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet } from '@reown/appkit/networks'
 
 const queryClient = new QueryClient()
 
+const networks = ConstantsUtil.EvmNetworks
+
 const wagmiAdapter = new WagmiAdapter({
   ssr: true,
-  networks: ConstantsUtil.EvmNetworks,
+  networks,
   projectId: ConstantsUtil.ProjectId
 })
 
 const modal = createAppKit({
   adapters: [wagmiAdapter],
-  networks: ConstantsUtil.EvmNetworks,
+  networks,
   defaultNetwork: mainnet,
   projectId: ConstantsUtil.ProjectId,
   features: {
     analytics: true
   },
-  siweConfig,
-  customWallets: ConstantsUtil.CustomWallets
+  enableAuth: true
 })
 
 ThemeStore.setModal(modal)

@@ -25,6 +25,24 @@
     "valtio": "1.11.2",
     "lit": "3.1.0"
   },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.62",
+    "@types/react-dom": "18.2.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "keywords": [
     "web3",
     "crypto",
