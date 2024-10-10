@@ -50,20 +50,9 @@ on:
         required: false
 
 jobs:
-  setup_playwright_runners:
-    uses: WalletConnect/gh-actions-runners/.github/workflows/setup-runners.yml@main
-    with:
-      cpu: 16384
-      memory: 65536
-      labels: playwright
-      count: 5
-    secrets:
-      GITHUB_PAT: ${{ secrets.RELEASE_TOKEN_V2 }}
-      TF_API_TOKEN: ${{ secrets.TFC_INFRA_TOKEN }}
-
   ui_tests:
     name: 'Playwright Tests'
-    runs-on: [self-hosted, playwright]
+    runs-on: [self-hosted, aws-ecs-16cpu-64mem-30m]
     strategy:
       fail-fast: false
       matrix:
