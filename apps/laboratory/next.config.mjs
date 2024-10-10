@@ -15,7 +15,7 @@ const cspHeader = `
   img-src * 'self' data: blob: https://walletconnect.org https://walletconnect.com https://secure.walletconnect.com https://secure.walletconnect.org https://tokens-data.1inch.io https://tokens.1inch.io https://ipfs.io https://appkit-lab.reown.org;
   font-src 'self' https://fonts.gstatic.com;
   connect-src 'self' https://react-wallet.walletconnect.com https://rpc.walletconnect.com https://rpc.walletconnect.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org https://pulse.walletconnect.com https://pulse.walletconnect.org https://api.web3modal.com https://api.web3modal.org wss://www.walletlink.org https://o1095249.ingest.sentry.io https://quote-api.jup.ag;
-  frame-src 'self' https://verify.walletconnect.com https://verify.walletconnect.org https://secure.walletconnect.com https://secure.walletconnect.org https://secure.reown.com https://widget.solflare.com/ ${secureSiteDomain}/;
+  frame-src 'self' https://secure-appkit-sdk.pages.dev https://verify.walletconnect.com https://verify.walletconnect.org https://secure.walletconnect.com https://secure.walletconnect.org https://secure.reown.com https://widget.solflare.com/ ${secureSiteDomain}/;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
