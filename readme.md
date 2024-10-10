@@ -1,5 +1,5 @@
 > [!NOTE]
-> Looking for v2? [switch the branch](https://github.com/WalletConnect/web3modal/tree/V2).
+> Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
 
 #### 📚 [Documentation](https://docs.walletconnect.com/web3modal/about)
 
