@@ -1,4 +1,4 @@
-import { type CaipNetworkId, NetworkUtil } from '@reown/appkit-common'
+import { type CaipNetworkId, ConstantsUtil, NetworkUtil } from '@reown/appkit-common'
 
 import { ChainController } from '../../../controllers/ChainController.js'
 import type { SIWXMessage } from '../../../utils/SIWXUtil.js'
@@ -35,15 +35,30 @@ export class ReownAuthenticationMessenger {
   }
 
   private stringify(params: SIWXMessage.Data): string {
+    const [namespace, reference] = params.chainId.split(':')
+    const isEvm = namespace === ConstantsUtil.CHAIN.EVM
     const networkName = this.getNetworkName(params.chainId)
+    /*
+     * EIP-4361 requires the decimal EIP-155 chain id for EVM (e.g. "1"), not the CAIP-2 id
+     * ("eip155:1"). Strict wallet parsers (e.g. Phantom) reject the CAIP form as "invalid
+     * formatting". EVM-only — non-EVM namespaces keep their CAIP-2 id.
+     */
+    const chainId = isEvm ? reference : params.chainId
 
     return [
       `${params.domain} wants you to sign in with your ${networkName} account:`,
       params.accountAddress,
-      params.statement ? `\n${params.statement}\n` : '',
+      /*
+       * EIP-4361 (EVM) places the optional statement between two blank lines, so a
+       * statement-less message must still emit the empty statement's blank line — otherwise
+       * there is a single blank line and strict parsers (e.g. Phantom) reject the message.
+       * This mirrors the reference `siwe` serializer. EVM-only, so non-EVM message formats
+       * (Solana, Bitcoin, ...) stay byte-for-byte unchanged.
+       */
+      params.statement ? `\n${params.statement}\n` : isEvm ? '\n' : '',
       `URI: ${params.uri}`,
       `Version: ${params.version}`,
-      `Chain ID: ${params.chainId}`,
+      `Chain ID: ${chainId}`,
       `Nonce: ${params.nonce}`,
       params.issuedAt && `Issued At: ${params.issuedAt}`,
       params.expirationTime && `Expiration Time: ${params.expirationTime}`,

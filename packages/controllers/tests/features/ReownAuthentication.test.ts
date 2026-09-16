@@ -154,13 +154,14 @@ describe.each([
         `${namespace}:${id}`
       )
 
+      // EVM (EIP-4361) uses the decimal chain id + two blank lines; non-EVM is unchanged
       expect(message.toString())
         .toBe(`mocked.com wants you to sign in with your ${networkName} account:
 ${address}
-
+${namespace === 'eip155' ? '\n' : ''}
 URI: http://mocked.com/
 Version: 1
-Chain ID: ${namespace}:${id}
+Chain ID: ${namespace === 'eip155' ? id : `${namespace}:${id}`}
 Nonce: mock_nonce
 Issued At: 2024-12-05T16:02:32.905Z`)
 
