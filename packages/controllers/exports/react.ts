@@ -320,7 +320,7 @@ export interface UseAppKitWalletsReturn {
 
   /**
    * List of WalletConnect wallets from Wallet Guide API. Useful to display all available WalletConnect wallets in a separate Search Wallets view.
-   * @see https://walletguide.walletconnect.network/.
+   * @see https://walletguide.walletconnect.com/.
    */
   wcWallets: WalletItem[]
 
