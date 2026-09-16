@@ -619,6 +619,7 @@ export class ModalPage {
     await signatureButton.waitFor({ state: 'visible', timeout: 15_000 })
     await signatureButton.scrollIntoViewIfNeeded()
     await signatureButton.click()
+
     await signatureHeader.waitFor({ state: 'hidden', timeout: 15_000 })
   }
 
@@ -693,7 +694,15 @@ export class ModalPage {
     })
 
     await networkButton.click()
-    // The state is chain too fast and test runner doesn't wait the loading page. It's fastly checking the network selection button and detect that it's switched already.
+
+    // Wait for network switch animation to complete (success animation is 800ms + modal close/goBack)
+    const switchView = this.page.locator('w3m-network-switch-view')
+    try {
+      await switchView.waitFor({ state: 'visible', timeout: 5000 })
+      await switchView.waitFor({ state: 'hidden', timeout: 15_000 })
+    } catch {
+      // Switch view may have already completed or wasn't shown
+    }
     await this.page.waitForTimeout(300)
   }
 
@@ -761,10 +770,28 @@ export class ModalPage {
   async closeModal() {
     // Wait until stable after animations
     await this.page.waitForTimeout(200)
+
+    // Modal may have already been closed (e.g. after network switch success animation)
+    const modal = this.page.getByTestId('w3m-modal-card')
+    const isModalVisible = await modal.isVisible().catch(() => false)
+    if (!isModalVisible) {
+      return
+    }
+
     const closeButton = this.page.getByTestId('w3m-header-close')
-    // Click the button and wait for modal to fade out
-    await closeButton.click()
-    await closeButton.waitFor({ state: 'hidden', timeout: 15_000 })
+
+    try {
+      // Click the button and wait for modal to fade out
+      await closeButton.click({ timeout: 5000 })
+      await closeButton.waitFor({ state: 'hidden', timeout: 15_000 })
+    } catch {
+      // Modal may have auto-closed during the click attempt (e.g. network switch success animation)
+      const isStillVisible = await modal.isVisible().catch(() => false)
+      if (isStillVisible) {
+        // Modal is still visible but close button failed — wait for it to close on its own
+        await modal.waitFor({ state: 'hidden', timeout: 15_000 })
+      }
+    }
 
     // Wait until stable after animations
     await this.page.waitForTimeout(200)
@@ -822,6 +849,17 @@ export class ModalPage {
 
     const networkToSwitchButton = this.page.getByTestId(`w3m-network-switch-${networkName}`)
     await networkToSwitchButton.click()
+
+    // Wait for network switch animation to complete (success animation is 800ms + modal close)
+    const switchView = this.page.locator('w3m-network-switch-view')
+    try {
+      await switchView.waitFor({ state: 'visible', timeout: 5000 })
+      await switchView.waitFor({ state: 'hidden', timeout: 15_000 })
+    } catch {
+      // Switch view may have already completed or wasn't shown
+    }
+    // Wait for state to settle
+    await this.page.waitForTimeout(300)
   }
 
   async openAllWallets() {

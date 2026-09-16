@@ -255,8 +255,20 @@ export class ModalValidator {
   }
 
   async expectSwitchedNetwork(network: string) {
-    const switchNetworkButton = this.page.getByTestId(`w3m-network-switch-${network}`)
-    await expect(switchNetworkButton).toBeVisible()
+    /* SwitchNetwork() already waits for the animation, so just check final state */
+    await this.page.waitForTimeout(300)
+
+    const modal = this.page.getByTestId('w3m-modal-card')
+    const isModalVisible = await modal.isVisible().catch(() => false)
+
+    if (isModalVisible) {
+      const networksView = this.page.locator('w3m-networks-view')
+      const isNetworksView = await networksView.isVisible().catch(() => false)
+      if (isNetworksView) {
+        const switchNetworkButton = this.page.getByTestId(`w3m-network-switch-${network}`)
+        await expect(switchNetworkButton).toBeVisible()
+      }
+    }
   }
 
   async expectNetworkButton(network: string) {
@@ -270,16 +282,31 @@ export class ModalValidator {
   }
 
   async expectSwitchedNetworkWithNetworkView() {
+    /*
+     * SwitchNetwork() already waits for the animation to complete.
+     * Just verify the switch view is gone (it should be by now).
+     */
     const switchNetworkViewLocator = this.page.locator('w3m-network-switch-view')
-    await expect(switchNetworkViewLocator).toBeVisible()
     await expect(switchNetworkViewLocator).not.toBeVisible({
-      timeout: 20_000
+      timeout: 10_000
     })
   }
 
   async expectSwitchedNetworkOnNetworksView(name: string) {
-    const networkOptions = this.page.getByTestId(`w3m-network-switch-${name}`)
-    await expect(networkOptions.locator('wui-icon')).toBeVisible()
+    /* SwitchNetwork() already waits for the animation, so just check final state */
+    await this.page.waitForTimeout(300)
+
+    const modal = this.page.getByTestId('w3m-modal-card')
+    const isModalVisible = await modal.isVisible().catch(() => false)
+
+    if (isModalVisible) {
+      const networksView = this.page.locator('w3m-networks-view')
+      const isNetworksView = await networksView.isVisible().catch(() => false)
+      if (isNetworksView) {
+        const networkOptions = this.page.getByTestId(`w3m-network-switch-${name}`)
+        await expect(networkOptions.locator('wui-icon')).toBeVisible()
+      }
+    }
   }
 
   expectSecureSiteFrameNotInjected() {

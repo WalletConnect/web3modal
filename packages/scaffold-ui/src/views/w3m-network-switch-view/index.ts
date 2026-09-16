@@ -7,6 +7,7 @@ import {
   AssetUtil,
   ChainController,
   ConnectorController,
+  ModalController,
   RouterController,
   SIWXUtil
 } from '@reown/appkit-controllers'
@@ -35,6 +36,8 @@ export class W3mNetworkSwitchView extends LitElement {
 
   @state() public error = false
 
+  @state() public success = false
+
   public constructor() {
     super()
   }
@@ -60,6 +63,7 @@ export class W3mNetworkSwitchView extends LitElement {
     return html`
       <wui-flex
         data-error=${this.error}
+        data-success=${this.success}
         flexDirection="column"
         alignItems="center"
         .padding=${['10', '5', '10', '5'] as const}
@@ -71,9 +75,10 @@ export class W3mNetworkSwitchView extends LitElement {
             imageSrc=${ifDefined(AssetUtil.getNetworkImage(this.network))}
           ></wui-network-image>
 
-          ${this.error ? null : html`<wui-loading-hexagon></wui-loading-hexagon>`}
+          ${this.error || this.success ? null : html`<wui-loading-hexagon></wui-loading-hexagon>`}
 
-          <wui-icon-box color="error" icon="close" size="sm"></wui-icon-box>
+          <wui-icon-box color="error" icon="close" size="sm" padding="2"></wui-icon-box>
+          <wui-icon-box color="success" icon="checkmark" size="sm" padding="2"></wui-icon-box>
         </wui-flex>
 
         <wui-flex flexDirection="column" alignItems="center" gap="2">
@@ -132,16 +137,40 @@ export class W3mNetworkSwitchView extends LitElement {
   private async onSwitchNetwork() {
     try {
       this.error = false
+      this.success = false
       if (ChainController.state.activeChain !== this.network?.chainNamespace) {
         ChainController.setIsSwitchingNamespace(true)
       }
       if (this.network) {
-        await ChainController.switchActiveNetwork(this.network)
+        await ChainController.switchActiveNetwork(this.network, { throwOnFailure: true })
         const isAuthenticated = await SIWXUtil.isAuthenticated()
 
-        // If not authenticated, wait for siwx prompt, else go back to previous view
+        // If not authenticated, wait for siwx prompt, else show success and close/navigate
         if (isAuthenticated) {
-          RouterController.goBack()
+          this.success = true
+          await new Promise<void>(resolve => {
+            setTimeout(resolve, 1100)
+          })
+
+          const connectorId = ConnectorController.getConnectorId(ChainController.state.activeChain)
+          const authConnector = ConnectorController.getAuthConnector()
+          const isUsingAuth = authConnector && connectorId === CommonConstantsUtil.CONNECTOR_ID.AUTH
+          const isConnected = Boolean(
+            ChainController.getAccountData(ChainController.state.activeChain)?.address
+          )
+          const history = RouterController.state.history
+          const previousView = history.length > 1 ? history[history.length - 2] : undefined
+
+          /*
+           * Close the modal only for connected, non-auth, user-initiated switches
+           * from the Networks view. For auth connector, disconnected users, or
+           * programmatic switches, go back to preserve internal state.
+           */
+          if (previousView === 'Networks' && !isUsingAuth && isConnected) {
+            ModalController.close()
+          } else {
+            RouterController.goBack()
+          }
         }
       }
     } catch (error) {
