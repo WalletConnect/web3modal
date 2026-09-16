@@ -5,6 +5,7 @@ import { SafeLocalStorageKeys } from '@reown/appkit-common'
 import type { Connection } from '@reown/appkit-common'
 import { W3mFrameConstants, W3mFrameHelpers, W3mFrameStorage } from '@reown/appkit-wallet'
 
+import { OptionsController } from '../../src/controllers/OptionsController'
 import { StorageUtil } from '../../src/utils/StorageUtil'
 import type { SocialProvider, WcWallet } from '../../src/utils/TypeUtil'
 
@@ -717,6 +718,45 @@ describe('StorageUtil', () => {
 
       const result = StorageUtil.isConnectorDisconnected('any-connector', 'eip155')
       expect(result).toBe(false)
+    })
+  })
+
+  describe('debug flag', () => {
+    afterEach(() => {
+      OptionsController.state.debug = undefined
+    })
+
+    it('should suppress console.info when debug is false', () => {
+      OptionsController.state.debug = false
+      const consoleSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
+      vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error')
+      })
+
+      StorageUtil.setWalletConnectDeepLink({ href: 'https://example.com', name: 'Example Wallet' })
+      expect(consoleSpy).not.toHaveBeenCalled()
+    })
+
+    it('should suppress console.error when debug is false', () => {
+      OptionsController.state.debug = false
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error')
+      })
+
+      StorageUtil.setConnections([], 'eip155')
+      expect(consoleSpy).not.toHaveBeenCalled()
+    })
+
+    it('should still log when debug is true', () => {
+      OptionsController.state.debug = true
+      const consoleSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
+      vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error')
+      })
+
+      StorageUtil.setWalletConnectDeepLink({ href: 'https://example.com', name: 'Example Wallet' })
+      expect(consoleSpy).toHaveBeenCalledWith('Unable to set WalletConnect deep link')
     })
   })
 })

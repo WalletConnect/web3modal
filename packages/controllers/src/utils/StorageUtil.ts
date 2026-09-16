@@ -9,6 +9,7 @@ import {
 } from '@reown/appkit-common'
 import type { Connection } from '@reown/appkit-common'
 
+import { OptionsController } from '../controllers/OptionsController.js'
 import type {
   BlockchainApiBalanceResponse,
   BlockchainApiIdentityResponse,
@@ -26,6 +27,19 @@ interface DeleteAddressFromConnectionParams {
   address: string
   connectorId: string
   namespace: ChainNamespace
+}
+
+// -- Helpers -----------------------------------------------------------------
+function debugInfo(...args: unknown[]) {
+  if (OptionsController.state.debug !== false) {
+    console.info(...args)
+  }
+}
+
+function debugError(...args: unknown[]) {
+  if (OptionsController.state.debug !== false) {
+    console.error(...args)
+  }
 }
 
 // -- Utility -----------------------------------------------------------------
@@ -69,7 +83,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.DEEPLINK_CHOICE, JSON.stringify({ href, name }))
     } catch {
-      console.info('Unable to set WalletConnect deep link')
+      debugInfo('Unable to set WalletConnect deep link')
     }
   },
 
@@ -80,7 +94,7 @@ export const StorageUtil = {
         return JSON.parse(deepLink)
       }
     } catch {
-      console.info('Unable to get WalletConnect deep link')
+      debugInfo('Unable to get WalletConnect deep link')
     }
 
     return undefined
@@ -90,7 +104,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.DEEPLINK_CHOICE)
     } catch {
-      console.info('Unable to delete WalletConnect deep link')
+      debugInfo('Unable to delete WalletConnect deep link')
     }
   },
 
@@ -98,7 +112,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.ACTIVE_NAMESPACE, namespace)
     } catch {
-      console.info('Unable to set active namespace')
+      debugInfo('Unable to set active namespace')
     }
   },
 
@@ -107,7 +121,7 @@ export const StorageUtil = {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.ACTIVE_CAIP_NETWORK_ID, caipNetworkId)
       StorageUtil.setActiveNamespace(caipNetworkId.split(':')[0] as ChainNamespace)
     } catch {
-      console.info('Unable to set active caip network id')
+      debugInfo('Unable to set active caip network id')
     }
   },
 
@@ -117,7 +131,7 @@ export const StorageUtil = {
         | CaipNetworkId
         | undefined
     } catch {
-      console.info('Unable to get active caip network id')
+      debugInfo('Unable to get active caip network id')
 
       return undefined
     }
@@ -127,7 +141,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.ACTIVE_CAIP_NETWORK_ID)
     } catch {
-      console.info('Unable to delete active caip network id')
+      debugInfo('Unable to delete active caip network id')
     }
   },
 
@@ -136,7 +150,7 @@ export const StorageUtil = {
       const key = getSafeConnectorIdKey(namespace)
       SafeLocalStorage.removeItem(key)
     } catch {
-      console.info('Unable to delete connected connector id')
+      debugInfo('Unable to delete connected connector id')
     }
   },
 
@@ -153,7 +167,7 @@ export const StorageUtil = {
         SafeLocalStorage.setItem(SafeLocalStorageKeys.RECENT_WALLET, JSON.stringify(wallet))
       }
     } catch {
-      console.info('Unable to set AppKit recent')
+      debugInfo('Unable to set AppKit recent')
     }
   },
 
@@ -163,7 +177,7 @@ export const StorageUtil = {
 
       return recent ? JSON.parse(recent) : []
     } catch {
-      console.info('Unable to get AppKit recent')
+      debugInfo('Unable to get AppKit recent')
     }
 
     return []
@@ -175,7 +189,7 @@ export const StorageUtil = {
 
       return recent ? JSON.parse(recent) : null
     } catch {
-      console.info('Unable to get AppKit recent')
+      debugInfo('Unable to get AppKit recent')
     }
 
     return null
@@ -185,7 +199,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.RECENT_WALLET)
     } catch {
-      console.info('Unable to delete AppKit recent')
+      debugInfo('Unable to delete AppKit recent')
     }
   },
 
@@ -194,7 +208,7 @@ export const StorageUtil = {
       const key = getSafeConnectorIdKey(namespace)
       SafeLocalStorage.setItem(key, connectorId)
     } catch {
-      console.info('Unable to set Connected Connector Id')
+      debugInfo('Unable to set Connected Connector Id')
     }
   },
 
@@ -204,7 +218,7 @@ export const StorageUtil = {
 
       return activeNamespace as ChainNamespace | undefined
     } catch {
-      console.info('Unable to get active namespace')
+      debugInfo('Unable to get active namespace')
     }
 
     return undefined
@@ -220,7 +234,7 @@ export const StorageUtil = {
 
       return SafeLocalStorage.getItem(key)
     } catch (e) {
-      console.info('Unable to get connected connector id in namespace', namespace)
+      debugInfo('Unable to get connected connector id in namespace', namespace)
     }
 
     return undefined
@@ -230,7 +244,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.CONNECTED_SOCIAL, socialProvider)
     } catch {
-      console.info('Unable to set connected social provider')
+      debugInfo('Unable to set connected social provider')
     }
   },
 
@@ -238,7 +252,7 @@ export const StorageUtil = {
     try {
       return SafeLocalStorage.getItem(SafeLocalStorageKeys.CONNECTED_SOCIAL)
     } catch {
-      console.info('Unable to get connected social provider')
+      debugInfo('Unable to get connected social provider')
     }
 
     return undefined
@@ -248,7 +262,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.CONNECTED_SOCIAL)
     } catch {
-      console.info('Unable to delete connected social provider')
+      debugInfo('Unable to delete connected social provider')
     }
   },
 
@@ -256,7 +270,7 @@ export const StorageUtil = {
     try {
       return SafeLocalStorage.getItem(SafeLocalStorageKeys.CONNECTED_SOCIAL_USERNAME)
     } catch {
-      console.info('Unable to get connected social username')
+      debugInfo('Unable to get connected social username')
     }
 
     return undefined
@@ -275,7 +289,7 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.CONNECTION_STATUS, status)
     } catch {
-      console.info('Unable to set connection status')
+      debugInfo('Unable to set connection status')
     }
   },
 
@@ -309,7 +323,7 @@ export const StorageUtil = {
         uniqueNamespaces.join(',')
       )
     } catch {
-      console.info('Unable to set namespaces in storage')
+      debugInfo('Unable to set namespaces in storage')
     }
   },
 
@@ -321,7 +335,7 @@ export const StorageUtil = {
         StorageUtil.setConnectedNamespaces(namespaces)
       }
     } catch {
-      console.info('Unable to add connected namespace')
+      debugInfo('Unable to add connected namespace')
     }
   },
 
@@ -334,7 +348,7 @@ export const StorageUtil = {
         StorageUtil.setConnectedNamespaces(namespaces)
       }
     } catch {
-      console.info('Unable to remove connected namespace')
+      debugInfo('Unable to remove connected namespace')
     }
   },
   getTelegramSocialProvider() {
@@ -343,7 +357,7 @@ export const StorageUtil = {
         | SocialProvider
         | undefined
     } catch {
-      console.info('Unable to get telegram social provider')
+      debugInfo('Unable to get telegram social provider')
 
       return null
     }
@@ -352,14 +366,14 @@ export const StorageUtil = {
     try {
       SafeLocalStorage.setItem(SafeLocalStorageKeys.TELEGRAM_SOCIAL_PROVIDER, socialProvider)
     } catch {
-      console.info('Unable to set telegram social provider')
+      debugInfo('Unable to set telegram social provider')
     }
   },
   removeTelegramSocialProvider() {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.TELEGRAM_SOCIAL_PROVIDER)
     } catch {
-      console.info('Unable to remove telegram social provider')
+      debugInfo('Unable to remove telegram social provider')
     }
   },
   getBalanceCache() {
@@ -368,7 +382,7 @@ export const StorageUtil = {
       const result = SafeLocalStorage.getItem(SafeLocalStorageKeys.PORTFOLIO_CACHE)
       cache = result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get balance cache')
+      debugInfo('Unable to get balance cache')
     }
 
     return cache
@@ -381,7 +395,7 @@ export const StorageUtil = {
         JSON.stringify({ ...cache, [caipAddress]: undefined })
       )
     } catch {
-      console.info('Unable to remove address from balance cache', caipAddress)
+      debugInfo('Unable to remove address from balance cache', caipAddress)
     }
   },
   getBalanceCacheForCaipAddress(caipAddress: string) {
@@ -398,7 +412,7 @@ export const StorageUtil = {
 
       StorageUtil.removeAddressFromBalanceCache(caipAddress)
     } catch {
-      console.info('Unable to get balance cache for address', caipAddress)
+      debugInfo('Unable to get balance cache for address', caipAddress)
     }
 
     return undefined
@@ -413,7 +427,7 @@ export const StorageUtil = {
       cache[params.caipAddress] = params
       SafeLocalStorage.setItem(SafeLocalStorageKeys.PORTFOLIO_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update balance cache', params)
+      debugInfo('Unable to update balance cache', params)
     }
   },
 
@@ -426,7 +440,7 @@ export const StorageUtil = {
       const result = SafeLocalStorage.getItem(SafeLocalStorageKeys.NATIVE_BALANCE_CACHE)
       cache = result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get balance cache')
+      debugInfo('Unable to get balance cache')
     }
 
     return cache
@@ -439,7 +453,7 @@ export const StorageUtil = {
         JSON.stringify({ ...cache, [caipAddress]: undefined })
       )
     } catch {
-      console.info('Unable to remove address from balance cache', caipAddress)
+      debugInfo('Unable to remove address from balance cache', caipAddress)
     }
   },
   getNativeBalanceCacheForCaipAddress(caipAddress: string) {
@@ -454,10 +468,10 @@ export const StorageUtil = {
         return nativeBalanceCache
       }
 
-      console.info('Discarding cache for address', caipAddress)
+      debugInfo('Discarding cache for address', caipAddress)
       StorageUtil.removeAddressFromBalanceCache(caipAddress)
     } catch {
-      console.info('Unable to get balance cache for address', caipAddress)
+      debugInfo('Unable to get balance cache for address', caipAddress)
     }
 
     return undefined
@@ -473,7 +487,7 @@ export const StorageUtil = {
       cache[params.caipAddress] = params
       SafeLocalStorage.setItem(SafeLocalStorageKeys.NATIVE_BALANCE_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update balance cache', params)
+      debugInfo('Unable to update balance cache', params)
     }
   },
 
@@ -483,7 +497,7 @@ export const StorageUtil = {
       const result = SafeLocalStorage.getItem(SafeLocalStorageKeys.ENS_CACHE)
       cache = result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get ens name cache')
+      debugInfo('Unable to get ens name cache')
     }
 
     return cache
@@ -498,7 +512,7 @@ export const StorageUtil = {
       }
       StorageUtil.removeEnsFromCache(address)
     } catch {
-      console.info('Unable to get ens name from cache', address)
+      debugInfo('Unable to get ens name from cache', address)
     }
 
     return undefined
@@ -513,7 +527,7 @@ export const StorageUtil = {
       cache[params.address] = params
       SafeLocalStorage.setItem(SafeLocalStorageKeys.ENS_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update ens name cache', params)
+      debugInfo('Unable to update ens name cache', params)
     }
   },
   removeEnsFromCache(address: string) {
@@ -524,7 +538,7 @@ export const StorageUtil = {
         JSON.stringify({ ...cache, [address]: undefined })
       )
     } catch {
-      console.info('Unable to remove ens name from cache', address)
+      debugInfo('Unable to remove ens name from cache', address)
     }
   },
   getIdentityCache() {
@@ -539,7 +553,7 @@ export const StorageUtil = {
       const result = SafeLocalStorage.getItem(SafeLocalStorageKeys.IDENTITY_CACHE)
       cache = result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get identity cache')
+      debugInfo('Unable to get identity cache')
     }
 
     return cache
@@ -557,7 +571,7 @@ export const StorageUtil = {
       }
       StorageUtil.removeIdentityFromCache(address)
     } catch {
-      console.info('Unable to get identity from cache', address)
+      debugInfo('Unable to get identity from cache', address)
     }
 
     return undefined
@@ -575,7 +589,7 @@ export const StorageUtil = {
       }
       SafeLocalStorage.setItem(SafeLocalStorageKeys.IDENTITY_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update identity cache', params)
+      debugInfo('Unable to update identity cache', params)
     }
   },
   removeIdentityFromCache(address: string) {
@@ -586,7 +600,7 @@ export const StorageUtil = {
         JSON.stringify({ ...cache, [address]: undefined })
       )
     } catch {
-      console.info('Unable to remove identity from cache', address)
+      debugInfo('Unable to remove identity from cache', address)
     }
   },
   getTonWalletsCache() {
@@ -600,7 +614,7 @@ export const StorageUtil = {
 
       StorageUtil.removeTonWalletsCache()
     } catch {
-      console.info('Unable to get ton wallets cache')
+      debugInfo('Unable to get ton wallets cache')
     }
 
     return undefined
@@ -612,14 +626,14 @@ export const StorageUtil = {
       cache.wallets = wallets
       SafeLocalStorage.setItem(SafeLocalStorageKeys.TON_WALLETS_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update ton wallets cache', wallets)
+      debugInfo('Unable to update ton wallets cache', wallets)
     }
   },
   removeTonWalletsCache() {
     try {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.TON_WALLETS_CACHE)
     } catch {
-      console.info('Unable to remove ton wallets cache')
+      debugInfo('Unable to remove ton wallets cache')
     }
   },
   clearAddressCache() {
@@ -630,7 +644,7 @@ export const StorageUtil = {
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.IDENTITY_CACHE)
       SafeLocalStorage.removeItem(SafeLocalStorageKeys.HISTORY_TRANSACTIONS_CACHE)
     } catch {
-      console.info('Unable to clear address cache')
+      debugInfo('Unable to clear address cache')
     }
   },
   setPreferredAccountTypes(accountTypes: PreferredAccountTypes) {
@@ -640,7 +654,7 @@ export const StorageUtil = {
         JSON.stringify(accountTypes)
       )
     } catch {
-      console.info('Unable to set preferred account types', accountTypes)
+      debugInfo('Unable to set preferred account types', accountTypes)
     }
   },
   getPreferredAccountTypes() {
@@ -652,7 +666,7 @@ export const StorageUtil = {
 
       return JSON.parse(result) as PreferredAccountTypes
     } catch {
-      console.info('Unable to get preferred account types')
+      debugInfo('Unable to get preferred account types')
     }
 
     return {}
@@ -688,7 +702,7 @@ export const StorageUtil = {
 
       SafeLocalStorage.setItem(SafeLocalStorageKeys.CONNECTIONS, JSON.stringify(dedupedConnections))
     } catch (error) {
-      console.error('Unable to sync connections to storage', error)
+      debugError('Unable to sync connections to storage', error)
     }
   },
   getConnections() {
@@ -701,7 +715,7 @@ export const StorageUtil = {
 
       return JSON.parse(connectionsStorage) as { [key in ChainNamespace]: Connection[] }
     } catch (error) {
-      console.error('Unable to get connections from storage', error)
+      debugError('Unable to get connections from storage', error)
 
       return {} as { [key in ChainNamespace]: Connection[] }
     }
@@ -744,7 +758,7 @@ export const StorageUtil = {
         })
       )
     } catch {
-      console.error(
+      debugError(
         `Unable to remove address "${address}" from connector "${connectorId}" in namespace "${namespace}"`
       )
     }
@@ -759,7 +773,7 @@ export const StorageUtil = {
 
       return JSON.parse(result) as { [key in ChainNamespace]: string[] }
     } catch {
-      console.info('Unable to get disconnected connector ids')
+      debugInfo('Unable to get disconnected connector ids')
     }
 
     return {} as { [key in ChainNamespace]: string[] }
@@ -781,7 +795,7 @@ export const StorageUtil = {
         })
       )
     } catch {
-      console.error(
+      debugError(
         `Unable to set disconnected connector id "${connectorId}" for namespace "${chainNamespace}"`
       )
     }
@@ -805,7 +819,7 @@ export const StorageUtil = {
         })
       )
     } catch {
-      console.error(
+      debugError(
         `Unable to remove disconnected connector id "${connectorId}" for namespace "${chainNamespace}"`
       )
     }
@@ -821,7 +835,7 @@ export const StorageUtil = {
         id => id.toLowerCase() === connectorId.toLowerCase()
       )
     } catch {
-      console.info(
+      debugInfo(
         `Unable to get disconnected connector id "${connectorId}" for namespace "${chainNamespace}"`
       )
     }
@@ -834,7 +848,7 @@ export const StorageUtil = {
 
       return result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get transactions cache')
+      debugInfo('Unable to get transactions cache')
     }
 
     return {}
@@ -854,7 +868,7 @@ export const StorageUtil = {
       }
       StorageUtil.removeTransactionsCache({ address, chainId })
     } catch {
-      console.info('Unable to get transactions cache')
+      debugInfo('Unable to get transactions cache')
     }
 
     return undefined
@@ -884,7 +898,7 @@ export const StorageUtil = {
         JSON.stringify(cache)
       )
     } catch {
-      console.info('Unable to update transactions cache', {
+      debugInfo('Unable to update transactions cache', {
         address,
         chainId,
         timestamp,
@@ -908,7 +922,7 @@ export const StorageUtil = {
         })
       )
     } catch {
-      console.info('Unable to remove transactions cache', { address, chainId })
+      debugInfo('Unable to remove transactions cache', { address, chainId })
     }
   },
   getTokenPriceCache() {
@@ -917,7 +931,7 @@ export const StorageUtil = {
 
       return result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get token price cache')
+      debugInfo('Unable to get token price cache')
     }
 
     return {}
@@ -934,7 +948,7 @@ export const StorageUtil = {
       }
       StorageUtil.removeTokenPriceCache(addresses)
     } catch {
-      console.info('Unable to get token price cache for addresses', addresses)
+      debugInfo('Unable to get token price cache for addresses', addresses)
     }
 
     return undefined
@@ -952,7 +966,7 @@ export const StorageUtil = {
       }
       SafeLocalStorage.setItem(SafeLocalStorageKeys.TOKEN_PRICE_CACHE, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update token price cache', params)
+      debugInfo('Unable to update token price cache', params)
     }
   },
   removeTokenPriceCache(addresses: string[]) {
@@ -963,7 +977,7 @@ export const StorageUtil = {
         JSON.stringify({ ...cache, [addresses.join(',')]: undefined })
       )
     } catch {
-      console.info('Unable to remove token price cache', addresses)
+      debugInfo('Unable to remove token price cache', addresses)
     }
   },
 
@@ -979,7 +993,7 @@ export const StorageUtil = {
 
       return undefined
     } catch {
-      console.info('Unable to get latest AppKit version')
+      debugInfo('Unable to get latest AppKit version')
     }
 
     return undefined
@@ -990,7 +1004,7 @@ export const StorageUtil = {
 
       return result ? JSON.parse(result) : {}
     } catch {
-      console.info('Unable to get latest AppKit version cache')
+      debugInfo('Unable to get latest AppKit version cache')
     }
 
     return {}
@@ -1003,7 +1017,7 @@ export const StorageUtil = {
 
       SafeLocalStorage.setItem(SafeLocalStorageKeys.LATEST_APPKIT_VERSION, JSON.stringify(cache))
     } catch {
-      console.info('Unable to update latest AppKit version on local storage', params)
+      debugInfo('Unable to update latest AppKit version on local storage', params)
     }
   }
 }
