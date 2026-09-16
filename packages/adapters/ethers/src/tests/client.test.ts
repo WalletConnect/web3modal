@@ -1431,5 +1431,77 @@ describe('EthersAdapter', () => {
 
       expect(providers?.safe).toBeDefined()
     })
+
+    it('should initialize coinbase wallet provider if the user was previously connected with it', async () => {
+      vi.spyOn(OptionsController, 'state', 'get').mockReturnValue({
+        ...OptionsController.state,
+        enableCoinbase: true,
+        enableBaseAccount: true,
+        metadata: mockEthersConfig.metadata
+      })
+      vi.spyOn(HelpersUtil, 'getConnectorStorageInfo').mockImplementation(connectorId => ({
+        hasConnected: connectorId === CommonConstantsUtil.CONNECTOR_ID.COINBASE,
+        hasDisconnected: false
+      }))
+
+      const providers = await adapter['createEthersConfig']()
+
+      expect(providers?.coinbaseWallet?.initialize).toHaveBeenCalledTimes(1)
+      expect(providers?.baseAccount?.initialize).not.toHaveBeenCalled()
+    })
+
+    it('should initialize base account provider if the user was previously connected with it', async () => {
+      vi.spyOn(OptionsController, 'state', 'get').mockReturnValue({
+        ...OptionsController.state,
+        enableCoinbase: true,
+        enableBaseAccount: true,
+        metadata: mockEthersConfig.metadata
+      })
+      vi.spyOn(HelpersUtil, 'getConnectorStorageInfo').mockImplementation(connectorId => ({
+        hasConnected: connectorId === CommonConstantsUtil.CONNECTOR_ID.BASE_ACCOUNT,
+        hasDisconnected: false
+      }))
+
+      const providers = await adapter['createEthersConfig']()
+
+      expect(providers?.baseAccount?.initialize).toHaveBeenCalledTimes(1)
+      expect(providers?.coinbaseWallet?.initialize).not.toHaveBeenCalled()
+    })
+
+    it('should not initialize coinbase wallet and base account providers if the user was never connected with them', async () => {
+      vi.spyOn(OptionsController, 'state', 'get').mockReturnValue({
+        ...OptionsController.state,
+        enableCoinbase: true,
+        enableBaseAccount: true,
+        metadata: mockEthersConfig.metadata
+      })
+      vi.spyOn(HelpersUtil, 'getConnectorStorageInfo').mockReturnValue({
+        hasConnected: false,
+        hasDisconnected: false
+      })
+
+      const providers = await adapter['createEthersConfig']()
+
+      expect(providers?.coinbaseWallet?.initialize).not.toHaveBeenCalled()
+      expect(providers?.baseAccount?.initialize).not.toHaveBeenCalled()
+    })
+
+    it('should not initialize coinbase wallet and base account providers if the user explicitly disconnected them', async () => {
+      vi.spyOn(OptionsController, 'state', 'get').mockReturnValue({
+        ...OptionsController.state,
+        enableCoinbase: true,
+        enableBaseAccount: true,
+        metadata: mockEthersConfig.metadata
+      })
+      vi.spyOn(HelpersUtil, 'getConnectorStorageInfo').mockReturnValue({
+        hasConnected: true,
+        hasDisconnected: true
+      })
+
+      const providers = await adapter['createEthersConfig']()
+
+      expect(providers?.coinbaseWallet?.initialize).not.toHaveBeenCalled()
+      expect(providers?.baseAccount?.initialize).not.toHaveBeenCalled()
+    })
   })
 })

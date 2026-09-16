@@ -78,11 +78,17 @@ export class Ethers5Adapter extends AdapterBlueprint {
     if (enableBaseAccount !== false) {
       // Do not initialize provider to prevent unnecessary api calls - lazy load
       this.ethersProviders.baseAccount = new BaseProvider()
+      if (this.hasStoredConnection(CommonConstantsUtil.CONNECTOR_ID.BASE_ACCOUNT)) {
+        await this.ethersProviders.baseAccount.initialize()
+      }
     }
 
     if (enableCoinbase !== false) {
       // Do not initialize provider to prevent unnecessary api calls - lazy load
       this.ethersProviders.coinbaseWallet = new CoinbaseWalletProvider()
+      if (this.hasStoredConnection(CommonConstantsUtil.CONNECTOR_ID.COINBASE)) {
+        await this.ethersProviders.coinbaseWallet.initialize()
+      }
     }
 
     if (CoreHelperUtil.isSafeApp()) {
@@ -96,6 +102,15 @@ export class Ethers5Adapter extends AdapterBlueprint {
       EIP6963: enableEIP6963 !== false,
       metadata
     }
+  }
+
+  private hasStoredConnection(connectorId: string) {
+    const { hasConnected, hasDisconnected } = HelpersUtil.getConnectorStorageInfo(
+      connectorId,
+      this.namespace as ChainNamespace
+    )
+
+    return hasConnected && !hasDisconnected
   }
 
   public async signMessage(
