@@ -323,6 +323,18 @@ export class TronAdapter extends AdapterBlueprint<TronConnector> {
     }
 
     try {
+      if (params.caipNetwork?.testnet) {
+        const balanceInSun = await this.getFullNodeBalance({
+          address,
+          rpcUrl: params.caipNetwork.rpcUrls?.['chainDefault']?.http?.[0]
+        })
+
+        return {
+          balance: this.formatTrxBalance(balanceInSun),
+          symbol: 'TRX'
+        }
+      }
+
       const response = await BlockchainApiController.getAddressBalance<{
         data: { balance: number }[]
       }>({
@@ -334,17 +346,47 @@ export class TronAdapter extends AdapterBlueprint<TronConnector> {
 
       const balanceInSun = response?.data?.[0]?.balance ?? 0
 
-      const formattedBalance = NumberUtil.bigNumber(balanceInSun)
-        .div(10 ** 6)
-        .toString()
-
-      return { balance: formattedBalance, symbol: 'TRX' }
+      return { balance: this.formatTrxBalance(balanceInSun), symbol: 'TRX' }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('[TronAdapter] getBalance error:', error)
 
       return { balance: '0', symbol: 'TRX' }
     }
+  }
+
+  private async getFullNodeBalance({
+    address,
+    rpcUrl
+  }: {
+    address: string
+    rpcUrl?: string
+  }): Promise<number> {
+    if (!rpcUrl) {
+      throw new Error('TRON fullnode RPC URL is not configured')
+    }
+
+    const normalizedRpcUrl = rpcUrl.replace(/\/+$/u, '')
+
+    const response = await fetch(`${normalizedRpcUrl}/wallet/getaccount`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address, visible: true })
+    })
+
+    if (!response.ok) {
+      throw new Error(`TRON fullnode balance request failed: ${response.status}`)
+    }
+
+    const result = (await response.json()) as { balance?: number }
+
+    return result.balance ?? 0
+  }
+
+  private formatTrxBalance(balanceInSun: number): string {
+    return NumberUtil.bigNumber(balanceInSun)
+      .div(10 ** 6)
+      .toString()
   }
 
   override parseUnits(): bigint {
