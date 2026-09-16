@@ -58,7 +58,7 @@ function SessionStatus() {
     <>
       <Heading size="sm">Session Status</Heading>
 
-      <Text>Bellow will be displayed the current SIWX session object when it is validated.</Text>
+      <Text>Below will be displayed the current SIWX session object when it is validated.</Text>
 
       <Code
         maxH="64"

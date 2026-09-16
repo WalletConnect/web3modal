@@ -23,7 +23,7 @@ export function externalTestConnector() {
         chainId: 0,
         chain: {
           id: 0,
-          unsuported: false
+          unsupported: false
         }
       })
     },

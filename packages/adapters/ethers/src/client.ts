@@ -89,7 +89,7 @@ export class EthersAdapter extends AdapterBlueprint {
 
     if (CoreHelperUtil.isSafeApp()) {
       const safeProvider = new SafeProvider()
-      // Initialize the safe provider during intialization
+      // Initialize the safe provider during initialization
       await safeProvider.initialize()
       this.ethersProviders.safe = safeProvider
     }

@@ -30,7 +30,7 @@ export type SafeLocalStorageItems = {
   '@appkit/latest_version': string
   /*
    * DO NOT CHANGE: @walletconnect/universal-provider requires us to set this specific key
-   *  This value is a stringified version of { href: stiring; name: string }
+   *  This value is a stringified version of { href: string; name: string }
    */
   WALLETCONNECT_DEEPLINK_CHOICE: string
   '@appkit/ton_wallets_cache': string
