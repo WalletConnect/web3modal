@@ -1,6 +1,11 @@
 import { ConstantsUtil } from '@reown/appkit-common'
 
-import { SECURE_SITE_SDK, SECURE_SITE_SDK_VERSION, W3mFrameConstants } from './W3mFrameConstants.js'
+import {
+  SECURE_SITE_SDK,
+  SECURE_SITE_SDK_ORIGIN,
+  SECURE_SITE_SDK_VERSION,
+  W3mFrameConstants
+} from './W3mFrameConstants.js'
 import { W3mFrameHelpers } from './W3mFrameHelpers.js'
 import { W3mFrameSchema } from './W3mFrameSchema.js'
 import { W3mFrameStorage } from './W3mFrameStorage.js'
@@ -175,7 +180,10 @@ export class W3mFrame {
       callback: (event: W3mFrameTypes.FrameEvent) => void,
       signal: AbortSignal
     ) => {
-      function eventHandler({ data }: MessageEvent) {
+      function eventHandler({ data, origin }: MessageEvent) {
+        if (origin !== SECURE_SITE_SDK_ORIGIN) {
+          return
+        }
         if (!shouldHandleEvent(W3mFrameConstants.FRAME_EVENT_KEY, data)) {
           return
         }
@@ -202,7 +210,10 @@ export class W3mFrame {
     },
     onFrameEvent: (callback: (event: W3mFrameTypes.FrameEvent) => void) => {
       if (W3mFrameHelpers.isClient) {
-        window.addEventListener('message', ({ data }) => {
+        window.addEventListener('message', ({ data, origin }) => {
+          if (origin !== SECURE_SITE_SDK_ORIGIN) {
+            return
+          }
           if (!shouldHandleEvent(W3mFrameConstants.FRAME_EVENT_KEY, data)) {
             return
           }
@@ -239,7 +250,7 @@ export class W3mFrame {
         if (!this.iframe?.contentWindow) {
           throw new Error('W3mFrame: iframe is not set')
         }
-        this.iframe.contentWindow.postMessage(event, '*')
+        this.iframe.contentWindow.postMessage(event, SECURE_SITE_SDK_ORIGIN)
       }
     },
 

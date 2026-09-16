@@ -6,6 +6,15 @@ export const SECURE_SITE_SDK =
     ? process.env['NEXT_PUBLIC_SECURE_SITE_SDK_URL']
     : undefined) || DEFAULT_SDK_URL
 
+/** Origin of the secure-site iframe SDK (postMessage target / allowlist). */
+export const SECURE_SITE_SDK_ORIGIN = (() => {
+  try {
+    return new URL(SECURE_SITE_SDK).origin
+  } catch {
+    return 'https://secure.walletconnect.org'
+  }
+})()
+
 export const DEFAULT_LOG_LEVEL =
   (typeof process !== 'undefined' && typeof process.env !== 'undefined'
     ? process.env['NEXT_PUBLIC_DEFAULT_LOG_LEVEL']
