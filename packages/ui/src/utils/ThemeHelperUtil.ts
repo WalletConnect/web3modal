@@ -17,6 +17,16 @@ function normalizeThemeVariables(themeVariables?: ThemeVariables): Record<string
   normalized['font-family'] =
     themeVariables['--apkt-font-family'] ?? themeVariables['--w3m-font-family'] ?? 'KHTeka'
 
+  /*
+   * Mono falls back to the custom base font before the bundled KHTekaMono, so a single
+   * --apkt-font-family keeps mono text styled instead of dropping to the browser default.
+   */
+  normalized['font-family-mono'] =
+    themeVariables['--apkt-font-family-mono'] ??
+    themeVariables['--apkt-font-family'] ??
+    themeVariables['--w3m-font-family'] ??
+    'KHTekaMono'
+
   normalized['accent'] =
     themeVariables['--apkt-accent'] ?? themeVariables['--w3m-accent'] ?? '#0988F0'
 
@@ -214,6 +224,14 @@ export const ThemeHelperUtil = {
 
     if (themeVariables['--apkt-font-family'] || themeVariables['--w3m-font-family']) {
       overrides['--apkt-fontFamily-regular'] = normalized['font-family'] as string
+    }
+
+    if (
+      themeVariables['--apkt-font-family-mono'] ||
+      themeVariables['--apkt-font-family'] ||
+      themeVariables['--w3m-font-family']
+    ) {
+      overrides['--apkt-fontFamily-mono'] = normalized['font-family-mono'] as string
     }
 
     if (normalized['z-index'] !== undefined) {

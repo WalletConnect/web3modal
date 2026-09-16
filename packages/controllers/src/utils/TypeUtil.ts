@@ -227,6 +227,7 @@ export interface ThemeVariables {
   '--w3m-z-index'?: number
   '--w3m-qr-color'?: string
   '--apkt-font-family'?: string
+  '--apkt-font-family-mono'?: string
   '--apkt-accent'?: string
   '--apkt-color-mix'?: string
   '--apkt-color-mix-strength'?: number

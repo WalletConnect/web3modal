@@ -114,6 +114,12 @@ export function createRootStyles(_themeVariables?: ThemeVariables) {
   const hasCustomFontFamily = Boolean(
     _themeVariables?.['--apkt-font-family'] || _themeVariables?.['--w3m-font-family']
   )
+  /*
+   * Mono inherits a custom base font, so the bundled face is only needed when neither
+   * the mono nor the base font has been overridden.
+   */
+  const hasCustomMonoFontFamily =
+    Boolean(_themeVariables?.['--apkt-font-family-mono']) || hasCustomFontFamily
 
   return {
     core: css`
@@ -140,19 +146,22 @@ export function createRootStyles(_themeVariables?: ThemeVariables) {
             }
 
             @font-face {
-              font-family: 'KHTekaMono';
-              src:
-                url(${unsafeCSS(fonts['KHTekaMono-400-woff2'])}) format('woff2'),
-                url(${unsafeCSS(fonts['KHTekaMono-400-woff'])}) format('woff');
-              font-weight: 400;
-              font-style: normal;
-            }
-
-            @font-face {
               font-family: 'KHTeka';
               src:
                 url(${unsafeCSS(fonts['KHTeka-400-woff2'])}) format('woff2'),
                 url(${unsafeCSS(fonts['KHTeka-400-woff'])}) format('woff');
+              font-weight: 400;
+              font-style: normal;
+            }
+          `}
+      ${hasCustomMonoFontFamily
+        ? css``
+        : css`
+            @font-face {
+              font-family: 'KHTekaMono';
+              src:
+                url(${unsafeCSS(fonts['KHTekaMono-400-woff2'])}) format('woff2'),
+                url(${unsafeCSS(fonts['KHTekaMono-400-woff'])}) format('woff');
               font-weight: 400;
               font-style: normal;
             }

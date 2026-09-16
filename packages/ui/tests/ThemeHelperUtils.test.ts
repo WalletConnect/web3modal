@@ -169,4 +169,38 @@ describe('ThemeHelperUtil', () => {
     const emptyOverrides = ThemeHelperUtil.generateW3MOverrides({})
     expect(emptyOverrides['--apkt-tokens-core-zIndex']).toBeUndefined()
   })
+
+  it('should override both regular and mono font families for a custom font', () => {
+    const apktOverrides = ThemeHelperUtil.generateW3MOverrides({
+      '--apkt-font-family': "'Comic Sans MS', cursive"
+    })
+    expect(apktOverrides['--apkt-fontFamily-regular']).toBe("'Comic Sans MS', cursive")
+    expect(apktOverrides['--apkt-fontFamily-mono']).toBe("'Comic Sans MS', cursive")
+
+    const w3mOverrides = ThemeHelperUtil.generateW3MOverrides({
+      '--w3m-font-family': "'Comic Sans MS', cursive"
+    })
+    expect(w3mOverrides['--apkt-fontFamily-regular']).toBe("'Comic Sans MS', cursive")
+    expect(w3mOverrides['--apkt-fontFamily-mono']).toBe("'Comic Sans MS', cursive")
+
+    const noFontOverrides = ThemeHelperUtil.generateW3MOverrides({ '--w3m-accent': '#ff0000' })
+    expect(noFontOverrides['--apkt-fontFamily-regular']).toBeUndefined()
+    expect(noFontOverrides['--apkt-fontFamily-mono']).toBeUndefined()
+  })
+
+  it('should let --apkt-font-family-mono override the mono font independently', () => {
+    const bothFonts = ThemeHelperUtil.generateW3MOverrides({
+      '--apkt-font-family': "'Comic Sans MS', cursive",
+      '--apkt-font-family-mono': "'Fira Code', monospace"
+    })
+    expect(bothFonts['--apkt-fontFamily-regular']).toBe("'Comic Sans MS', cursive")
+    expect(bothFonts['--apkt-fontFamily-mono']).toBe("'Fira Code', monospace")
+
+    // Mono alone must not drag the regular font along with it
+    const monoOnly = ThemeHelperUtil.generateW3MOverrides({
+      '--apkt-font-family-mono': "'Fira Code', monospace"
+    })
+    expect(monoOnly['--apkt-fontFamily-mono']).toBe("'Fira Code', monospace")
+    expect(monoOnly['--apkt-fontFamily-regular']).toBeUndefined()
+  })
 })
