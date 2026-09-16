@@ -3,6 +3,7 @@ export type ThemeType = 'dark' | 'light'
 
 export interface ThemeVariables {
   '--w3m-font-family'?: string
+  '--w3m-font-family-mono'?: string
   '--w3m-accent'?: string
   '--w3m-color-mix'?: string
   '--w3m-color-mix-strength'?: number
@@ -11,6 +12,7 @@ export interface ThemeVariables {
   '--w3m-z-index'?: number
   '--w3m-qr-color'?: string
   '--apkt-font-family'?: string
+  '--apkt-font-family-mono'?: string
   '--apkt-accent'?: string
   '--apkt-color-mix'?: string
   '--apkt-color-mix-strength'?: number

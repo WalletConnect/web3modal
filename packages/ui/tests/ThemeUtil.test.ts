@@ -52,6 +52,31 @@ describe('ThemeUtil', () => {
       expect(rootStyles).toContain('--apkt-fontFamily-regular:New Font')
     })
 
+    it('should drive the monospace font from --apkt-font-family when no mono font is set', () => {
+      const themeVariables: ThemeVariables = {
+        '--apkt-font-family': 'New Font'
+      }
+      const rootStyles = ThemeHelperUtil.createRootStyles('dark', themeVariables)
+
+      expect(rootStyles).toContain('--apkt-fontFamily-mono:New Font')
+    })
+
+    it('should prioritize --apkt-font-family-mono over --apkt-font-family for monospace text', () => {
+      const themeVariables: ThemeVariables = {
+        '--apkt-font-family': 'New Font',
+        '--apkt-font-family-mono': 'New Mono'
+      }
+      const rootStyles = ThemeHelperUtil.createRootStyles('dark', themeVariables)
+
+      expect(rootStyles).toContain('--apkt-fontFamily-mono:New Mono')
+    })
+
+    it('should default the monospace font to KHTekaMono when no font is provided', () => {
+      const rootStyles = ThemeHelperUtil.createRootStyles('dark', { '--w3m-accent': '#ff0000' })
+
+      expect(rootStyles).toContain('--w3m-font-family-mono:KHTekaMono')
+    })
+
     it('should always include keyframe animations regardless of font family setting', () => {
       const withCustomFont: ThemeVariables = { '--w3m-font-family': 'Custom Font' }
       const withoutCustomFont: ThemeVariables = {}

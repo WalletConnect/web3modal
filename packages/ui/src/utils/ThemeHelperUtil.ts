@@ -17,6 +17,14 @@ function normalizeThemeVariables(themeVariables?: ThemeVariables): Record<string
   normalized['font-family'] =
     themeVariables['--apkt-font-family'] ?? themeVariables['--w3m-font-family'] ?? 'KHTeka'
 
+  // Fall back to the base font (so one --apkt-font-family styles mono too), then the mono default.
+  normalized['font-family-mono'] =
+    themeVariables['--apkt-font-family-mono'] ??
+    themeVariables['--w3m-font-family-mono'] ??
+    themeVariables['--apkt-font-family'] ??
+    themeVariables['--w3m-font-family'] ??
+    'KHTekaMono'
+
   normalized['accent'] =
     themeVariables['--apkt-accent'] ?? themeVariables['--w3m-accent'] ?? '#0988F0'
 
@@ -183,6 +191,7 @@ export const ThemeHelperUtil = {
 
     // Set default values and user overrides (keep --w3m-* names for backwards compatibility)
     variables['--w3m-font-family'] = normalized['font-family'] as string
+    variables['--w3m-font-family-mono'] = normalized['font-family-mono'] as string
     variables['--w3m-accent'] = normalized['accent'] as string
     variables['--w3m-color-mix'] = normalized['color-mix'] as string
     variables['--w3m-color-mix-strength'] = `${normalized['color-mix-strength']}%`
@@ -214,6 +223,15 @@ export const ThemeHelperUtil = {
 
     if (themeVariables['--apkt-font-family'] || themeVariables['--w3m-font-family']) {
       overrides['--apkt-fontFamily-regular'] = normalized['font-family'] as string
+    }
+
+    if (
+      themeVariables['--apkt-font-family-mono'] ||
+      themeVariables['--w3m-font-family-mono'] ||
+      themeVariables['--apkt-font-family'] ||
+      themeVariables['--w3m-font-family']
+    ) {
+      overrides['--apkt-fontFamily-mono'] = normalized['font-family-mono'] as string
     }
 
     if (normalized['z-index'] !== undefined) {
