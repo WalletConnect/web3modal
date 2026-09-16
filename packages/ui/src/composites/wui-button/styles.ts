@@ -3,10 +3,11 @@ import { css } from '../../utils/ThemeHelperUtil.js'
 export default css`
   :host {
     width: var(--local-width);
+    min-width: 0;
   }
 
   button {
-    width: var(--local-width);
+    width: 100%;
     white-space: nowrap;
     column-gap: ${({ spacing }) => spacing[2]};
     transition:
@@ -17,6 +18,18 @@ export default css`
         ${({ easings }) => easings['ease-out-power-1']};
     will-change: scale, background-color, border-radius;
     cursor: pointer;
+  }
+
+  wui-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  wui-loading-spinner,
+  slot[name='iconLeft'],
+  slot[name='iconRight'] {
+    flex-shrink: 0;
   }
 
   /* -- Sizes --------------------------------------------------- */
