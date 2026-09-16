@@ -76,6 +76,11 @@ describe('NetworkUtil', () => {
       expect(NetworkUtil.parseEvmChainId('eip155:42')).toBe(42)
     })
 
+    test('parses numeric string chain ID', () => {
+      expect(NetworkUtil.parseEvmChainId('1')).toBe(1)
+      expect(NetworkUtil.parseEvmChainId('42')).toBe(42)
+    })
+
     test('returns number input as-is', () => {
       expect(NetworkUtil.parseEvmChainId(1)).toBe(1)
       expect(NetworkUtil.parseEvmChainId(42)).toBe(42)

@@ -7,9 +7,13 @@ export const NetworkUtil = {
   },
 
   parseEvmChainId(chainId: string | number) {
-    return typeof chainId === 'string'
+    if (typeof chainId === 'number') {
+      return chainId
+    }
+
+    return chainId.includes(':')
       ? this.caipNetworkIdToNumber(chainId as CaipNetworkId)
-      : chainId
+      : Number(chainId)
   },
 
   getNetworksByNamespace(networks: CaipNetwork[] | undefined, namespace: ChainNamespace) {
