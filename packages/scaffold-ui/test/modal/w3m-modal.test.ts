@@ -75,6 +75,21 @@ describe('W3mModal', () => {
       expect(overlay).toBeNull()
     })
 
+    it('should name the card after the current view heading', async () => {
+      RouterController.reset('Connect')
+      element = await fixture(html`<w3m-modal .enableEmbedded=${true}></w3m-modal>`)
+      const card = HelpersUtil.getByTestId(element, 'w3m-modal-card')
+      expect(card.getAttribute('aria-label')).toBe('Connect Wallet')
+
+      RouterController.push('Networks')
+      await elementUpdated(element)
+      expect(card.getAttribute('aria-label')).toBe('Choose Network')
+
+      RouterController.push('Account')
+      await elementUpdated(element)
+      expect(card.getAttribute('aria-label')).toBe('Account')
+    })
+
     it('should close modal when wallet is connected', async () => {
       ChainController.state.activeCaipAddress = 'eip155:1:0x123...'
       await fixture(html`<w3m-modal .enableEmbedded=${true}></w3m-modal>`)

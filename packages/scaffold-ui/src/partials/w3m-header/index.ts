@@ -30,7 +30,7 @@ const BACKGROUND_OVERRIDES: Record<string, string> = {
 }
 
 // -- Helpers ------------------------------------------- //
-function headings() {
+export function headings() {
   const connectorName = RouterController.state.data?.connector?.name
   const walletName = RouterController.state.data?.wallet?.name
   const networkName = RouterController.state.data?.network?.name
@@ -43,7 +43,7 @@ function headings() {
     : 'Connect Social'
 
   return {
-    Connect: `Connect ${isEmail ? 'Email' : ''} Wallet`,
+    Connect: `Connect ${isEmail ? 'Email ' : ''}Wallet`,
     Create: 'Create Wallet',
     ChooseAccountName: undefined,
     Account: undefined,
@@ -199,6 +199,7 @@ export class W3mHeader extends LitElement {
     return html`<wui-flex>
       <wui-icon-button
         icon="clock"
+        label="Smart Sessions"
         size="lg"
         iconSize="lg"
         type="neutral"
@@ -214,6 +215,7 @@ export class W3mHeader extends LitElement {
     return html`
       <wui-icon-button
         icon="close"
+        label="Close"
         size="lg"
         type="neutral"
         variant="primary"
@@ -278,6 +280,7 @@ export class W3mHeader extends LitElement {
         data-testid="header-back"
         id="dynamic"
         icon="chevronLeft"
+        label="Back"
         size="lg"
         iconSize="lg"
         type="neutral"
@@ -290,6 +293,7 @@ export class W3mHeader extends LitElement {
       data-hidden=${!isConnectHelp}
       id="dynamic"
       icon="helpCircle"
+      label="Help"
       size="lg"
       iconSize="lg"
       type="neutral"

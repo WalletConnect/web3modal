@@ -294,4 +294,24 @@ describe('W3mHeader', () => {
       expect(networkSelect).toBeNull()
     })
   })
+
+  describe('Accessible Names', () => {
+    it('should label the help and close buttons', async () => {
+      const helpButton = element.shadowRoot?.querySelector('wui-icon-button[icon="helpCircle"]')
+      const closeButton = HelpersUtil.getByTestId(element, 'w3m-header-close')
+
+      expect(helpButton?.getAttribute('label')).toBe('Help')
+      expect(closeButton?.getAttribute('label')).toBe('Close')
+    })
+
+    it('should label the back button', async () => {
+      RouterController.push('Networks')
+      element.requestUpdate()
+      await element.updateComplete
+      await elementUpdated(element)
+
+      const backButton = HelpersUtil.getByTestId(element, 'header-back')
+      expect(backButton?.getAttribute('label')).toBe('Back')
+    })
+  })
 })

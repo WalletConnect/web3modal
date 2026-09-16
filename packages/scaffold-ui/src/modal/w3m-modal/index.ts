@@ -21,7 +21,7 @@ import '@reown/appkit-ui/wui-card'
 import '@reown/appkit-ui/wui-flex'
 
 import '../../partials/w3m-alertbar/index.js'
-import '../../partials/w3m-header/index.js'
+import { headings } from '../../partials/w3m-header/index.js'
 import '../../partials/w3m-snackbar/index.js'
 import '../../partials/w3m-tooltip-trigger/index.js'
 import '../../partials/w3m-tooltip/index.js'
@@ -32,6 +32,13 @@ import styles from './styles.js'
 
 // -- Helpers --------------------------------------------- //
 const SCROLL_LOCK = 'scroll-lock'
+
+function getCardLabel() {
+  const { view } = RouterController.state
+
+  // Views without a header title, such as the account screens, fall back to the view name
+  return headings()[view] || view.replace(/(?<=[a-z])(?=[A-Z])/gu, ' ')
+}
 
 // -- Constants --------------------------------------------- //
 const PADDING_OVERRIDES: Record<string, string> = {
@@ -67,6 +74,8 @@ export class W3mModalBase extends LitElement {
 
   @state() private padding = vars.spacing[1]
 
+  @state() private cardLabel = getCardLabel()
+
   @state() private mobileFullScreen = OptionsController.state.enableMobileFullScreen
 
   public constructor() {
@@ -89,6 +98,7 @@ export class W3mModalBase extends LitElement {
         RouterController.subscribeKey('view', () => {
           this.dataset['border'] = HelpersUtil.hasFooter() ? 'true' : 'false'
           this.padding = PADDING_OVERRIDES[RouterController.state.view] ?? vars.spacing[1]
+          this.cardLabel = getCardLabel()
         })
       ]
     )
@@ -152,6 +162,7 @@ export class W3mModalBase extends LitElement {
       data-embedded="${ifDefined(this.enableEmbedded)}"
       role="alertdialog"
       aria-modal="true"
+      aria-label=${this.cardLabel}
       tabindex="0"
       data-testid="w3m-modal-card"
     >

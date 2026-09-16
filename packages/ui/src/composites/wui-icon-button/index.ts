@@ -27,6 +27,9 @@ export class WuiIconButton extends LitElement {
 
   @property({ type: Boolean }) public disabled = false
 
+  /** Accessible name for the icon-only button, rendered as aria-label on the inner button */
+  @property() public label?: string = undefined
+
   // -- Render -------------------------------------------- //
   public override render() {
     return html`<button
@@ -35,6 +38,7 @@ export class WuiIconButton extends LitElement {
       data-size=${this.size}
       data-full-width=${this.fullWidth}
       ?disabled=${this.disabled}
+      aria-label=${ifDefined(this.label)}
     >
       <wui-icon color="inherit" name=${this.icon} size=${ifDefined(this.iconSize)}></wui-icon>
     </button>`
