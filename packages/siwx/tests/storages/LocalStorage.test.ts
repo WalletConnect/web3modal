@@ -53,18 +53,38 @@ describe('LocalStorage', () => {
     expect(setItem).toHaveBeenCalledWith(key, JSON.stringify([session]))
   })
 
-  test('should remove sessions', async () => {
+  test('should remove only sessions matching the chain and address', async () => {
+    const matchingSession = mockSession({
+      data: { accountAddress: '0xAAA', chainId: 'eip155:1' }
+    })
+    const duplicateMatchingSession = mockSession({
+      data: { accountAddress: '0xAAA', chainId: 'eip155:1' }
+    })
+    const sameChainSession = mockSession({
+      data: { accountAddress: '0xBBB', chainId: 'eip155:1' }
+    })
+    const sameAddressSession = mockSession({
+      data: { accountAddress: '0xAAA', chainId: 'eip155:137' }
+    })
+    const unrelatedSession = mockSession({
+      data: { accountAddress: '0xBBB', chainId: 'eip155:137' }
+    })
+
     getItem.mockImplementation(() =>
       JSON.stringify([
-        mockSession({
-          data: { accountAddress: '0x1234567890abcdef', chainId: 'eip155:1' }
-        })
+        matchingSession,
+        duplicateMatchingSession,
+        sameChainSession,
+        sameAddressSession,
+        unrelatedSession
       ])
     )
-    expect(await storage.get('eip155:1', '0x1234567890abcdef')).toHaveLength(1)
 
-    await storage.delete('eip155:1', '0x1234567890abcdef')
+    await storage.delete('eip155:1', '0xAAA')
     expect(getItem).toHaveBeenCalledWith(key)
-    expect(setItem).toHaveBeenCalledWith(key, JSON.stringify([]))
+    expect(setItem).toHaveBeenCalledWith(
+      key,
+      JSON.stringify([sameChainSession, sameAddressSession, unrelatedSession])
+    )
   })
 })

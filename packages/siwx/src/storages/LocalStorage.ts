@@ -52,7 +52,7 @@ export class LocalStorage implements SIWXStorage {
 
   delete(chainId: string, address: string): Promise<void> {
     const sessions = this.getSessions().filter(
-      session => session.data.chainId !== chainId && session.data.accountAddress !== address
+      session => session.data.chainId !== chainId || session.data.accountAddress !== address
     )
     this.setSessions(sessions)
 
