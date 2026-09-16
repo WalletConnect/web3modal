@@ -31,13 +31,12 @@ export class W3mSIWXSignMessageView extends LitElement {
       </wui-flex>
       <wui-flex .padding=${['0', '20', '5', '20'] as const} gap="3" justifyContent="space-between">
         <wui-text variant="lg-medium" align="center" color="primary"
-          >${this.dappName ?? 'Dapp'} needs to connect to your wallet</wui-text
+          >${this.dappName ?? 'Dapp'} needs to confirm your wallet.</wui-text
         >
       </wui-flex>
       <wui-flex .padding=${['0', '10', '4', '10'] as const} gap="3" justifyContent="space-between">
         <wui-text variant="md-regular" align="center" color="secondary"
-          >Sign this message to prove you own this wallet and proceed. Canceling will disconnect
-          you.</wui-text
+          >Sign this message to prove you own this wallet. Cancel to go back.</wui-text
         >
       </wui-flex>
       <wui-flex .padding=${['4', '5', '5', '5'] as const} gap="3" justifyContent="space-between">
